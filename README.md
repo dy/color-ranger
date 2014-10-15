@@ -1,4 +1,4 @@
-## Color ranges
+## Color range
 
 Render background for a color channel/space. Intended for color pickers or gradient generation.
 
@@ -16,16 +16,30 @@ element.style.background = range.rectangular.red.green(c, 'right');
 #### Rendering methods:
 
 `.linear[space](color, direction)` — get linear range background based on passed color for the space.
+
 `.rectangular[spaceH][spaceV](color, direction)` — get rectangular range based on passed color for the spaceA and spaceB.
+
 `.circular[space](color, direction)` — get circular range
+
 `.polar[spaceR][spaceA](color, direction)` — get polar background
+
 `.triangular[spaceH][spaceV](color, direction)` — get triangular background
 
 #### Helpers:
 
-`.grad(direction?, [color1, color2, ...colorN])` - render even gradient based on colors passed and for the proper browser.
+`.grad(direction?, [color1, color2, ...colorN])` — render even linear gradient based on colors passed.
 
-`.interpolate(colorA, colorB, number, space)` - return list of @number colors between colorA and color B interpolated by @space.
+`.interpolate(colorA, colorB, number, space)` — return list of @number colors between colorA and color B interpolated by @space.
+
+
+#### Options:
+
+Set options any time via `range.options`
+
+`direction` — default direction of gradient
+`space` — default color space to use as a basic
+`gridColor` — alpha grid color
+`gridSize` — alpha grid cell size
 
 
 ## Linear backgrounds
