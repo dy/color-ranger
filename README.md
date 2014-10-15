@@ -39,6 +39,8 @@ Set options any time via `range.options`
 
 ## Linear backgrounds
 
+TODO: insert images for each, with direction
+
 * red
 * green
 * blue
@@ -93,4 +95,8 @@ All the same as a linear ones.
 All the same as rectangular ones.
 
 
-## Unlicensed
+## Unlicense
+
+This is free and unencumbered software released into the public domain.
+
+[![Unlicense](http://upload.wikimedia.org/wikipedia/commons/6/62/PD-icon.svg)](http://unlicense.org/UNLICENSE)
