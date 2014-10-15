@@ -1,4 +1,3 @@
-var colorString = require('color-string');
 var splitKeys = require('split-keys');
 var Color = require('color');
 
@@ -31,19 +30,6 @@ var linear = {
 	 * @return {string} rendered css background-image
 	 */
 	hue: function(color, direction){
-		//hardcode version
-		// var s = color.saturation(),
-		// 	l = color.lightness();
-		// var bg = ['linear-gradient(to ' + direction + ',',
-		// 	'hsl(0,' + s + '%,' + l + '%) 0%,',
-		// 	'hsl(60,' + s + '%,' + l + '%) 16.666%,',
-		// 	'hsl(120,' + s + '%,' + l + '%) 33.333%,',
-		// 	'hsl(180,' + s + '%,' + l + '%) 50%,',
-		// 	'hsl(240,' + s + '%,' + l + '%) 66.666%,',
-		// 	'hsl(300,' + s + '%,' + l + '%) 83.333%,',
-		// 	'hsl(360,' + s + '%,' + l + '%) 100%)'].join('');
-		// return bg;
-
 		//softcode version
 		var c = color.clone();
 		var seq = interpolate(color.hue(0), color.hue(360), 7, 'hsl');
