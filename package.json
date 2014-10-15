@@ -1,0 +1,32 @@
+{
+  "name": "color-range",
+  "version": "0.0.0",
+  "description": "Render color range by channel or space for the color passed. Useful for creating any king of color picker.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node test/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dfcreative/color-range"
+  },
+  "keywords": [
+    "color-range",
+    "picker-background",
+    "palette",
+    "picker",
+    "color-picker",
+    "color-space",
+    "color-value",
+    "color-ranges"
+  ],
+  "author": "DMR",
+  "license": "Public Domain",
+  "bugs": {
+    "url": "https://github.com/dfcreative/color-range/issues"
+  },
+  "homepage": "https://github.com/dfcreative/color-range"
+}
