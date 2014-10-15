@@ -1,3 +1,4 @@
+var type = require('mutypes');
 var splitKeys = require('split-keys');
 var Color = require('color');
 
@@ -106,7 +107,7 @@ var rectangular = {
 		blue: function() {
 		}
 	},
-	hue: {
+	hue: splitKeys({
 		saturation: function() {
 		},
 		saturationv: function() {
@@ -114,22 +115,50 @@ var rectangular = {
 		lightness: function() {
 		},
 		'value, brightness': function() {
+		},
+
+		//TODO: think to use a separate worker to calculate chroma image
+		chroma: function(){
+
 		}
-	},
-	saturation: {
+	}),
+	saturation: splitKeys({
 		lightness: function() {
 		},
 		'value, brightness': function() {
 		},
 		hue: function() {
 		},
-	},
+	}),
 	L: {
 		a: function() {
 		},
 		b: function() {
 		}
 	}
+};
+
+
+
+/* --------------------------  C  I  R  C  U  L  A  R  ------------------------------- */
+
+
+/**
+ * Circular pickers - values depend on angle
+ */
+var circular = {
+	hue: function(color, direction){
+
+	}
+};
+
+
+
+/* --------------------------------  P  O  L  A  R  ---------------------------------- */
+
+
+var polar = {
+
 };
 
 
@@ -150,7 +179,7 @@ var rectangular = {
 function interpolate(colorA, colorB, steps, space){
 	var result = [], c = colorA.clone();
 	for (var i = 0; i < steps; i++){
-		result.push(colorA.mix(colorB, i/steps, space));
+		result.push(colorA.mix(colorB, i/(steps - 1), space).clone());
 	}
 	return result;
 }
@@ -167,12 +196,17 @@ function interpolate(colorA, colorB, steps, space){
  * @return {string} A string representing gradient
  */
 function grad(direction, list){
+	if (type.isArray(direction)){
+		list = direction;
+		direction = options.direction;
+	}
+
 	var result = 'linear-gradient(to ' + direction + ', ';
 
-	var l = list.length - 1, r = (100/l).toFixed(3);
+	var l = list.length - 1, r = 100/l;
 
 	for (var i = 0; i < l; i++){
-		result += list[i] + i*r + '%,';
+		result += list[i] + (i*r).toFixed(3) + '%,';
 	}
 
 	result += list[l] + '100%)';
