@@ -2,22 +2,13 @@
 
 Render background for a color channel/space. Intended for color pickers or gradient generation.
 
-Keywords:
-Color-range
-color-picker-background
-color-palette
-color-space
-color value range render
-color-range-background
-color-ranges
-
 
 ```js
-var background = require('color-ranges');
+var range = require('color-range');
 var Color = require('color');
 var c = new Color('green');
 
-element.style.background = background.rectangular.red.green(c, 'right');
+element.style.background = range.rectangular.red.green(c, 'right');
 ```
 
 ## API
@@ -91,3 +82,6 @@ All the same as a linear ones.
 ## Radial backgrounds
 
 All the same as rectangular ones.
+
+
+## Unlicensed
