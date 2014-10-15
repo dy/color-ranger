@@ -95,8 +95,5 @@ All the same as a linear ones.
 All the same as rectangular ones.
 
 
-## Unlicense
 
-This is free and unencumbered software released into the public domain.
-
-[![Unlicense](http://upload.wikimedia.org/wikipedia/commons/6/62/PD-icon.svg)](http://unlicense.org/UNLICENSE)
+<a href="http://unlicense.org/UNLICENSE"><img src="http://upload.wikimedia.org/wikipedia/commons/6/62/PD-icon.svg" width="40"/></a>
