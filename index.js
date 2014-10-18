@@ -12,7 +12,7 @@ var options = {
 	direction: 'to right',
 
 	/** transparency grid settings */
-	gridColor: new Color('rgba(0,0,0,.4)'),
+	gridColor: 'rgba(0,0,0,.4)',
 	gridSize: 14
 };
 
