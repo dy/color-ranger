@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "node test/index.js"
+    "test": "mocha test/index.js"
   },
   "repository": {
     "type": "git",
@@ -33,5 +33,10 @@
     "color": "*",
     "split-keys": "*",
     "mutypes": "*"
+  },
+  "devDependencies": {
+    "color-convert": "~0.5.2",
+    "color-string": "~0.2.1",
+    "mocha": "~1.21.5"
   }
 }

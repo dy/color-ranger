@@ -1,0 +1,41 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Ranges tests</title>
+	<link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
+
+	<style>
+		.range-case{
+			display: block;
+			width: 200px;
+			height: 40px;
+			margin: 15px;
+		}
+	</style>
+</head>
+<body>
+	<div id="mocha"></div>
+
+	<script src="../node_modules/mocha/mocha.js"></script>
+	<script src="../node_modules/chai/chai.js"></script>
+
+	<!-- dev -->
+	<script src="../node_modules/require-stub/index.js"></script>
+	<script src="../node_modules/color-convert/conversions.js"></script>
+	<script src="../node_modules/color-convert/index.js"></script>
+	<script src="../node_modules/color-string/color-string.js"></script>
+	<script src="../node_modules/color/color.js"></script>
+	<script src="../index.js"></script>
+
+	<script>
+		mocha.setup('bdd');
+	</script>
+
+	<script src="index.js"></script>
+
+	<script>
+		mocha.checkLeaks();
+		mocha.run();
+	</script>
+</body>
+</html>

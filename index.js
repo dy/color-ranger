@@ -1,15 +1,15 @@
-var type = require('mutypes');
-var splitKeys = require('split-keys');
 var Color = require('color');
 
 
 /** Default settings */
 var options = {
-	/** default color space */
+	/** default color space
+	 * used as a gradient stop value
+	 */
 	space: 'rgb',
 
 	/** default direction */
-	direction: '0deg',
+	direction: 'to right',
 
 	/** transparency grid settings */
 	gridColor: new Color('rgba(0,0,0,.4)'),
@@ -31,36 +31,37 @@ var linear = {
 	 * @return {string} rendered css background-image
 	 */
 	hue: function(color, direction){
-		//softcode version
-		var c = color.clone();
-		var seq = interpolate(color.hue(0), color.hue(360), 7, 'hsl');
+		direction = direction || options.direction;
+		var c1 = color.clone();
+		var c2 = color.clone();
+		var seq = interpolate(c1.hue(0), c2.hue(360), 7, 'hsl');
 
 		return grad(direction, seq);
 	},
 
 	saturation: function(color, direction){
-		var c = color.clone();
-		return grad(direction, interpolate(c.saturation(0), c.saturation(100), 2, 'hsl'));
+		direction = direction || options.direction;
+		return grad(direction, [color.clone().saturation(0), color.clone().saturation(100)]);
 	},
 
 	lightness: function(color, direction){
-		var c = color.clone();
-		return grad(direction, interpolate(c.lightness(0), c.lightness(100), 3, 'hsl'));
+		direction = direction || options.direction;
+		return grad(direction, [c.clone().lightness(0), c.clone().lightness(50) , c.clone().lightness(100)]);
 	},
 
 	red: function(color, direction){
-		var c = color.clone();
-		return grad(direction, [c.red(0), c.red(255)]);
+		direction = direction || options.direction;
+		return grad(direction, [c.clone().red(0), c.clone().red(255)]);
 	},
 
 	green: function(color, direction){
-		var c = color.clone();
-		return grad(direction, [c.green(0), c.green(255)]);
+		direction = direction || options.direction;
+		return grad(direction, [c.clone().green(0), c.clone().green(255)]);
 	},
 
 	blue: function(color, direction){
-		var c = color.clone();
-		return grad(direction, [c.blue(0), c.blue(255)]);
+		direction = direction || options.direction;
+		return grad(direction, [c.clone().blue(0), c.clone().blue(255)]);
 	},
 
 	/**
@@ -76,12 +77,10 @@ var linear = {
 	 * @return {[type]} [description]
 	 */
 	alpha: function(color, direction) {
-		var c = color.clone();
-
 		var gc = options.gridColor;
 		var s = options.gridSize;
 
-		return [grad(direction, [c.alpha(0), c.alpha(1)]) + ' 0 0 / 100% 100%,',
+		return [grad(direction, [c.clone().alpha(0), c.clone().alpha(1)]) + ' 0 0 / 100% 100%,',
 
 		//chess gradient
 		'linear-gradient(45deg, ' + gc + ' 25%, rgba(0,0,0,0) 25%, rgba(0,0,0,0) 75%, ' + gc + ' 75%) 0 0 / ' + s + 'px ' + s + 'px ,',
@@ -107,29 +106,34 @@ var rectangular = {
 		blue: function() {
 		}
 	},
-	hue: splitKeys({
+	hue: {
 		saturation: function() {
 		},
 		saturationv: function() {
 		},
 		lightness: function() {
 		},
-		'value, brightness': function() {
+		value: function() {
+		},
+		brightness: function() {
 		},
 
 		//TODO: think to use a separate worker to calculate chroma image
 		chroma: function(){
 
 		}
-	}),
-	saturation: splitKeys({
+	},
+	saturation: {
 		lightness: function() {
 		},
-		'value, brightness': function() {
+		value: function(){
+
+		},
+		brightness: function() {
 		},
 		hue: function() {
 		},
-	}),
+	},
 	L: {
 		a: function() {
 		},
@@ -179,7 +183,7 @@ var polar = {
 function interpolate(colorA, colorB, steps, space){
 	var result = [], c = colorA.clone();
 	for (var i = 0; i < steps; i++){
-		result.push(colorA.mix(colorB, i/(steps - 1), space).clone());
+		result.push(colorA.clone().mix(colorB, i/(steps - 1), space));
 	}
 	return result;
 }
@@ -195,21 +199,26 @@ function interpolate(colorA, colorB, steps, space){
  *
  * @return {string} A string representing gradient
  */
-function grad(direction, list){
-	if (type.isArray(direction)){
+function grad(direction, list, space){
+	space = space || options.space;
+	var strMeth = space + 'String';
+
+	var isCorner = list.length === 2;
+
+	if (direction instanceof Array){
 		list = direction;
 		direction = options.direction;
 	}
 
-	var result = 'linear-gradient(to ' + direction + ', ';
+	var result = 'linear-gradient(' + direction + ', ' + list[0][strMeth]() + (!isCorner ? ' 0%' : '') + ', ';
 
 	var l = list.length - 1, r = 100/l;
 
-	for (var i = 0; i < l; i++){
-		result += list[i] + (i*r).toFixed(3) + '%,';
+	for (var i = 1; i < l; i++){
+		result += list[i][strMeth]() + ' ' + (i*r).toFixed(3) + '%, ';
 	}
 
-	result += list[l] + '100%)';
+	result += list[l][strMeth]() + (!isCorner ? ' 100%' : '') + ')';
 
 	return result;
 }
