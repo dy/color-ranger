@@ -69,12 +69,10 @@ var linear = {
 	 *
 	 * @param {Color} color Main color to calc range from
 	 * @param {string} direction A direction to follow
-	 * @param {string} gridColor Transparent grid color
-	 * @param {number} gridSize Grid size
 	 *
 	 * @todo Think up the more graceful way of renderind this
 	 *
-	 * @return {[type]} [description]
+	 * @return {string} Background
 	 */
 	alpha: function(color, direction) {
 		var gc = options.gridColor;
@@ -85,6 +83,26 @@ var linear = {
 		//chess gradient
 		'linear-gradient(45deg, ' + gc + ' 25%, rgba(0,0,0,0) 25%, rgba(0,0,0,0) 75%, ' + gc + ' 75%) 0 0 / ' + s + 'px ' + s + 'px ,',
 		'linear-gradient(45deg, ' + gc + ' 25%, rgba(0,0,0,0) 25%, rgba(0,0,0,0) 75%, ' + gc + ' 75%) ' + s/2 + 'px ' + s/2 + 'px / ' + s + 'px ' + s + 'px'].join('');
+	},
+
+	cyan: function(color, direction){
+		direction = direction || options.direction;
+		return grad(direction, [c.clone().cyan(0), c.clone().cyan(100)]);
+	},
+
+	magenta: function(color, direction){
+		direction = direction || options.direction;
+		return grad(direction, [c.clone().magenta(0), c.clone().magenta(100)]);
+	},
+
+	yellow: function(color, direction){
+		direction = direction || options.direction;
+		return grad(direction, [c.clone().yellow(0), c.clone().yellow(100)]);
+	},
+
+	black: function(color, direction){
+		direction = direction || options.direction;
+		return grad(direction, [c.clone().black(0), c.clone().black(100)]);
 	}
 };
 
@@ -94,24 +112,21 @@ var linear = {
 
 
 var rectangular = {
-	red: {
-		green: function() {
-		},
-		blue: function() {
-		}
-	},
-	green: {
-		red: function() {
-		},
-		blue: function() {
-		}
-	},
 	hue: {
 		saturation: function() {
 		},
 		saturationv: function() {
 		},
-		lightness: function() {
+		lightness: function(c, directions) {
+			var result = '';
+
+			//create hue horizontally
+			result += linear.hue(c, directions[0]);
+
+			//apply lightness verticallly
+			result = grad(directions[1], [c.clone().lightness(100), [c.clone().lightness(100).alpha(0), 50], [c.clone().lightness(0).alpha(0), 50], c.clone().lightness(0).alpha(100)]) + ', ' + result;
+
+			return result;
 		},
 		value: function() {
 		},
@@ -133,6 +148,18 @@ var rectangular = {
 		},
 		hue: function() {
 		},
+	},
+	red: {
+		green: function() {
+		},
+		blue: function() {
+		}
+	},
+	green: {
+		red: function() {
+		},
+		blue: function() {
+		}
 	},
 	L: {
 		a: function() {
@@ -203,25 +230,36 @@ function grad(direction, list, space){
 	space = space || options.space;
 	var strMeth = space + 'String';
 
-	var isCorner = list.length === 2;
-
 	if (direction instanceof Array){
 		list = direction;
 		direction = options.direction;
 	}
 
-	var result = 'linear-gradient(' + direction + ', ' + list[0][strMeth]() + (!isCorner ? ' 0%' : '') + ', ';
+	var result = 'linear-gradient(' + direction + ', ';
 
 	var l = list.length - 1, r = 100/l;
 
-	for (var i = 1; i < l; i++){
-		result += list[i][strMeth]() + ' ' + (i*r).toFixed(3) + '%, ';
+	for (var i = 0, step, color; i <= l; i++) {
+		//color-step
+		if (list[i].length){
+			color = list[i][0][strMeth]();
+			step = list[i][1];
+		}
+		else {
+			color = list[i][strMeth]();
+			step = (i*r);
+		}
+		//shorten 0%/100% values?
+		step = step === 0 || step === 100 ? '' : step.toFixed(3) + '%';
+
+		result += color + ' ' + step + ', ';
 	}
 
-	result += list[l][strMeth]() + (!isCorner ? ' 100%' : '') + ')';
+	result = result.slice(0, -2) + ')';
 
 	return result;
 }
+
 
 
 /**

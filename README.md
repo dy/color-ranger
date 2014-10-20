@@ -23,7 +23,7 @@ element.style.background = range.rectangular.red.green(c, 'right');
 
 #### Helpers:
 
-* `.grad(direction?, [color1, color2, ...colorN])` — render even linear gradient based on colors passed.
+* `.grad(direction?, [color1, [color2, stop], color3 ...colorN])` — render even linear gradient based on colors passed.
 * `.interpolate(colorA, colorB, number, space)` — return list of @number colors between colorA and color B interpolated by @space.
 
 
@@ -31,10 +31,10 @@ element.style.background = range.rectangular.red.green(c, 'right');
 
 Set options any time via `range.options`
 
-* `direction` — default direction of gradient
-* `space` — default color space to use as a basic
-* `gridColor` — alpha grid color
-* `gridSize` — alpha grid cell size
+* `direction` — used as default direction for generated css gradient.
+* `space` — default color space to use as a basic.
+* `gridColor` — alpha grid color.
+* `gridSize` — alpha grid cell size.
 
 
 ## Linear backgrounds
