@@ -124,7 +124,7 @@ var rectangular = {
 			result += linear.hue(c, directions[0]);
 
 			//apply lightness verticallly
-			result = grad(directions[1], [c.clone().lightness(100), [c.clone().lightness(100).alpha(0), 50], [c.clone().lightness(0).alpha(0), 50], c.clone().lightness(0).alpha(100)]) + ', ' + result;
+			result = grad(directions[1], [c.clone().lightness(0).alpha(1), [c.clone().lightness(0).alpha(0), 50], [c.clone().lightness(100).alpha(0), 50], c.clone().lightness(100).alpha(1)]) + ', ' + result;
 
 			return result;
 		},
