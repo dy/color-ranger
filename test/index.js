@@ -15,6 +15,9 @@ var direction = 'to right';
 function createBg(str){
 	var bg = document.createElement('div');
 	bg.className = 'range-case';
+	if (/-/.test(str)){
+		bg.className += ' rect-case';
+	}
 	document.body.appendChild(bg);
 
 	bg.setAttribute('data-channel', str || '')
@@ -73,6 +76,10 @@ describe('linear',function(){
 		createBg('lightness').style.background = range.linear.lightness(c, direction);
 	});
 
+	it('brightness', function(){
+		createBg('brightness').style.background = range.linear.brightness(c, direction);
+	});
+
 	it('red', function(){
 		createBg('red').style.background = range.linear.red(c, direction);
 	});
@@ -109,6 +116,14 @@ describe('linear',function(){
 
 describe('rectangular', function(){
 	it('hue-lightness', function(){
-		createBg('hue-lightness').style.background = range.rectangular.hue.lightness(c, ['to right', 'to top']);
+		createBg('hue-lightness').style.background = range.rectangular.hue.lightness(c);
+	});
+
+	it('hue-brightness', function(){
+		createBg('hue-brightness').style.background = range.rectangular.hue.brightness(c);
+	});
+
+	it('hue-saturation', function(){
+		createBg('hue-saturation').style.background = range.rectangular.hue.saturation(c);
 	});
 });

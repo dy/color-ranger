@@ -9,7 +9,7 @@ var options = {
 	space: 'rgb',
 
 	/** default direction */
-	direction: 'to right',
+	direction: ['to right', 'to top'],
 
 	/** transparency grid settings */
 	gridColor: 'rgba(0,0,0,.4)',
@@ -31,7 +31,7 @@ var linear = {
 	 * @return {string} rendered css background-image
 	 */
 	hue: function(color, direction){
-		direction = direction || options.direction;
+		direction = direction || options.direction[0];
 		var c1 = color.clone();
 		var c2 = color.clone();
 		var seq = interpolate(c1.hue(0), c2.hue(360), 7, 'hsl');
@@ -40,27 +40,35 @@ var linear = {
 	},
 
 	saturation: function(color, direction){
-		direction = direction || options.direction;
+		direction = direction || options.direction[0];
 		return grad(direction, [color.clone().saturation(0), color.clone().saturation(100)]);
 	},
 
 	lightness: function(color, direction){
-		direction = direction || options.direction;
-		return grad(direction, [c.clone().lightness(0), c.clone().lightness(50) , c.clone().lightness(100)]);
+		direction = direction || options.direction[0];
+		return grad(direction, [c.clone().lightness(0), c.clone().lightness(50), c.clone().lightness(100)]);
+	},
+
+	value: function(color, direction){
+		direction = direction || options.direction[0];
+		return grad(direction, [c.clone().value(0), c.clone().value(100)]);
+	},
+	brightness: function(){
+		return linear.value.apply(this, arguments);
 	},
 
 	red: function(color, direction){
-		direction = direction || options.direction;
+		direction = direction || options.direction[0];
 		return grad(direction, [c.clone().red(0), c.clone().red(255)]);
 	},
 
 	green: function(color, direction){
-		direction = direction || options.direction;
+		direction = direction || options.direction[0];
 		return grad(direction, [c.clone().green(0), c.clone().green(255)]);
 	},
 
 	blue: function(color, direction){
-		direction = direction || options.direction;
+		direction = direction || options.direction[0];
 		return grad(direction, [c.clone().blue(0), c.clone().blue(255)]);
 	},
 
@@ -77,6 +85,7 @@ var linear = {
 	alpha: function(color, direction) {
 		var gc = options.gridColor;
 		var s = options.gridSize;
+		direction = direction || options.direction[0];
 
 		return [grad(direction, [c.clone().alpha(0), c.clone().alpha(1)]) + ' 0 0 / 100% 100%,',
 
@@ -86,22 +95,22 @@ var linear = {
 	},
 
 	cyan: function(color, direction){
-		direction = direction || options.direction;
+		direction = direction || options.direction[0];
 		return grad(direction, [c.clone().cyan(0), c.clone().cyan(100)]);
 	},
 
 	magenta: function(color, direction){
-		direction = direction || options.direction;
+		direction = direction || options.direction[0];
 		return grad(direction, [c.clone().magenta(0), c.clone().magenta(100)]);
 	},
 
 	yellow: function(color, direction){
-		direction = direction || options.direction;
+		direction = direction || options.direction[0];
 		return grad(direction, [c.clone().yellow(0), c.clone().yellow(100)]);
 	},
 
 	black: function(color, direction){
-		direction = direction || options.direction;
+		direction = direction || options.direction[0];
 		return grad(direction, [c.clone().black(0), c.clone().black(100)]);
 	}
 };
@@ -113,24 +122,46 @@ var linear = {
 
 var rectangular = {
 	hue: {
-		saturation: function() {
-		},
-		saturationv: function() {
-		},
-		lightness: function(c, directions) {
+		saturation: function(c, direction) {
 			var result = '';
+			direction = direction || options.direction;
 
 			//create hue horizontally
-			result += linear.hue(c, directions[0]);
+			result += linear.hue(c, direction[0]);
 
 			//apply lightness verticallly
-			result = grad(directions[1], [c.clone().lightness(0).alpha(1), [c.clone().lightness(0).alpha(0), 50], [c.clone().lightness(100).alpha(0), 50], c.clone().lightness(100).alpha(1)]) + ', ' + result;
+			result = grad(direction[1], [c.clone().saturation(0).alpha(1), c.clone().saturation(0).alpha(0)]) + ', ' + result;
 
 			return result;
 		},
-		value: function() {
+		saturationv: function() {
 		},
-		brightness: function() {
+		lightness: function(c, direction) {
+			var result = '';
+			direction = direction || options.direction;
+
+			//create hue horizontally
+			result += linear.hue(c, direction[0]);
+
+			//apply lightness verticallly
+			result = grad(direction[1], [c.clone().lightness(0).alpha(1), [c.clone().lightness(0).alpha(0), 50], [c.clone().lightness(100).alpha(0), 50], c.clone().lightness(100).alpha(1)]) + ', ' + result;
+
+			return result;
+		},
+		brightness: function(){
+			return rectangular.hue.value.apply(this, arguments);
+		},
+		value: function(c, direction) {
+			var result = '';
+			direction = direction || options.direction;
+
+			//create hue horizontally
+			result += linear.hue(c, direction[0]);
+
+			//apply lightness verticallly
+			result = grad(direction[1], [c.clone().value(0).alpha(1), c.clone().value(0).alpha(0)]) + ', ' + result;
+
+			return result;
 		},
 
 		//TODO: think to use a separate worker to calculate chroma image
