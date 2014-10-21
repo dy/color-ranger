@@ -135,4 +135,8 @@ describe('rectangular', function(){
 	it('hue-saturation', function(){
 		createBg('hue-saturation').style.background = range.rectangular.hue.saturation(c);
 	});
+
+	it('saturation-lightness', function(){
+		createBg('saturation-lightness').style.background = range.rectangular.saturation.lightness(c);
+	});
 });

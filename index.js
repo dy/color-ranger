@@ -130,7 +130,7 @@ var rectangular = {
 			result += linear.hue(c, direction[0]);
 
 			//apply lightness verticallly
-			result = grad(direction[1], ['rgba(128,128,128,0)', 'gray']) + ', ' + result;
+			result = grad(direction[1], ['gray', 'rgba(128,128,128,0)']) + ', ' + result;
 
 			return result;
 		},
@@ -141,7 +141,7 @@ var rectangular = {
 			direction = direction || options.direction;
 
 			//create hue horizontally
-			result += linear.hue(c, direction[0]);
+			result += linear.hue(c.clone().value(100), direction[0]);
 
 			//apply lightness verticallly
 			result = grad(direction[1], [c.clone().lightness(0).alpha(1), [c.clone().lightness(0).alpha(0), 50], [c.clone().lightness(100).alpha(0), 50], c.clone().lightness(100).alpha(1)]) + ', ' + result;
@@ -156,10 +156,10 @@ var rectangular = {
 			direction = direction || options.direction;
 
 			//create hue horizontally
-			result += linear.hue(c, direction[0]);
+			result += linear.hue(c.clone().value(100), direction[0]);
 
 			//apply lightness verticallly
-			result = grad(direction[1], [c.clone().value(0).alpha(1), c.clone().value(0).alpha(0)]) + ', ' + result;
+			result = grad(direction[1], ['rgba(0,0,0,1)', 'rgba(0,0,0,0)']) + ', ' + result;
 
 			return result;
 		},
@@ -170,7 +170,17 @@ var rectangular = {
 		}
 	},
 	saturation: {
-		lightness: function() {
+		lightness: function(c, direction) {
+			var result = '';
+			direction = direction || options.direction;
+
+			//render saturation horizontally
+			result += linear.saturation.apply(this, arguments);
+
+			//add vertical lightness gradient
+			result = grad(direction[1], ['black', ['rgba(0,0,0,0)', 50], ['rgba(255,255,255,0)', 50], 'white']) + ', ' + result;
+
+			return result;
 		},
 		value: function(){
 
