@@ -130,7 +130,7 @@ var rectangular = {
 			result += linear.hue(c, direction[0]);
 
 			//apply lightness verticallly
-			result = grad(direction[1], [c.clone().saturation(0).alpha(1), c.clone().saturation(0).alpha(0)]) + ', ' + result;
+			result = grad(direction[1], ['rgba(128,128,128,0)', 'gray']) + ', ' + result;
 
 			return result;
 		},
@@ -263,7 +263,7 @@ function grad(direction, list, space){
 
 	if (direction instanceof Array){
 		list = direction;
-		direction = options.direction;
+		direction = options.direction[0];
 	}
 
 	var result = 'linear-gradient(' + direction + ', ';
@@ -272,20 +272,23 @@ function grad(direction, list, space){
 
 	for (var i = 0, step, color; i <= l; i++) {
 		//color-step
-		if (list[i].length){
-			color = list[i][0][strMeth]();
+		if (list[i] instanceof Array){
+			color = list[i][0];
 			step = list[i][1];
 		}
 		else {
-			color = list[i][strMeth]();
+			color = list[i];
 			step = (i*r);
 		}
+
+		//non-textual color
+		if (color instanceof Color) color = color[strMeth]();
+
 		//shorten 0%/100% values?
 		step = step === 0 || step === 100 ? '' : step.toFixed(3) + '%';
 
 		result += color + ' ' + step + ', ';
 	}
-
 	result = result.slice(0, -2) + ')';
 
 	return result;

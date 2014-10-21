@@ -46,7 +46,6 @@ describe('helpers', function(){
 		var bg1 = div.style.background;
 		div.style.background = 'linear-gradient(to right, rgba(0, 0, 0, 1), rgba(255, 255, 255, 1))';
 		var bg2 = div.style.background;
-
 		assert.equal(bg1, bg2);
 	});
 
@@ -55,6 +54,16 @@ describe('helpers', function(){
 		div.style.background = range.gradient([[new Color('black'), 10], [new Color('white'), 20]]);
 		var bg1 = div.style.background;
 		div.style.background = 'linear-gradient(to right, rgba(0, 0, 0, 1) 10%, rgba(255, 255, 255, 1) 20%)';
+		var bg2 = div.style.background;
+
+		assert.equal(bg1, bg2);
+	});
+
+	it('textual colors in grad', function(){
+		var div = document.createElement('div');
+		div.style.background = range.gradient(['black', 'white']);
+		var bg1 = div.style.background;
+		div.style.background = 'linear-gradient(to right, black, white)';
 		var bg2 = div.style.background;
 
 		assert.equal(bg1, bg2);
