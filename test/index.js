@@ -8,7 +8,7 @@ var range = require('../index');
 var Color = require('color');
 
 
-var c = new Color('green');
+var c = new Color('red');
 var direction = 'to right';
 
 
