@@ -6,11 +6,14 @@
 
 	<style>
 		.range-case{
+			float: left;
 			display: block;
 			width: 200px;
 			height: 40px;
 			margin: 15px;
 			position: relative;
+			background-repeat: no-repeat!important;
+			background-size: 100% 100%!important;
 		}
 		.range-case:after{
 			content: attr(data-channel);
@@ -22,8 +25,17 @@
 			font-size: 12px;
 			font-family: sans-serif;
 		}
+		.range-case:even:after{
+			content: 123;
+		}
 		.rect-case{
 			height: 120px;
+		}
+		.canvas-case{
+			margin-left: 120px;
+		}
+		br{
+			clear: both;
 		}
 	</style>
 </head>

@@ -12,15 +12,23 @@ var c = new Color('green');
 var direction = 'to right';
 
 
+//create range case, build up canvas renderer
 function createBg(str){
 	var bg = document.createElement('div');
 	bg.className = 'range-case';
+
 	if (/-/.test(str)){
 		bg.className += ' rect-case';
+		bg.setAttribute('data-channel', str || '');
 	}
 	document.body.appendChild(bg);
 
-	bg.setAttribute('data-channel', str || '')
+	//canvas case
+	if (/-c/.test(str)){
+		bg.className += ' canvas-case';
+		bg.setAttribute('data-channel', '');
+	}
+
 
 	return bg;
 }
@@ -124,19 +132,32 @@ describe('linear',function(){
 
 
 describe('rectangular', function(){
+	// it('canvas', function(){
+	// 	range.canvasify(c, 'hsv', ['hue', 'value']);
+	// });
+
 	it('hue-lightness', function(){
 		createBg('hue-lightness').style.background = range.rectangular.hue.lightness(c);
+		createBg('hue-lightness-c').style.background = range.canvasify(c, 'hsl', ['hue', 'lightness']);
 	});
 
 	it('hue-brightness', function(){
 		createBg('hue-brightness').style.background = range.rectangular.hue.brightness(c);
+		createBg('hue-brightness-c').style.background = range.canvasify(c, 'hsv', ['hue', 'value']);
 	});
 
 	it('hue-saturation', function(){
 		createBg('hue-saturation').style.background = range.rectangular.hue.saturation(c);
+		createBg('hue-saturation-c').style.background = range.canvasify(c, 'hsl', ['hue', 'saturation']);
 	});
 
 	it('saturation-lightness', function(){
 		createBg('saturation-lightness').style.background = range.rectangular.saturation.lightness(c);
+		createBg('saturation-lightness-c').style.background = range.canvasify(c, 'hsl', ['saturation', 'lightness']);
+	});
+
+	it('saturation-brightness', function(){
+		createBg('saturation-brightness').style.background = range.rectangular.saturation.brightness(c);
+		createBg('saturation-brightness-c').style.background = range.canvasify(c, 'hsv', [1, 'value']);
 	});
 });

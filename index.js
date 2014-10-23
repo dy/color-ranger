@@ -182,10 +182,20 @@ var rectangular = {
 
 			return result;
 		},
-		value: function(){
+		value: function(c, direction){
+			var result = '';
+			direction = direction || options.direction;
 
+			//render saturation horizontally
+			result += linear.saturation.apply(this, arguments);
+
+			//add vertical lightness gradient
+			result = grad(direction[1], ['black', 'rgba(0,0,0,0)']) + ', ' + result;
+
+			return result;
 		},
 		brightness: function() {
+			return this.value.apply(this, arguments);
 		},
 		hue: function() {
 		},
@@ -305,6 +315,58 @@ function grad(direction, list, space){
 }
 
 
+var canvas = document.createElement('canvas');
+canvas.width = 100;
+canvas.height = 100;
+var ctx = canvas.getContext('2d');
+
+
+/**
+ * Render passed color range in canvas
+ *
+ * @param {Color} c A color to build range
+ * @param {string} space A space to render
+ * @param {array} channels List of channels to render
+ *
+ * @return {string} base-64 encoded background string
+ */
+
+function canv(c, space, channels){
+	var cw = canvas.width;
+	var ch = canvas.height;
+
+	var c1idx = typeof channels[0] === 'string' ? Color.spaces[space].indexOf(channels[0]) : channels[0];
+	var c2idx = typeof channels[1] === 'string' ? Color.spaces[space].indexOf(channels[1]) : channels[1];
+
+	var c1max = Color.maxes[space][c1idx];
+	var c2max = Color.maxes[space][c2idx];
+
+	//take 100 as a number of steps to calc
+	var stepsH = 100,
+		stepsW = 100;
+
+	var rColor, lColor;
+	var stepX = cw / stepsW;
+	var stepY = ch / stepsH;
+
+	//FIXME: migrate to fast color
+	for (var x, y = stepsH; y--;){
+		//calc right & left colors
+		rColor = c.clone().setChannel(space, c1idx, c1max).setChannel(space, c2idx, c2max - c2max * y / stepsH);
+		lColor = c.clone().setChannel(space, c1idx, 0).setChannel(space, c2idx, c2max - c2max * y / stepsH);
+
+		for (x = 0; x < stepsW; x++){
+			//set fill color
+			ctx.setFillColor(lColor.setChannel(space, c1idx, c1max * x / stepsW).rgbaString());
+
+			//fill proper area
+			ctx.fillRect(x * stepX, y * stepY, stepX, stepY );
+		}
+	}
+
+	return 'url(' + canvas.toDataURL() + ')';
+}
+
 
 /**
  * @module color-range
@@ -317,6 +379,8 @@ module.exports = {
 
 	interpolate: interpolate,
 	gradient: grad,
+	canvasify: canv,
 
-	options: options
+	options: options,
+
 };
