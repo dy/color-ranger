@@ -151,6 +151,11 @@ describe('rectangular', function(){
 		createBg('hue-saturation-c').style.background = range.canvasify(c, 'hsl', ['hue', 'saturation']);
 	});
 
+	it('hue-saturationv', function(){
+		createBg('hue-saturationv').style.background = range.rectangular.hue.saturationv(c);
+		createBg('hue-saturation-c').style.background = range.canvasify(c, 'hsv', [0, 1]);
+	});
+
 	it('saturation-lightness', function(){
 		createBg('saturation-lightness').style.background = range.rectangular.saturation.lightness(c);
 		createBg('saturation-lightness-c').style.background = range.canvasify(c, 'hsl', ['saturation', 'lightness']);

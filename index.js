@@ -130,11 +130,21 @@ var rectangular = {
 			result += linear.hue(c, direction[0]);
 
 			//apply lightness verticallly
-			result = grad(direction[1], ['gray', 'rgba(128,128,128,0)']) + ', ' + result;
+			result = grad(direction[1], ['rgba(63,63,63,1)', 'rgba(63,63,63,0)']) + ', ' + result;
 
 			return result;
 		},
-		saturationv: function() {
+		saturationv: function(c, direction) {
+			var result = '';
+			direction = direction || options.direction;
+
+			//create hue horizontally
+			result += linear.hue(c, direction[0]);
+
+			//add gray fade
+			result = grad(direction[1], ['rgba(127,127,127,1)', 'rgba(127,127,127,0)']) + ', ' + result;
+
+			return result;
 		},
 		lightness: function(c, direction) {
 			var result = '';
