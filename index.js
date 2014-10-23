@@ -174,8 +174,11 @@ var rectangular = {
 			var result = '';
 			direction = direction || options.direction;
 
-			//render saturation horizontally
-			result += linear.saturation.apply(this, arguments);
+			//render color
+			result += c.lightness(50).saturation(100).rgbaString();
+
+			//add gray fade
+			result = grad(direction[0], ['rgba(127,127,127,1)', 'rgba(127,127,127,0)']) + ', ' + result;
 
 			//add vertical lightness gradient
 			result = grad(direction[1], ['black', ['rgba(0,0,0,0)', 50], ['rgba(255,255,255,0)', 50], 'white']) + ', ' + result;
