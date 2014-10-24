@@ -217,7 +217,26 @@ var rectangular = {
 		},
 	},
 	red: {
-		green: function() {
+		green: function(c, direction) {
+			var result = '';
+			direction = direction || options.direction;
+
+			result = c.clone().green(0).red(0).rgbaString();
+
+			//green
+			result = grad('135deg', [c.clone().green(255).red(0).rgbaString(), [c.clone().green(255).red(0).alpha(0).rgbaString(), 70]])
+			 + ', ' + result;
+
+
+			//yell
+			result = grad('-135deg', [c.clone().green(255).red(255).rgbaString(), [c.clone().green(255).red(255).alpha(0).rgbaString(), 70]])
+			 + ', ' + result;
+
+			//red
+			result = grad('-45deg', [c.clone().green(0).red(255).rgbaString(), [c.clone().green(0).red(255).alpha(0).rgbaString(), 70]])
+			 + ', ' + result;
+
+			return result;
 		},
 		blue: function() {
 		}
@@ -346,8 +365,8 @@ var ctx = canvas.getContext('2d');
  *
  * @return {string} base-64 encoded background string
  */
-
 function canv(c, space, channels){
+	// console.time('canv');
 	var cw = canvas.width;
 	var ch = canvas.height;
 
@@ -365,21 +384,37 @@ function canv(c, space, channels){
 	var stepX = cw / stepsW;
 	var stepY = ch / stepsH;
 
+	var data = ctx.createImageData(100,100);
+
 	//FIXME: migrate to fast color
-	for (var x, y = stepsH; y--;){
+	for (var x, y = stepsH, row; y--;){
 		//calc right & left colors
 		rColor = c.clone().setChannel(space, c1idx, c1max).setChannel(space, c2idx, c2max - c2max * y / stepsH);
 		lColor = c.clone().setChannel(space, c1idx, 0).setChannel(space, c2idx, c2max - c2max * y / stepsH);
 
 		for (x = 0; x < stepsW; x++){
+			//calc color
+			lColor.setChannel(space, c1idx, c1max * x / stepsW);
+
 			//set fill color
-			ctx.setFillColor(lColor.setChannel(space, c1idx, c1max * x / stepsW).rgbaString());
+			// ctx.setFillColor(lColor.setChannel(space, c1idx, c1max * x / stepsW).rgbString());
+
+			//fill image data
+			row = y * stepsW * 4;
+			data.data[row + x * 4 + 0] = lColor.red();
+			data.data[row + x * 4 + 1] = lColor.green();
+			data.data[row + x * 4 + 2] = lColor.blue();
+			data.data[row + x * 4 + 3] = 255;
+			// data.data[row + x + 3] = lColor.alpha();
 
 			//fill proper area
-			ctx.fillRect(x * stepX, y * stepY, stepX, stepY );
+			// ctx.fillRect(x * stepX, y * stepY, stepX, stepY );
 		}
 	}
 
+	ctx.putImageData(data, 0, 0);
+
+	// console.timeEnd('canv');
 	return 'url(' + canvas.toDataURL() + ')';
 }
 

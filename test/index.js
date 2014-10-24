@@ -27,6 +27,7 @@ function createBg(str){
 	if (/-c/.test(str)){
 		bg.className += ' canvas-case';
 		bg.setAttribute('data-channel', '');
+		document.body.appendChild(document.createElement('br'));
 	}
 
 
@@ -75,6 +76,18 @@ describe('helpers', function(){
 		var bg2 = div.style.background;
 
 		assert.equal(bg1, bg2);
+	});
+
+	it.skip('radial grad', function(){
+
+	});
+
+	it('canvas 1-dim', function(){
+		range.canvasify(color, 'Lab', ['L']);
+	});
+
+	it('canvas 2-dim', function(){
+		range.canvasify(color, 'rgb', ['red', 'green']);
 	});
 });
 
@@ -164,5 +177,20 @@ describe('rectangular', function(){
 	it('saturation-brightness', function(){
 		createBg('saturation-brightness').style.background = range.rectangular.saturation.brightness(c);
 		createBg('saturation-brightness-c').style.background = range.canvasify(c, 'hsv', [1, 'value']);
+	});
+
+	it('red-green', function(){
+		createBg('red-green').style.background = range.rectangular.red.green(c);
+		createBg('red-green-c').style.background = range.canvasify(c, 'rgb', [0,1]);
+	});
+
+	it('red-blue', function(){
+		createBg('red-blue').style.background = range.rectangular.red.blue(c);
+		createBg('red-blue-c').style.background = range.canvasify(c, 'rgb', [0,2]);
+	});
+
+	it('green-blue', function(){
+		createBg('green-blue').style.background = range.rectangular.green.blue(c);
+		createBg('green-blue-c').style.background = range.canvasify(c, 'rgb', [1,2]);
 	});
 });
