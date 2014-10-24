@@ -2,7 +2,7 @@ var Color = require('color');
 
 
 /** Default settings */
-var options = {
+var options = ColorRange.options = {
 	/** default color space
 	 * used as a gradient stop value
 	 */
@@ -19,6 +19,38 @@ var options = {
 
 
 /* ----------------------------  L  I  N  E  A  R  ----------------------------------- */
+
+
+/**
+ * @constructor
+ *
+ * Create linear range
+ */
+function ColorRange(color, direction){
+	this.color = new Color(color);
+	this.direction = direction || options.direction;
+}
+
+
+var ColorRangeProto = ColorRange.prototype;
+
+
+/**
+ * Return range as a canvas-rendered data-URL
+ *
+ * @return {[type]} [description]
+ */
+ColorRangeProto.toDataURL = function(){
+
+};
+
+
+/**
+ * Get range as CSS gradients string
+ */
+ColorRangeProto.toCSS = function(){
+
+};
 
 
 var linear = {
@@ -53,6 +85,7 @@ var linear = {
 		direction = direction || options.direction[0];
 		return grad(direction, [c.clone().value(0), c.clone().value(100)]);
 	},
+
 	brightness: function(){
 		return linear.value.apply(this, arguments);
 	},
@@ -351,8 +384,8 @@ function grad(direction, list, space){
 
 
 var canvas = document.createElement('canvas');
-canvas.width = 100;
-canvas.height = 100;
+canvas.width = 24;
+canvas.height = 24;
 var ctx = canvas.getContext('2d');
 
 
@@ -367,8 +400,10 @@ var ctx = canvas.getContext('2d');
  */
 function canv(c, space, channels){
 	// console.time('canv');
-	var cw = canvas.width;
-	var ch = canvas.height;
+	var cw = canvas.width,
+		ch = canvas.height,
+		stepsH = ch,
+		stepsW = cw;
 
 	var c1idx = typeof channels[0] === 'string' ? Color.spaces[space].indexOf(channels[0]) : channels[0];
 	var c2idx = typeof channels[1] === 'string' ? Color.spaces[space].indexOf(channels[1]) : channels[1];
@@ -376,15 +411,11 @@ function canv(c, space, channels){
 	var c1max = Color.maxes[space][c1idx];
 	var c2max = Color.maxes[space][c2idx];
 
-	//take 100 as a number of steps to calc
-	var stepsH = 100,
-		stepsW = 100;
-
 	var rColor, lColor;
 	var stepX = cw / stepsW;
 	var stepY = ch / stepsH;
 
-	var data = ctx.createImageData(100,100);
+	var data = ctx.createImageData(stepsW,stepsH);
 
 	//FIXME: migrate to fast color
 	for (var x, y = stepsH, row; y--;){
