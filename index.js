@@ -383,60 +383,72 @@ function grad(direction, list, space){
 }
 
 
+/** Virtual canvas */
 var canvas = document.createElement('canvas');
+var ctx = canvas.getContext('2d');
 canvas.width = 24;
 canvas.height = 24;
-var ctx = canvas.getContext('2d');
 
 
 /**
- * Render passed color range in canvas
+ * Render passed color range in canvas, imageData approach
  *
  * @param {Color} c A color to build range
  * @param {string} space A space to render
- * @param {array} channels List of channels to render
+ * @param {array} channels List of channel indexes to render
  *
  * @return {string} base-64 encoded background string
  */
-function canv(c, space, channels){
-	// console.time('canv');
-	var cw = canvas.width,
-		ch = canvas.height,
+function canv(c, space, channels, size){
+	console.time('canv');
+
+	//normalize size
+	if (!size) size = [24,24];
+
+	var cw = canvas.width = size[0],
+		ch = canvas.height = size[1],
 		stepsH = ch,
 		stepsW = cw;
 
-	var c1idx = typeof channels[0] === 'string' ? Color.spaces[space].indexOf(channels[0]) : channels[0];
-	var c2idx = typeof channels[1] === 'string' ? Color.spaces[space].indexOf(channels[1]) : channels[1];
-
+	var c1idx = channels[0];
+	var c2idx = channels[1];
 	var c1max = Color.maxes[space][c1idx];
 	var c2max = Color.maxes[space][c2idx];
 
-	var rColor, lColor;
+	var rc, lc;
 	var stepX = cw / stepsW;
 	var stepY = ch / stepsH;
 
-	var data = ctx.createImageData(stepsW,stepsH);
+	//shorten channels calc
+	if (c2idx === undefined) {
+		stepsH = ch = canvas.height = 1;
+	}
 
-	//FIXME: migrate to fast color
+	var data = ctx.createImageData(stepsW, stepsH);
+
 	for (var x, y = stepsH, row; y--;){
 		//calc right & left colors
-		rColor = c.clone().setChannel(space, c1idx, c1max).setChannel(space, c2idx, c2max - c2max * y / stepsH);
-		lColor = c.clone().setChannel(space, c1idx, 0).setChannel(space, c2idx, c2max - c2max * y / stepsH);
+		rc = c.clone().setChannel(space, c1idx, c1max);
+		if (c2idx !== undefined) rc.setChannel(space, c2idx, c2max - c2max * y / stepsH);
+		lc = c.clone().setChannel(space, c1idx, 0);
+		if (c2idx !== undefined) lc.setChannel(space, c2idx, c2max - c2max * y / stepsH);
 
 		for (x = 0; x < stepsW; x++){
+			if (c2idx === undefined) lc = c.clone();
+
 			//calc color
-			lColor.setChannel(space, c1idx, c1max * x / stepsW);
+			lc.setChannel(space, c1idx, c1max * x / stepsW);
 
 			//set fill color
-			// ctx.setFillColor(lColor.setChannel(space, c1idx, c1max * x / stepsW).rgbString());
+			// ctx.setFillc(lc.setChannel(space, c1idx, c1max * x / stepsW).rgbString());
 
 			//fill image data
 			row = y * stepsW * 4;
-			data.data[row + x * 4 + 0] = lColor.red();
-			data.data[row + x * 4 + 1] = lColor.green();
-			data.data[row + x * 4 + 2] = lColor.blue();
+			data.data[row + x * 4 + 0] = lc.red();
+			data.data[row + x * 4 + 1] = lc.green();
+			data.data[row + x * 4 + 2] = lc.blue();
 			data.data[row + x * 4 + 3] = 255;
-			// data.data[row + x + 3] = lColor.alpha();
+			// data.data[row + x + 3] = lc.alpha();
 
 			//fill proper area
 			// ctx.fillRect(x * stepX, y * stepY, stepX, stepY );
@@ -445,8 +457,8 @@ function canv(c, space, channels){
 
 	ctx.putImageData(data, 0, 0);
 
-	// console.timeEnd('canv');
-	return 'url(' + canvas.toDataURL() + ')';
+	console.timeEnd('canv');
+	return 'url(' + canvas.toDataURL() + ') 0 0 / 100% 100%';
 }
 
 

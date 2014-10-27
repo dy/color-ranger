@@ -24,7 +24,7 @@ function createBg(str){
 	document.body.appendChild(bg);
 
 	//canvas case
-	if (/-c/.test(str)){
+	if (/c$/.test(str)){
 		bg.className += ' canvas-case';
 		bg.setAttribute('data-channel', '');
 		document.body.appendChild(document.createElement('br'));
@@ -87,7 +87,7 @@ describe('helpers', function(){
 	});
 
 	it('canvas 2-dim', function(){
-		range.canvasify(color, 'rgb', ['red', 'green']);
+		range.canvasify(color, 'rgb', [0, 1]);
 	});
 });
 
@@ -96,50 +96,62 @@ describe('helpers', function(){
 describe('linear',function(){
 	it('hue', function(){
 		createBg('hue').style.background = range.linear.hue(c, direction);
+		createBg('huec').style.background = range.canvasify(c, 'hsl', [0]);
 	});
 
 	it('saturation', function(){
 		createBg('saturation').style.background = range.linear.saturation(c, direction);
+		createBg('saturationc').style.background = range.canvasify(c, 'hsl', [1]);
 	});
 
 	it('lightness', function(){
 		createBg('lightness').style.background = range.linear.lightness(c, direction);
+		createBg('lightnessc').style.background = range.canvasify(c, 'hsl', [2]);
 	});
 
 	it('brightness', function(){
 		createBg('brightness').style.background = range.linear.brightness(c, direction);
+		createBg('brightnessc').style.background = range.canvasify(c, 'hsv', [2]);
 	});
 
 	it('red', function(){
 		createBg('red').style.background = range.linear.red(c, direction);
+		createBg('redc').style.background = range.canvasify(c, 'rgb', [0]);
 	});
 
 	it('green', function(){
 		createBg('green').style.background = range.linear.green(c, direction);
+		createBg('greenc').style.background = range.canvasify(c, 'rgb', [1]);
 	});
 
 	it('blue', function(){
 		createBg('blue').style.background = range.linear.blue(c, direction);
+		createBg('bluec').style.background = range.canvasify(c, 'rgb', [2]);
 	});
 
 	it('alpha', function(){
 		createBg('alpha').style.background = range.linear.alpha(c, direction);
+		createBg('alphac').style.background = range.canvasify(c, 'alpha', [0]);
 	});
 
 	it('cyan', function(){
 		createBg('cyan').style.background = range.linear.cyan(c, direction);
+		createBg('cyanc').style.background = range.canvasify(c, 'cmyk', [0]);
 	});
 
 	it('magenta', function(){
 		createBg('magenta').style.background = range.linear.magenta(c, direction);
+		createBg('magentac').style.background = range.canvasify(c, 'cmyk', [1]);
 	});
 
 	it('yellow', function(){
 		createBg('yellow').style.background = range.linear.yellow(c, direction);
+		createBg('yellowc').style.background = range.canvasify(c, 'cmyk', [2]);
 	});
 
 	it('black', function(){
 		createBg('black').style.background = range.linear.black(c, direction);
+		createBg('blackc').style.background = range.canvasify(c, 'cmyk', [3]);
 	});
 });
 
@@ -151,17 +163,17 @@ describe('rectangular', function(){
 
 	it('hue-lightness', function(){
 		createBg('hue-lightness').style.background = range.rectangular.hue.lightness(c);
-		createBg('hue-lightness-c').style.background = range.canvasify(c, 'hsl', ['hue', 'lightness']);
+		createBg('hue-lightness-c').style.background = range.canvasify(c, 'hsl', [0,2]);
 	});
 
 	it('hue-brightness', function(){
 		createBg('hue-brightness').style.background = range.rectangular.hue.brightness(c);
-		createBg('hue-brightness-c').style.background = range.canvasify(c, 'hsv', ['hue', 'value']);
+		createBg('hue-brightness-c').style.background = range.canvasify(c, 'hsv', [0, 2]);
 	});
 
 	it('hue-saturation', function(){
 		createBg('hue-saturation').style.background = range.rectangular.hue.saturation(c);
-		createBg('hue-saturation-c').style.background = range.canvasify(c, 'hsl', ['hue', 'saturation']);
+		createBg('hue-saturation-c').style.background = range.canvasify(c, 'hsl', [0, 1]);
 	});
 
 	it('hue-saturationv', function(){
@@ -171,12 +183,12 @@ describe('rectangular', function(){
 
 	it('saturation-lightness', function(){
 		createBg('saturation-lightness').style.background = range.rectangular.saturation.lightness(c);
-		createBg('saturation-lightness-c').style.background = range.canvasify(c, 'hsl', ['saturation', 'lightness']);
+		createBg('saturation-lightness-c').style.background = range.canvasify(c, 'hsl', [1, 2]);
 	});
 
 	it('saturation-brightness', function(){
 		createBg('saturation-brightness').style.background = range.rectangular.saturation.brightness(c);
-		createBg('saturation-brightness-c').style.background = range.canvasify(c, 'hsv', [1, 'value']);
+		createBg('saturation-brightness-c').style.background = range.canvasify(c, 'hsv', [1, 2]);
 	});
 
 	it('red-green', function(){
