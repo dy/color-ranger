@@ -1,14 +1,14 @@
-## Color range
+## Color ranger
 
-Render background for a color channel/space. Intended for color pickers or gradient generation.
+Render background for a color channel/space. Intended for color pickers or gradient generation. Useful both as a separate web-worker thread and as a simple module.
 
 
 ```js
-var range = require('color-range');
+var ranger = require('color-ranger');
 var Color = require('color');
 var c = new Color('green');
 
-element.style.background = range.rectangular.red.green(c, 'right');
+element.style.background = ranger.getRect(c, 'right');
 ```
 
 ## API

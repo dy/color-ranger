@@ -6,12 +6,13 @@
 
 	<style>
 		.range-case{
-			float: left;
 			display: block;
 			width: 200px;
 			height: 40px;
 			margin: 15px;
 			position: relative;
+			background-repeat: no-repeat;
+			background-size: 100% 100%;
 		}
 		.range-case:after{
 			content: attr(data-channel);
@@ -25,13 +26,6 @@
 		}
 		.rect-case{
 			height: 200px;
-			background-repeat: no-repeat!important;
-		}
-		.canvas-case{
-			margin-left: 120px;
-		}
-		br{
-			clear: both;
 		}
 	</style>
 </head>
@@ -43,11 +37,6 @@
 
 	<!-- dev -->
 	<script src="../node_modules/require-stub/index.js"></script>
-	<script src="../node_modules/color-convert/conversions.js"></script>
-	<script src="../node_modules/color-convert/index.js"></script>
-	<script src="../node_modules/color-string/color-string.js"></script>
-	<script src="../node_modules/color/color.js"></script>
-	<script src="../index.js"></script>
 
 	<script>
 		mocha.setup('bdd');
