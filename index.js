@@ -1,45 +1,57 @@
-var Color = require('color');
+var converter = require('color-convert')();
 
 
 /**
  * Render passed color range in imageData.
  * Can be used in a separate web-worker, then pass imgData by reference.
  *
- * @param {Color} color A color to build range
+ * @param {array} rgb A list of values
  * @param {string} space A space to render
  * @param {array} channels List of channel indexes to render
+ * @param {array} maxes Max values to render range
  * @param {ImageData} imgData An image data which might be passed from outside
  *
  * @return {string} base-64 FIXME
  */
-function renderRange(color, space, channels, imgData){
+function renderRange(rgb, space, channels, maxes, imgData){
 	// console.time('canv');
+
+	var values = converter.rgb(rgb)[space]();
 
 	var h = imgData.height,
 		w = imgData.width;
 
 	var c1idx = channels[0];
 	var c2idx = channels[1];
-	var c1max = Color.maxes[space][c1idx];
-	var c2max = Color.maxes[space][c2idx];
+	var noIdx = 3 - c1idx - c2idx;
 
-	for (var x, y = h, row, col, c; y--;){
+	var c1max = maxes[0];
+	var c2max = maxes[1];
+
+	for (var x, y = h, row, col, res, preset = []; y--;){
 
 		row = y * w * 4;
 
 		for (x = 0; x < w; x++){
 			col = row + x * 4;
 
-			c = color.clone();
-			if (c2idx !== undefined) c.setChannel(space, c2idx, c2max * (1 - y / (h - 1)));
+			//calculate color
+			if (c2idx !== undefined) {
+				preset[c2idx] = c2max * (1 - y / (h - 1));
+				// c.setChannel(space, c2idx, c2max * (1 - y / (h - 1)));
+			}
+			if (c1idx !== undefined) {
+				preset[c1idx] = c1max * x / (w - 1);
+				// c.setChannel(space, c1idx, c1max * x / (w - 1));
+			}
+			preset[noIdx] = values[noIdx];
 
-			//calc color
-			c.setChannel(space, c1idx, c1max * x / (w - 1));
 
 			//fill image data
-			imgData.data[col + 0] = c.red();
-			imgData.data[col + 1] = c.green();
-			imgData.data[col + 2] = c.blue();
+			res = converter[space](preset).rgb();
+			imgData.data[col + 0] = res[0];
+			imgData.data[col + 1] = res[1];
+			imgData.data[col + 2] = res[2];
 			imgData.data[col + 3] = 255;
 			// data.data[row + x + 3] = lc.alpha();
 		}

@@ -25,8 +25,8 @@ function createRangeCase(str){
 
 //virtual canvas
 var cnv = document.createElement('canvas');
-cnv.width = 37;
-cnv.height = 37;
+cnv.width = 101//37;
+cnv.height = 101//37;
 var ctx = cnv.getContext('2d');
 var data = ctx.getImageData(0,0,cnv.width,cnv.height);
 
@@ -109,10 +109,6 @@ describe('linear',function(){
 
 
 describe('rectangular', function(){
-	// it.skip('canvas', function(){
-	// 	range.canvasify(c, 'hsv', ['hue', 'value']);
-	// });
-
 	it('hue-lightness', function(){
 		renderRange(color, 'hsl', [0,2], data);
 		ctx.putImageData(data, 0, 0);
@@ -213,53 +209,79 @@ describe('rectangular', function(){
 
 
 
-describe('web-worker', function(){
-	var blobURL = URL.createObjectURL( new Blob([ '(',
+describe('performance', function(){
+	var blobURL = URL.createObjectURL( new Blob([
+		'var renderRange = ',
+		renderRange.toString(),
+
+		';(',
 		function(){
-			onmessage = function(e){
-				console.log('got request', e);
+			self.onmessage = function(e){
+				var data = e.data;
+				if (!data) return postMessage(false);
 
-				postMessage(e.data);
+				console.log('got request', data);
+
+				var data = renderRange(data.color, data.space, data.channels, data.data);
+
+				postMessage(data);
 			};
-
 		}.toString(),
-	')()' ], { type: 'application/javascript' } ) ),
+		')();'
+	], { type: 'application/javascript' } ) ),
 
 	worker = new Worker( blobURL );
 
 
 	//hook up worker
 	before(function(done){
-		worker.postMessage(0);
+		worker.postMessage();
 		Emmy.one(worker, 'message', function(){
-			done()
+			done();
 		});
 	});
 
 
-
 	it('no-webworker', function(){
+		var bg = createRangeCase('no-webworker')
 
+		console.time('no-webworker');
+		renderRange(color.rgbArray(), 'hsl', [0,2], [360,100], data);
+		ctx.putImageData(data, 0, 0);
+		console.timeEnd('no-webworker');
+
+		bg.style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
 
 
 	it('clone', function(done){
-		worker.postMessage(1);
+		var bg = createRangeCase('clone')
+
+		console.time('clone');
+		worker.postMessage({rgb: color.rgbArray(), space: 'hsl', channels: [0,2], maxes: [360, 100], data: data});
 
 		Emmy.one(worker, 'message', function(e){
 			console.log('got clone response', e.data);
+			ctx.putImageData(e.data, 0, 0);
+			console.timeEnd('clone');
+
 			done();
+			bg.style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 		});
 	});
 
-	it('transfer', function(done){
-		worker.postMessage(2);
+
+	it.skip('transfer', function(done){
+		console.time('transfer');
+		worker.postMessage(1);
 
 		Emmy.one(worker, 'message', function(e){
 			console.log('got transfer response', e.data);
 			done();
+			console.timeEnd('transfer');
 		});
 	});
+
 
 
 
