@@ -5,7 +5,7 @@
 
 var Color = require('color');
 var renderRange = require('../');
-
+var Emmy = require('emmy');
 
 
 //create range case
@@ -208,4 +208,60 @@ describe('rectangular', function(){
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('y-k').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
+});
+
+
+
+
+describe('web-worker', function(){
+	var blobURL = URL.createObjectURL( new Blob([ '(',
+		function(){
+			onmessage = function(e){
+				console.log('got request', e);
+
+				postMessage(e.data);
+			};
+
+		}.toString(),
+	')()' ], { type: 'application/javascript' } ) ),
+
+	worker = new Worker( blobURL );
+
+
+	//hook up worker
+	before(function(done){
+		worker.postMessage(0);
+		Emmy.one(worker, 'message', function(){
+			done()
+		});
+	});
+
+
+
+	it('no-webworker', function(){
+
+	});
+
+
+	it('clone', function(done){
+		worker.postMessage(1);
+
+		Emmy.one(worker, 'message', function(e){
+			console.log('got clone response', e.data);
+			done();
+		});
+	});
+
+	it('transfer', function(done){
+		worker.postMessage(2);
+
+		Emmy.one(worker, 'message', function(e){
+			console.log('got transfer response', e.data);
+			done();
+		});
+	});
+
+
+
+	URL.revokeObjectURL( blobURL );
 });

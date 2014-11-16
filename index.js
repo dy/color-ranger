@@ -10,7 +10,7 @@ var Color = require('color');
  * @param {array} channels List of channel indexes to render
  * @param {ImageData} imgData An image data which might be passed from outside
  *
- * @return {string} base-64 encoded background string
+ * @return {string} base-64 FIXME
  */
 function renderRange(color, space, channels, imgData){
 	// console.time('canv');
