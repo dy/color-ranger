@@ -1,98 +1,23 @@
-## Color ranger
-
-Render background for a color channel/space. Intended for color pickers or gradient generation. Useful both as a separate web-worker thread and as a simple module.
+Useful both as a separate web-worker and as a simple module.
 
 
 ```js
-var ranger = require('color-ranger');
+var range = require('color-ranger');
 var Color = require('color');
+
+
 var c = new Color('green');
 
-element.style.background = ranger.getRect(c, 'right');
+
+var imageData = range(c, 'hsl', [0,1], data);
 ```
 
-## API
+##### `range(color, space, channels, data)`
 
-#### Rendering methods:
-
-* `.linear[space](color, direction)` — get linear range background based on passed color for the space.
-* `.rectangular[spaceH][spaceV](color, direction)` — get rectangular range based on passed color for the spaceA and spaceB.
-* `.circular[space](color, direction)` — get circular range
-* `.polar[spaceR][spaceA](color, direction)` — get polar background
-* `.triangular[spaceH][spaceV](color, direction)` — get triangular background
-
-#### Helpers:
-
-* `.grad(direction?, [color1, [color2, stop], color3 ...colorN])` — render even linear gradient based on colors passed.
-* `.interpolate(colorA, colorB, number, space)` — return list of @number colors between colorA and color B interpolated by @space.
-
-
-#### Options:
-
-Set options any time via `range.options`
-
-* `direction` — used as default direction for generated css gradient.
-* `space` — default color space to use as a basic.
-* `gridColor` — alpha grid color.
-* `gridSize` — alpha grid cell size.
-
-
-## Linear backgrounds
-
-TODO: insert images for each, with direction
-
-* red
-* green
-* blue
-* hue
-* saturation
-* lightness
-* saturationv
-* value
-* whiteness
-* blackness
-* L
-* a
-* b
-* cyan
-* magenta
-* yellow
-* black, kyan
-* alpha, opacity
-
-
-## Rectangular backgrounds
-
-* red
-	* green
-	* blue
-* green
-	* red
-	* blue
-* hue
-	* saturation
-	* saturationv
-	* lightness
-	* value/brightness
-* saturation
-	* lightness
-	* value/brightness
-	* hue
-* L
-	* a
-	* b
-
-A components of each pair may be swapped.
-
-
-## Circular backgrounds
-
-All the same as a linear ones.
-
-
-## Radial backgrounds
-
-All the same as rectangular ones.
+`color` - Render range for a color
+`space` - pick a space
+`channels` - list of channels to render
+`data` - an ImageData instance.
 
 
 
