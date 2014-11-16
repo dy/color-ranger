@@ -1,6 +1,6 @@
 {
   "name": "color-range",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Render color range by channel or space for the color passed. Useful for creating any king of color picker.",
   "main": "index.js",
   "directories": {
