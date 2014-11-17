@@ -1,3 +1,4 @@
+Render color range into an ImageData.
 Useful both as a separate web-worker and as a simple module.
 
 
@@ -12,11 +13,14 @@ var c = new Color('green');
 var imageData = range(c, 'hsl', [0,1], data);
 ```
 
-##### `range(color, space, channels, data)`
+#### `range(color, space, channels, data)`
 
 `color` - Render range for a color
+
 `space` - pick a space
+
 `channels` - list of channels to render
+
 `data` - an ImageData instance.
 
 
