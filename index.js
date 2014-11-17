@@ -1,5 +1,4 @@
-var converter = require('color-convert')();
-
+var converter = require('color-convert/conversions');
 
 /**
  * Render passed color range in imageData.
@@ -16,7 +15,7 @@ var converter = require('color-convert')();
 function renderRange(rgb, space, channels, maxes, imgData){
 	// console.time('canv');
 
-	var values = converter.rgb(rgb)[space]();
+	var values = converter['rgb2' + space](rgb);
 
 	var h = imgData.height,
 		w = imgData.width;
@@ -27,6 +26,8 @@ function renderRange(rgb, space, channels, maxes, imgData){
 
 	var c1max = maxes[0];
 	var c2max = maxes[1];
+
+	var convert = converter[space + '2rgb'];
 
 	for (var x, y = h, row, col, res, preset = []; y--;){
 
@@ -48,7 +49,7 @@ function renderRange(rgb, space, channels, maxes, imgData){
 
 
 			//fill image data
-			res = converter[space](preset).rgb();
+			res = convert(preset);
 			imgData.data[col + 0] = res[0];
 			imgData.data[col + 1] = res[1];
 			imgData.data[col + 2] = res[2];
