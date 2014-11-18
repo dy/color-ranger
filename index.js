@@ -29,11 +29,10 @@ function renderRange(rgb, space, channels, maxes, imgData){
 
 	var convert = converter[space + '2rgb'];
 
-	for (var x, y = h, row, col, res, preset = []; y--;){
-
+	for (var x, y = h, row, col, res, preset = []; y--;) {
 		row = y * w * 4;
 
-		for (x = 0; x < w; x++){
+		for (x = 0; x < w; x++) {
 			col = row + x * 4;
 
 			//calculate color
