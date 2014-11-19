@@ -1,6 +1,6 @@
 {
   "name": "color-ranger",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Render color range by channel or space for the color passed. Useful for creating any king of color picker.",
   "main": "index.js",
   "directories": {
@@ -29,8 +29,7 @@
     "url": "https://github.com/dfcreative/color-range/issues"
   },
   "homepage": "https://github.com/dfcreative/color-range",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "color-convert": "~0.5.2",
     "mocha": "~1.21.5",
