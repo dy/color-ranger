@@ -35,6 +35,28 @@ var data = ctx.getImageData(0,0,cnv.width,cnv.height);
 var color = new Color('red');
 
 
+describe('directions', function(){
+	it('[x]', function(){
+		renderRange(color.rgbArray(), 'hsl', [0], [360], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('only-x').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+
+	it('[null, y]', function(){
+		renderRange(color.rgbArray(), 'hsl', [null, 0], [null, 360], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('only-y').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+
+	it('[x,y]', function(){
+
+		renderRange(color.rgbArray(), 'hsl', [0, 1], [360, 100], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('x-y').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+});
+
+
 describe('linear',function(){
 	it('hue', function(){
 		renderRange(color.rgbArray(), 'hsl', [0], [360], data);

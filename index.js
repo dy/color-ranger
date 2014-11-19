@@ -22,7 +22,18 @@ function renderRange(rgb, space, channels, maxes, imgData){
 
 	var c1idx = channels[0];
 	var c2idx = channels[1];
-	var noIdx = 3 - c1idx - c2idx;
+	var noIdx1, noIdx2;
+	if (typeof c1idx === 'number' && typeof c2idx === 'number'){
+		noIdx1 = 3 - c1idx - c2idx;
+	}
+	else if (typeof c1idx !== 'number') {
+		noIdx1 = (c2idx + 2) % 3;
+		noIdx2 = (noIdx1 + 2) % 3;
+	}
+	else if (typeof c2idx !== 'number') {
+		noIdx1 = (c1idx + 2) % 3;
+		noIdx2 = (noIdx1 + 2) % 3;
+	}
 
 	var c1max = maxes[0];
 	var c2max = maxes[1];
@@ -36,16 +47,16 @@ function renderRange(rgb, space, channels, maxes, imgData){
 			col = row + x * 4;
 
 			//calculate color
-			if (c2idx !== undefined) {
+			if (c2idx || c2idx === 0) {
 				preset[c2idx] = c2max * (1 - y / (h - 1));
 				// c.setChannel(space, c2idx, c2max * (1 - y / (h - 1)));
 			}
-			if (c1idx !== undefined) {
+			if (c1idx || c1idx === 0) {
 				preset[c1idx] = c1max * x / (w - 1);
 				// c.setChannel(space, c1idx, c1max * x / (w - 1));
 			}
-			preset[noIdx] = values[noIdx];
-
+			if (noIdx1 || noIdx1 === 0) preset[noIdx1] = values[noIdx1];
+			if (noIdx2 || noIdx2 === 0) preset[noIdx2] = values[noIdx2];
 
 			//fill image data
 			res = convert(preset);
