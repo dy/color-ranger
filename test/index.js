@@ -133,97 +133,97 @@ describe('linear',function(){
 
 describe('rectangular', function(){
 	it('hue-lightness', function(){
-		renderRange(color.rgbArray(), 'hsl', [0,2], data);
+		renderRange(color.rgbArray(), 'hsl', [0, 2], [360, 100], data);
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('h-l').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
 
 	it('hue-brightness', function(){
-		renderRange(color.rgbArray(), 'hsv', [0,2], data);
+		renderRange(color.rgbArray(), 'hsv', [0,2], [360, 100], data);
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('h-b').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
 
 	it('hue-saturation', function(){
-		renderRange(color.rgbArray(), 'hsl', [0,1], data);
+		renderRange(color.rgbArray(), 'hsl', [0,1], [360, 100], data);
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('h-s').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
 
 	it('hue-saturationv', function(){
-		renderRange(color.rgbArray(), 'hsv', [0,1], data);
+		renderRange(color.rgbArray(), 'hsv', [0,1], [360, 100], data);
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('h-sv').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
 
 	it('saturation-lightness', function(){
-		renderRange(color.rgbArray(), 'hsl', [1,2], data);
+		renderRange(color.rgbArray(), 'hsl', [1,2], [100,100], data);
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('s-l').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
 
 	it('saturation-brightness', function(){
-		renderRange(color.rgbArray(), 'hsv', [1,2], data);
+		renderRange(color.rgbArray(), 'hsv', [1,2], [100,100], data);
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('s-b').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
 
 	it('red-green', function(){
-		renderRange(color.rgbArray(), 'rgb', [0,1], data);
+		renderRange(color.rgbArray(), 'rgb', [0,1], [255,255], data);
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('r-g').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
 
 	it('red-blue', function(){
-		renderRange(color.rgbArray(), 'rgb', [0,2], data);
+		renderRange(color.rgbArray(), 'rgb', [0,2], [255,255],  data);
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('r-b').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
 
 	it('green-blue', function(){
-		renderRange(color.rgbArray(), 'rgb', [1,2], data);
+		renderRange(color.rgbArray(), 'rgb', [1,2], [255,255],  data);
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('g-b').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
 
 	it('cyan-magenta', function(){
-		renderRange(color.rgbArray(), 'cmyk', [0,1], data);
+		renderRange(color.rgbArray(), 'cmyk', [0,1], [100,100], data);
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('c-m').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
 
 	it('cyan-yellow', function(){
-		renderRange(color.rgbArray(), 'cmyk', [0,2], data);
+		renderRange(color.rgbArray(), 'cmyk', [0,2], [100,100], data);
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('c-y').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
 
 	it('cyan-black', function(){
-		renderRange(color.rgbArray(), 'cmyk', [0,3], data);
+		renderRange(color.rgbArray(), 'cmyk', [0,3], [100,100], data);
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('c-k').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
 
 	it('cyan-black', function(){
-		renderRange(color.rgbArray(), 'cmyk', [0,3], data);
+		renderRange(color.rgbArray(), 'cmyk', [0,3], [100,100], data);
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('c-k').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
 
 	it('magenta-yellow', function(){
-		renderRange(color.rgbArray(), 'cmyk', [1,2], data);
+		renderRange(color.rgbArray(), 'cmyk', [1,2], [100,100], data);
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('m-y').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
 
 	it('magenta-black', function(){
-		renderRange(color.rgbArray(), 'cmyk', [1,3], data);
+		renderRange(color.rgbArray(), 'cmyk', [1,3], [100,100], data);
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('m-k').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
 
 	it('yellow-black', function(){
-		renderRange(color.rgbArray(), 'cmyk', [2,3], data);
+		renderRange(color.rgbArray(), 'cmyk', [2,3], [100,100], data);
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('y-k').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});

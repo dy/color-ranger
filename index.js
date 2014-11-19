@@ -15,32 +15,27 @@ var converter = require('color-convert/conversions');
 function renderRange(rgb, space, channels, maxes, imgData){
 	// console.time('canv');
 
-	var values = converter['rgb2' + space](rgb);
+	var values = space === 'rgb' ? rgb : converter['rgb2' + space](rgb);
 
 	var h = imgData.height,
 		w = imgData.width;
 
 	var c1idx = channels[0];
 	var c2idx = channels[1];
-	var noIdx1, noIdx2;
-	if (typeof c1idx === 'number' && typeof c2idx === 'number'){
-		noIdx1 = 3 - c1idx - c2idx;
+	var noIdx = [];
+	for (var i = space.length; i--;){
+		if (i !== c1idx && i !== c2idx) noIdx.push(i);
 	}
-	else if (typeof c1idx !== 'number') {
-		noIdx1 = (c2idx + 2) % 3;
-		noIdx2 = (noIdx1 + 2) % 3;
-	}
-	else if (typeof c2idx !== 'number') {
-		noIdx1 = (c1idx + 2) % 3;
-		noIdx2 = (noIdx1 + 2) % 3;
-	}
+	var noIdx1 = noIdx[0];
+	var noIdx2 = noIdx[1];
+	var noIdx3 = noIdx[2];
 
 	var c1max = maxes[0];
 	var c2max = maxes[1];
 
-	var convert = converter[space + '2rgb'];
+	var convert = space === 'rgb' ? function(a){return a} : converter[space + '2rgb'];
 
-	for (var x, y = h, row, col, res, preset = []; y--;) {
+	for (var x, y = h, row, col, res, preset = values.slice(); y--;) {
 		row = y * w * 4;
 
 		for (x = 0; x < w; x++) {
@@ -57,6 +52,7 @@ function renderRange(rgb, space, channels, maxes, imgData){
 			}
 			if (noIdx1 || noIdx1 === 0) preset[noIdx1] = values[noIdx1];
 			if (noIdx2 || noIdx2 === 0) preset[noIdx2] = values[noIdx2];
+			if (noIdx3 || noIdx3 === 0) preset[noIdx3] = values[noIdx3];
 
 			//fill image data
 			res = convert(preset);
