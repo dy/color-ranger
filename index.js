@@ -1,12 +1,12 @@
 var convert = require('color-space');
 
 
-//TODO: use color-space to get maxes & channels
+//TODO: use color-space to get maxes & channels (instead of ids)
+//TODO: paint limits, esp. lch
 //TODO: readme
 //TODO: demo page
-//TODO: paint limits, esp. lch
-//TODO: statistical range (expanden popular areas, shrunk less needed areas)
 //TODO: implement shaders approach https://github.com/rosskettle/color-space-canvas
+//TODO: statistical range (expanded popular areas, shrunk less needed areas)
 
 
 /**
