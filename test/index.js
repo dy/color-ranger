@@ -354,126 +354,6 @@ describe('circular', function(){
 });
 
 
-describe('performance', function(){
-	var worker;
-
-
-	//hook up worker
-	before(function(done){
-		console.time('blobStart');
-
-		//inline worker - isn’t slower on init & work than file loader
-		var blobURL = URL.createObjectURL( new Blob([
-			//export module
-			'var render = ', renderRange.render.toString() + '\n',
-			'var renderRect = ', renderRange.rect.toString() + '\n',
-			'var renderPolar = ', renderRange.polar.toString() + '\n',
-
-			//export convert
-			(function(c){
-				var res = '';
-				for (var fn in c) {
-					res += c[fn].toString() + '\n';
-				}
-				res += '\nvar convert = {';
-				for (var fn in c) {
-					res += fn + ':' + c[fn].toString() + ',\n';
-				}
-				return res + '}\n';
-			})(convert),
-
-			';(',
-			function(){
-				self.onmessage = function(e){
-					var data = e.data;
-					// console.log('got request', data);
-					if (!data) return postMessage(false);
-
-
-					var data = renderRect(data.rgb, data.space, data.channels, data.mins, data.maxes, data.data);
-
-					postMessage({
-						data: data,
-						id: e.data.id
-					});
-				};
-			}.toString(),
-			')();'
-		], { type: 'application/javascript' } ) );
-
-		worker = new Worker(blobURL);
-
-		//external worker
-		// worker = new Worker( '../worker.js' );
-
-
-		worker.postMessage('');
-		Emmy.one(worker, 'message', function(){
-			done();
-			console.timeEnd('blobStart');
-		});
-
-	});
-
-
-	it('no-webworker', function(){
-		var bg = createRangeCase('no-webworker')
-
-		console.time('no-webworker');
-		renderRange.rect(color.rgbArray(), 'lch', [0,2], [0,0], [100,360], data);
-		ctx.putImageData(data, 0, 0);
-		console.timeEnd('no-webworker');
-
-		bg.style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
-	});
-
-
-	it('webworker clone', function(done){
-		var bg = createRangeCase('webworker-clone')
-
-		console.time('clone');
-		worker.postMessage({rgb: color.rgbArray(), space: 'lch', channels: [0,2], maxes: [100, 360], data: data, mins:[0,0]});
-
-		Emmy.one(worker, 'message', function(e){
-			ctx.putImageData(e.data.data, 0, 0);
-			console.timeEnd('clone');
-
-			done();
-			bg.style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
-		});
-	});
-
-
-	//image data isn’t transferable yet
-	it.skip('webworker transfer', function(done){
-		var bg = createRangeCase('webworker-transfer');
-
-		console.time('transfer');
-		worker.postMessage({rgb: color.rgbArray(), space: 'hsl', channels: [0,2], maxes: [360, 100]}, [data.data]);
-
-		Emmy.one(worker, 'message', function(e){
-			console.log('got transfer response', e.data);
-			ctx.putImageData(e.data, 0, 0);
-			console.timeEnd('transfer');
-
-			done();
-			bg.style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
-		});
-	});
-
-
-	//TODO
-	it.skip('WebGL shaders', function(){
-
-	});
-
-
-	// URL.revokeObjectURL( blobURL );
-});
-
-
-
-
 describe('polar', function(){
 	it('hue-lightness', function(){
 		renderRange.polar(color.rgbArray(), 'hsl', [0, 2], [0,100], [360, 0], data);
@@ -547,12 +427,6 @@ describe('polar', function(){
 		createRangeCase('c-k').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
 
-	it('cyan-black', function(){
-		renderRange.polar(color.rgbArray(), 'cmyk', [0,3], [0,0], [100,100], data);
-		ctx.putImageData(data, 0, 0);
-		createRangeCase('c-k').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
-	});
-
 	it('magenta-yellow', function(){
 		renderRange.polar(color.rgbArray(), 'cmyk', [1,2], [0,0], [100,100], data);
 		ctx.putImageData(data, 0, 0);
@@ -618,4 +492,132 @@ describe('polar', function(){
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('c-h').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
+});
+
+
+
+describe('performance', function(){
+	var worker;
+
+
+	//hook up worker
+	before(function(done){
+		console.time('blobStart');
+
+		//inline worker - isn’t slower on init & work than file loader
+		var blobURL = URL.createObjectURL( new Blob([
+			//export color-ranger
+			'var render = ', renderRange.render.toString() + '\n',
+			'var renderRect = ', renderRange.rect.toString() + '\n',
+			'var renderPolar = ', renderRange.polar.toString() + '\n',
+
+			//export color-space
+			(function(c){
+				var res = 'var convert = {};\n';
+				for (var space in c) {
+					res += '\nvar ' + space + ' = convert.' + space + ' = {\n';
+
+					for (var prop in c[space]) {
+						if (typeof c[space][prop] === 'object') {
+							res += prop + ':' + JSON.stringify(c[space][prop]) + ',\n';
+						} else {
+							res += prop + ':' + c[space][prop].toString() + ',\n';
+						}
+					}
+
+					res += '}\n';
+				}
+
+				return res;
+			})(convert),
+
+			';(',
+			function(){
+				self.onmessage = function(e){
+					var data = e.data;
+					// console.log('got request', data);
+					if (!data) return postMessage(false);
+
+
+					var data = renderRect(data.rgb, data.space, data.channels, data.mins, data.maxes, data.data);
+
+					postMessage({
+						data: data,
+						id: e.data.id
+					});
+				};
+			}.toString(),
+			')();'
+		], { type: 'application/javascript' } ) );
+
+		worker = new Worker(blobURL);
+
+		//external worker
+		// worker = new Worker( '../worker.js' );
+
+
+		worker.postMessage('');
+		Emmy.one(worker, 'message', function(){
+			done();
+			console.timeEnd('blobStart');
+		});
+
+	});
+
+
+	it('no-webworker', function(){
+		var bg = createRangeCase('no-webworker')
+
+		console.time('no-webworker');
+		renderRange.rect(color.rgbArray(), 'lch', [0,2], [0,0], [100,360], data);
+		ctx.putImageData(data, 0, 0);
+		console.timeEnd('no-webworker');
+
+		bg.style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+
+
+	it('webworker clone', function(done){
+		var bg = createRangeCase('webworker-clone');
+
+		Emmy.on(worker, 'message', function(e){
+			if (e.data.id !== 1) return;
+			console.timeEnd('webworker-clone');
+
+			ctx.putImageData(e.data.data, 0, 0);
+
+			done();
+			bg.style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+		});
+
+		console.time('webworker-clone');
+		worker.postMessage({rgb: color.rgbArray(), space: 'lch', channels: [0,2], maxes: [100, 360], data: data, mins:[0,0], id: 1});
+	});
+
+
+	//image data isn’t transferable yet
+	it.skip('webworker transfer', function(done){
+		var bg = createRangeCase('webworker-transfer');
+
+		console.time('transfer');
+		worker.postMessage({rgb: color.rgbArray(), space: 'hsl', channels: [0,2], maxes: [360, 100]}, [data.data]);
+
+		Emmy.one(worker, 'message', function(e){
+			console.log('got transfer response', e.data);
+			ctx.putImageData(e.data, 0, 0);
+			console.timeEnd('transfer');
+
+			done();
+			bg.style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+		});
+	});
+
+
+	//TODO
+	it.skip('WebGL shaders', function(){
+
+	});
+
+
+	// URL.revokeObjectURL( blobURL );
 });
