@@ -1,8 +1,9 @@
 var converter = require('color-convert/conversions');
 
-//TODO: alpha
-//TODO: circular range
+
 //TODO: all spaces
+//TODO: circular range
+//TODO: readme
 //TODO: demo page
 
 
@@ -46,12 +47,13 @@ function renderGrid(a, b, imgData){
  * @param {array} rgb A list of values + optional alpha
  * @param {string} space A space to render, no alpha-suffix
  * @param {array} channels List of channel indexes to render
+ * @param {array} mins Min values to render range
  * @param {array} maxes Max values to render range
  * @param {ImageData} imgData An image data which might be passed from outside
  *
  * @return {string} base-64 FIXME
  */
-function renderRect(rgba, space, channels, maxes, imgData){
+function renderRect(rgba, space, channels, mins, maxes, imgData){
 	// console.time('canv');
 
 	var isCMYK = space === 'cmyk';
@@ -84,6 +86,13 @@ function renderRect(rgba, space, channels, maxes, imgData){
 
 	var c1max = maxes[0];
 	var c2max = maxes[1];
+	var c1min, c2min;
+	if (mins) {
+		c1min = mins[0] || 0;
+		c2min = mins[1] || 0;
+	} else {
+		c1min = c2min = 0;
+	}
 
 	var convert = space === 'rgb' ? function(a){return a} : converter[space + '2rgb'];
 
@@ -95,11 +104,11 @@ function renderRect(rgba, space, channels, maxes, imgData){
 
 			//calculate color
 			if (c2idx || c2idx === 0) {
-				preset[c2idx] = c2max * (1 - y / (h - 1));
+				preset[c2idx] = c1min + (c2max - c1min) * (1 - y / (h - 1));
 				// c.setChannel(space, c2idx, c2max * (1 - y / (h - 1)));
 			}
 			if (c1idx || c1idx === 0) {
-				preset[c1idx] = c1max * x / (w - 1);
+				preset[c1idx] = c1min + (c1max - c1min) * x / (w - 1);
 				// c.setChannel(space, c1idx, c1max * x / (w - 1));
 			}
 			if (noIdx1 || noIdx1 === 0) preset[noIdx1] = values[noIdx1];
