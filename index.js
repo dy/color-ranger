@@ -1,10 +1,9 @@
 var converter = require('color-convert/conversions');
 
 
-//TODO: all spaces
-//TODO: circular range
 //TODO: readme
 //TODO: demo page
+//TODO: paint limits, esp. lch
 
 
 /**
@@ -53,15 +52,16 @@ function renderGrid(a, b, imgData){
  *
  * @return {string} base-64 FIXME
  */
-function renderRect(rgba, space, channels, mins, maxes, imgData){
+function render(rgba, space, channels, mins, maxes, imgData, calc){
 	// console.time('canv');
 
 	var isCMYK = space === 'cmyk';
 
 	//add alpha
+	if (rgba.length === 4) rgba[3] *= 255;
 	if (rgba.length === 3) rgba[3] = 255;
 
-	//specific space values
+	//get specific space values
 	var values;
 	if (space === 'rgb') {
 		values = rgba.slice();
@@ -70,55 +70,38 @@ function renderRect(rgba, space, channels, mins, maxes, imgData){
 		if (!isCMYK && values.length === 3) values[3] = rgba[3];
 	}
 
-
+	//resolve channel indexes
 	var h = imgData.height,
-		w = imgData.width;
+		w = imgData.width,
+		size = [w,h];
 
-	var c1idx = channels[0];
-	var c2idx = channels[1];
 	var noIdx = [];
 	for (var i = space.length; i--;){
-		if (i !== c1idx && i !== c2idx) noIdx.push(i);
+		if (i !== channels[0] && i !== channels[1]) noIdx.push(i);
 	}
 	var noIdx1 = noIdx[0];
 	var noIdx2 = noIdx[1];
 	var noIdx3 = noIdx[2];
 
-	var c1max = maxes[0];
-	var c2max = maxes[1];
-	var c1min, c2min;
-	if (mins) {
-		c1min = mins[0] || 0;
-		c2min = mins[1] || 0;
-	} else {
-		c1min = c2min = 0;
-	}
-
+	//get converting fn
 	var convert = space === 'rgb' ? function(a){return a} : converter[space + '2rgb'];
 
-	for (var x, y = h, row, col, res, preset = values.slice(); y--;) {
+	for (var x, y = h, row, col, res, stepVals = values.slice(); y--;) {
 		row = y * w * 4;
 
 		for (x = 0; x < w; x++) {
 			col = row + x * 4;
 
 			//calculate color
-			if (c2idx || c2idx === 0) {
-				preset[c2idx] = c1min + (c2max - c1min) * (1 - y / (h - 1));
-				// c.setChannel(space, c2idx, c2max * (1 - y / (h - 1)));
-			}
-			if (c1idx || c1idx === 0) {
-				preset[c1idx] = c1min + (c1max - c1min) * x / (w - 1);
-				// c.setChannel(space, c1idx, c1max * x / (w - 1));
-			}
-			if (noIdx1 || noIdx1 === 0) preset[noIdx1] = values[noIdx1];
-			if (noIdx2 || noIdx2 === 0) preset[noIdx2] = values[noIdx2];
-			if (noIdx3 || noIdx3 === 0) preset[noIdx3] = values[noIdx3];
+			stepVals = calc(x,y, stepVals, size, channels, mins, maxes);
+
+			if (noIdx1 || noIdx1 === 0) stepVals[noIdx1] = values[noIdx1];
+			if (noIdx2 || noIdx2 === 0) stepVals[noIdx2] = values[noIdx2];
+			if (noIdx3 || noIdx3 === 0) stepVals[noIdx3] = values[noIdx3];
 
 			//fill image data
-			res = convert(preset);
-			if (isCMYK) res[3] = 255;
-			else res[3] = preset[3];
+			res = convert(stepVals);
+			res[3] = isCMYK ? 255 : stepVals[3];
 
 			imgData.data.set(res, col);
 		}
@@ -129,14 +112,73 @@ function renderRect(rgba, space, channels, mins, maxes, imgData){
 
 
 /**
- * Render polar coords range
- *
- * @return {ImageData}
+ * A wrapper over the render for rectangular coords render
  */
-function renderPolar(){
+function renderRect(rgba, space, channels, mins, maxes, imgData){
+	/**
+	 * Calculate step values for a rectangular range
+	 *
+	 * @param {array} vals step values to calc
+	 * @param {array} size size of rect
+	 * @param {array} mins min c1,c2
+	 * @param {array} maxes max c1,c2
+	 *
+	 * @return {array} [description]
+	 */
+	function calcRectStep(x,y, vals, size, channels, mins, maxes){
+		if (channels[1] || channels[1] === 0) {
+			vals[channels[1]] = mins[1] + (maxes[1] - mins[1]) * (1 - y / (size[1] - 1));
+		}
+		if (channels[0] || channels[0] === 0) {
+			vals[channels[0]] = mins[0] + (maxes[0] - mins[0]) * x / (size[0] - 1);
+		}
+		return vals;
+	}
 
+	return render(rgba, space, channels, mins, maxes, imgData, calcRectStep);
 }
 
+
+/**
+ * A wrapper over the render for polar coords render
+ */
+function renderPolar(rgba, space, channels, mins, maxes, imgData){
+	/**
+	 * Calculate step values for a polar range
+	 */
+	function calcPolarStep(x,y, vals, size, channels, mins, maxes){
+		//cet center
+		var cx = size[0]/2, cy = size[1]/2;
+
+		//get radius
+		var r = Math.sqrt((cx-x)*(cx-x) + (cy-y)*(cy-y));
+
+		//normalize radius
+		var nr = r / cx;
+
+		//get angle
+		var a = Math.atan2( cy-y, cx-x );
+
+		//get normalized angle
+		//FIXME: why 1.73?
+		var na = (a + Math.PI)/Math.PI/2;
+
+
+		//ch 1 is radius
+		if (channels[1] || channels[1] === 0) {
+			vals[channels[1]] = mins[1] + (maxes[1] - mins[1]) * nr;
+		}
+
+		//ch 2 is angle
+		if (channels[0] || channels[0] === 0) {
+			vals[channels[0]] = mins[0] + (maxes[0] - mins[0]) * na;
+		}
+
+		return vals;
+	}
+
+	return render(rgba, space, channels, mins, maxes, imgData, calcPolarStep);
+}
 
 
 
@@ -145,6 +187,7 @@ function renderPolar(){
  * @module color-ranger
  */
 module.exports = {
+	render: render,
 	rect: renderRect,
 	polar: renderPolar,
 	grid: renderGrid
