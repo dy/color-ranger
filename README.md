@@ -1,27 +1,37 @@
-Render color range into an ImageData.
-Useful both as a separate web-worker and as a simple module.
+# Color-ranger
 
+Render rectangular/polar color range into an ImageData.
+Useful in a color-picker both as a separate web-worker and single flow.
+
+[Tests](todo).
+
+
+## Use
 
 ```js
-var range = require('color-ranger');
+var renderRange = require('color-ranger');
 var Color = require('color');
 
 
-var c = new Color('green');
+var color = new Color('rgba(10,250,30,.3)');
 
 
-var imageData = range(c, 'hsl', [0,1], data);
+var imageData = renderRange.rect(color.rgbaArray(), 'hsl', [0,1], data);
 ```
 
-#### `range(color, space, channels, data)`
+## API
 
-`color` - Render range for a color
+### `rect()`
 
-`space` - pick a space
+Render rectangular range.
 
-`channels` - list of channels to render
+### `polar()`
 
-`data` - an ImageData instance.
+Render polar range.
+
+### `grid()`
+
+Render transparency grid.
 
 
 

@@ -1,21 +1,73 @@
 var converter = require('color-convert/conversions');
 
+//TODO: alpha
+//TODO: circular range
+//TODO: all spaces
+//TODO: demo page
+
+
 /**
- * Render passed color range in imageData.
+ * Render transparency grid
+ *
+ * @param {array} a A list of values representing first cell
+ * @param {array} b A list of values representing second cell
+ * @param {ImageData} imgData A data taken as a base for grid
+ *
+ * @return {ImageData} Return updated imageData
+ */
+function renderGrid(a, b, imgData){
+	var h = imgData.height,
+		w = imgData.width;
+
+	var cellH = ~~(h/2);
+	var cellW = ~~(w/2);
+
+	//convert alphas to 255
+	if (a.length === 4) a[3] *= 255;
+	if (b.length === 4) b[3] *= 255;
+
+	for (var y=0, col, row; y < h; y++){
+		row = y * w * 4;
+		for ( var x=0; x < w; x++){
+			col = row + x * 4;
+			imgData.data.set(x >= cellW ? (y >= cellH ? a : b) : (y >= cellH ? b : a), col);
+		}
+	}
+
+	return imgData;
+};
+
+
+
+/**
+ * Render passed color rectangular range in imageData.
  * Can be used in a separate web-worker, then pass imgData by reference.
  *
- * @param {array} rgb A list of values
- * @param {string} space A space to render
+ * @param {array} rgb A list of values + optional alpha
+ * @param {string} space A space to render, no alpha-suffix
  * @param {array} channels List of channel indexes to render
  * @param {array} maxes Max values to render range
  * @param {ImageData} imgData An image data which might be passed from outside
  *
  * @return {string} base-64 FIXME
  */
-function renderRange(rgb, space, channels, maxes, imgData){
+function renderRect(rgba, space, channels, maxes, imgData){
 	// console.time('canv');
 
-	var values = space === 'rgb' ? rgb : converter['rgb2' + space](rgb);
+	var isCMYK = space === 'cmyk';
+
+	//add alpha
+	if (rgba.length === 3) rgba[3] = 255;
+
+	//specific space values
+	var values;
+	if (space === 'rgb') {
+		values = rgba.slice();
+	} else {
+		values = converter['rgb2' + space](rgba);
+		if (!isCMYK && values.length === 3) values[3] = rgba[3];
+	}
+
 
 	var h = imgData.height,
 		w = imgData.width;
@@ -56,11 +108,10 @@ function renderRange(rgb, space, channels, maxes, imgData){
 
 			//fill image data
 			res = convert(preset);
-			imgData.data[col + 0] = res[0];
-			imgData.data[col + 1] = res[1];
-			imgData.data[col + 2] = res[2];
-			imgData.data[col + 3] = 255;
-			// data.data[row + x + 3] = lc.alpha();
+			if (isCMYK) res[3] = 255;
+			else res[3] = preset[3];
+
+			imgData.data.set(res, col);
 		}
 	}
 
@@ -69,6 +120,23 @@ function renderRange(rgb, space, channels, maxes, imgData){
 
 
 /**
+ * Render polar coords range
+ *
+ * @return {ImageData}
+ */
+function renderPolar(){
+
+}
+
+
+
+
+
+/**
  * @module color-ranger
  */
-module.exports = renderRange;
+module.exports = {
+	rect: renderRect,
+	polar: renderPolar,
+	grid: renderGrid
+};
