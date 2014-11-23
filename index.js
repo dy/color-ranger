@@ -1,9 +1,12 @@
 var converter = require('color-convert/conversions');
 
 
+//TODO: color-range lib to simplify getting maxes
 //TODO: readme
 //TODO: demo page
 //TODO: paint limits, esp. lch
+//TODO: statistical range (expanden popular areas, shrunk less needed areas)
+
 
 
 /**

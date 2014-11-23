@@ -14,6 +14,8 @@
     "url": "https://github.com/dfcreative/color-range"
   },
   "keywords": [
+    "gamut",
+    "chroma",
     "color-range",
     "picker-background",
     "palette",
@@ -23,8 +25,8 @@
     "color-value",
     "color-ranges"
   ],
-  "author": "DMR",
-  "license": "Public Domain",
+  "author": "Dmitry Ivanov",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/dfcreative/color-range/issues"
   },
