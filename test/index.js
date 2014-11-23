@@ -6,7 +6,7 @@
 var Color = require('color');
 var renderRange = require('../');
 var Emmy = require('emmy');
-var converter = require('color-convert/conversions');
+var convert = require('color-space');
 
 
 //create range case
@@ -369,18 +369,18 @@ describe('performance', function(){
 			'var renderRect = ', renderRange.rect.toString() + '\n',
 			'var renderPolar = ', renderRange.polar.toString() + '\n',
 
-			//export converter
+			//export convert
 			(function(c){
 				var res = '';
 				for (var fn in c) {
 					res += c[fn].toString() + '\n';
 				}
-				res += '\nvar converter = {';
+				res += '\nvar convert = {';
 				for (var fn in c) {
 					res += fn + ':' + c[fn].toString() + ',\n';
 				}
 				return res + '}\n';
-			})(converter),
+			})(convert),
 
 			';(',
 			function(){
@@ -428,7 +428,7 @@ describe('performance', function(){
 	});
 
 
-	it('clone', function(done){
+	it('webworker clone', function(done){
 		var bg = createRangeCase('webworker-clone')
 
 		console.time('clone');
@@ -445,7 +445,7 @@ describe('performance', function(){
 
 
 	//image data isn’t transferable yet
-	it.skip('transfer', function(done){
+	it.skip('webworker transfer', function(done){
 		var bg = createRangeCase('webworker-transfer');
 
 		console.time('transfer');
@@ -459,6 +459,12 @@ describe('performance', function(){
 			done();
 			bg.style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 		});
+	});
+
+
+	//TODO
+	it.skip('WebGL shaders', function(){
+
 	});
 
 

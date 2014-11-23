@@ -1,12 +1,12 @@
-var converter = require('color-convert/conversions');
+var convert = require('color-space');
 
 
-//TODO: color-range lib to simplify getting maxes
+//TODO: use color-space to get maxes & channels
 //TODO: readme
 //TODO: demo page
 //TODO: paint limits, esp. lch
 //TODO: statistical range (expanden popular areas, shrunk less needed areas)
-
+//TODO: implement shaders approach https://github.com/rosskettle/color-space-canvas
 
 
 /**
@@ -69,7 +69,7 @@ function render(rgba, space, channels, mins, maxes, imgData, calc){
 	if (space === 'rgb') {
 		values = rgba.slice();
 	} else {
-		values = converter['rgb2' + space](rgba);
+		values = convert.rgb[space](rgba);
 		if (!isCMYK && values.length === 3) values[3] = rgba[3];
 	}
 
@@ -87,7 +87,7 @@ function render(rgba, space, channels, mins, maxes, imgData, calc){
 	var noIdx3 = noIdx[2];
 
 	//get converting fn
-	var convert = space === 'rgb' ? function(a){return a} : converter[space + '2rgb'];
+	var converter = space === 'rgb' ? function(a){return a} : convert[space].rgb;
 
 	for (var x, y = h, row, col, res, stepVals = values.slice(); y--;) {
 		row = y * w * 4;
@@ -103,7 +103,7 @@ function render(rgba, space, channels, mins, maxes, imgData, calc){
 			if (noIdx3 || noIdx3 === 0) stepVals[noIdx3] = values[noIdx3];
 
 			//fill image data
-			res = convert(stepVals);
+			res = converter(stepVals);
 			res[3] = isCMYK ? 255 : stepVals[3];
 
 			imgData.data.set(res, col);

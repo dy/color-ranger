@@ -1,7 +1,7 @@
 {
   "name": "color-ranger",
   "version": "2.0.0",
-  "description": "Render color range by channel or space for the color passed. Useful for creating any king of color picker.",
+  "description": "Render color range by channel or space for the color passed. Useful for creating color pickers.",
   "main": "index.js",
   "directories": {
     "test": "test"
@@ -14,6 +14,8 @@
     "url": "https://github.com/dfcreative/color-range"
   },
   "keywords": [
+    "color",
+    "colour",
     "gamut",
     "chroma",
     "color-range",
@@ -23,18 +25,21 @@
     "color-picker",
     "color-space",
     "color-value",
-    "color-ranges"
+    "color-ranges",
+    "color-space",
+    "cie"
   ],
   "author": "Dmitry Ivanov",
-  "license": "MIT",
+  "license": "unlicensed",
   "bugs": {
     "url": "https://github.com/dfcreative/color-range/issues"
   },
   "homepage": "https://github.com/dfcreative/color-range",
   "dependencies": {
-    "color-convert": "~0.x"
+    "color-space": "0.x"
   },
   "devDependencies": {
+    "color": "dfcreative/color",
     "mocha": "~1.x",
     "require-stub": "~1.x",
     "emmy": "~1.x"
