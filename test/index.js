@@ -16,7 +16,9 @@ function createRangeCase(str){
 
 	bg.setAttribute('data-channel', str || '');
 
-	if (/-/.test(str)) bg.className += ' rect-case';
+	if (/v-/.test(str)) bg.className += ' vertical-case';
+	else if (/p-/.test(str)) bg.className += ' polar-case';
+	else if (/-/.test(str)) bg.className += ' rect-case';
 
 	document.body.appendChild(bg);
 
@@ -56,7 +58,43 @@ describe('directions', function(){
 });
 
 
-describe('linear',function(){
+describe('alphas', function(){
+	var gridBg;
+	before(function(){
+		//render grid
+		var iw = cnv.width, ih = cnv.height;
+
+		cnv.width = 12; cnv.height = 12;
+		var gridData = ctx.getImageData(0,0,cnv.width,cnv.height);
+		ctx.putImageData(renderRange.grid([120,120,120,.4], [0,0,0,0], gridData), 0, 0);
+
+		gridBg = 'url(' + cnv.toDataURL() + ')';
+
+		cnv.width = iw; cnv.height = ih;
+	});
+
+	it('alpha', function(){
+		renderRange.rect(color.rgbaArray(), 'rgb', [3], [0], [255], data);
+		ctx.putImageData(data, 0, 0);
+
+		createRangeCase('alpha').style.background = 'url(' + cnv.toDataURL() + ') no-repeat 0 0 / cover, ' + gridBg;
+	});
+	it('red-alpha', function(){
+		renderRange.rect(color.rgbaArray(), 'rgb', [0,3], [0,0], [255,255], data);
+		ctx.putImageData(data, 0, 0);
+
+		createRangeCase('red-alpha').style.background = 'url(' + cnv.toDataURL() + ') no-repeat 0 0 / cover, ' + gridBg;
+	});
+	it('hue-alpha', function(){
+		renderRange.rect(color.rgbaArray(), 'hsl', [0,3], [0,0], [360,255], data);
+		ctx.putImageData(data, 0, 0);
+
+		createRangeCase('hue-alpha').style.background = 'url(' + cnv.toDataURL() + ') no-repeat 0 0 / cover, ' + gridBg;
+	});
+});
+
+
+describe('horizontal',function(){
 	it('hue', function(){
 		renderRange.rect(color.rgbArray(), 'hsl', [0], [0], [360], data);
 		ctx.putImageData(data, 0, 0);
@@ -172,35 +210,185 @@ describe('linear',function(){
 	});
 
 	it('L(uv)', function(){
-		renderRange.rect(color.rgbArray(), 'lab', [0], [0], [100], data);
+		renderRange.rect(color.rgbArray(), 'luv', [0], [0], [100], data);
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('L').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
-	it('u', function(){
-		renderRange.rect(color.rgbArray(), 'lab', [1], [-100], [100], data);
+	it('υ', function(){
+		renderRange.rect(color.rgbArray(), 'luv', [1], [-100], [100], data);
 		ctx.putImageData(data, 0, 0);
-		createRangeCase('a').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+		createRangeCase('u').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
-	it('v', function(){
-		renderRange.rect(color.rgbArray(), 'lab', [2], [-100], [100], data);
+	it('ν', function(){
+		renderRange.rect(color.rgbArray(), 'luv', [2], [-100], [100], data);
 		ctx.putImageData(data, 0, 0);
-		createRangeCase('b').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+		createRangeCase('v').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
 
 	it('l(uv)', function(){
-		renderRange.rect(color.rgbArray(), 'lch', [0], [0], [100], data);
+		renderRange.rect(color.rgbArray(), 'lchuv', [0], [0], [100], data);
 		ctx.putImageData(data, 0, 0);
-		createRangeCase('l').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+		createRangeCase('lυν').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
 	it('c(uv)', function(){
-		renderRange.rect(color.rgbArray(), 'lch', [1], [0], [100], data);
+		renderRange.rect(color.rgbArray(), 'lchuv', [1], [0], [100], data);
 		ctx.putImageData(data, 0, 0);
-		createRangeCase('c').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+		createRangeCase('cυν').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
 	it('h(uv)', function(){
-		renderRange.rect(color.rgbArray(), 'lch', [2], [0], [360], data);
+		renderRange.rect(color.rgbArray(), 'lchuv', [2], [0], [360], data);
 		ctx.putImageData(data, 0, 0);
-		createRangeCase('h').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+		createRangeCase('hυν').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+});
+
+
+
+describe('vertical',function(){
+	it('hue', function(){
+		renderRange.rect(color.rgbArray(), 'hsl', [null, 0], [null, 0], [null, 360], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('v-hue').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+
+	it('saturation', function(){
+		renderRange.rect(color.rgbArray(), 'hsl', [null, 1], [null, 0], [null, 100], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('v-saturation').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+
+	it('lightness', function(){
+		renderRange.rect(color.rgbArray(), 'hsl', [null, 2], [null, 0], [null, 100], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('v-lightness').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+
+	it('brightness', function(){
+		renderRange.rect(color.rgbArray(), 'hsv', [null, 2], [null, 0], [null, 100], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('v-brightness').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+
+	it('red', function(){
+		renderRange.rect(color.rgbArray(), 'rgb', [null, 0], [null, 0], [null, 255], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('v-red').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+
+	it('green', function(){
+		renderRange.rect(color.rgbArray(), 'rgb', [null, 1], [null, 0], [null, 255], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('v-green').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+
+	it('blue', function(){
+		renderRange.rect(color.rgbArray(), 'rgb', [null, 2], [null, 0], [null, 255], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('v-blue').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+
+	it('cyan', function(){
+		renderRange.rect(color.rgbArray(), 'cmyk', [null, 0], [null, 0], [null, 100], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('v-cyan').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+
+	it('magenta', function(){
+		renderRange.rect(color.rgbArray(), 'cmyk', [null, 1], [null, 0], [null, 100], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('v-magenta').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+
+	it('yellow', function(){
+		renderRange.rect(color.rgbArray(), 'cmyk', [null, 2], [null, 0], [null, 100], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('v-yellow').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+
+	it('black', function(){
+		renderRange.rect(color.rgbArray(), 'cmyk', [null, 3], [null, 0], [null, 100], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('v-black').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+
+	it('x', function(){
+		renderRange.rect(color.rgbArray(), 'xyz', [null, 0], [null, 0], [null, 95.047], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('v-x').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+	it('y', function(){
+		renderRange.rect(color.rgbArray(), 'xyz', [null, 1], [null, 0], [null, 100], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('v-y').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+	it('z', function(){
+		renderRange.rect(color.rgbArray(), 'xyz', [null, 2], [null, 0], [null, 108.883], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('v-z').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+
+	it('L', function(){
+		renderRange.rect(color.rgbArray(), 'lab', [null, 0], [null, 0], [null, 100], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('v-L').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+	it('a', function(){
+		renderRange.rect(color.rgbArray(), 'lab', [null, 1], [null, 0], [null, 100], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('v-a').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+	it('b', function(){
+		renderRange.rect(color.rgbArray(), 'lab', [null, 2], [null, 0], [null, 100], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('v-b').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+
+	it('l', function(){
+		renderRange.rect(color.rgbArray(), 'lch', [null, 0], [null, 0], [null, 100], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('v-l').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+	it('c', function(){
+		renderRange.rect(color.rgbArray(), 'lch', [null, 1], [null, 0], [null, 100], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('v-c').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+	it('h', function(){
+		renderRange.rect(color.rgbArray(), 'lch', [null, 2], [null, 0], [null, 360], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('v-h').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+
+	it('L(uv)', function(){
+		renderRange.rect(color.rgbArray(), 'luv', [null, 0], [null, 0], [null, 100], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('v-L').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+	it('u', function(){
+		renderRange.rect(color.rgbArray(), 'luv', [null, 1], [null, 0], [null, 100], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('v-u').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+	it('v', function(){
+		renderRange.rect(color.rgbArray(), 'luv', [null, 2], [null, 0], [null, 100], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('v-v').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+
+	it('l(uv)', function(){
+		renderRange.rect(color.rgbArray(), 'lchuv', [null, 0], [null, 0], [null, 100], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('v-lυν').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+	it('c(uv)', function(){
+		renderRange.rect(color.rgbArray(), 'lchuv', [null, 1], [null, 0], [null, 100], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('v-cυν').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+	it('h(uv)', function(){
+		renderRange.rect(color.rgbArray(), 'lchuv', [null, 2], [null, 0], [null, 360], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('v-hυν').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
 });
 
@@ -343,43 +531,41 @@ describe('rectangular', function(){
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('c-h').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
+
+
+	it('l-u', function(){
+		renderRange.rect(color.rgbArray(), 'luv', [0,1], [0,-100], [100,100], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('l-u').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+	it('l-v', function(){
+		renderRange.rect(color.rgbArray(), 'luv', [0,2], [0,-100], [100,100], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('l-v').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+	it('u-v', function(){
+		renderRange.rect(color.rgbArray(), 'luv', [1,2], [-100,-100], [100,100], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('u-v').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+
+	it('l-cυν', function(){
+		renderRange.rect(color.rgbArray(), 'lchuv', [0,1], [0,0], [100,100], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('l-cυν').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+	it('l-hυν', function(){
+		renderRange.rect(color.rgbArray(), 'lchuv', [0,2], [0,0], [100,360], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('l-hυν').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+	it('c-hυν', function(){
+		renderRange.rect(color.rgbArray(), 'lchuv', [1,2], [0,0], [100,360], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('c-hυν').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
 });
 
-
-describe('alphas', function(){
-	var gridBg;
-	before(function(){
-		//render grid
-		var iw = cnv.width, ih = cnv.height;
-
-		cnv.width = 12; cnv.height = 12;
-		var gridData = ctx.getImageData(0,0,cnv.width,cnv.height);
-		ctx.putImageData(renderRange.grid([120,120,120,.4], [0,0,0,0], gridData), 0, 0);
-
-		gridBg = 'url(' + cnv.toDataURL() + ')';
-
-		cnv.width = iw; cnv.height = ih;
-	});
-
-	it('alpha', function(){
-		renderRange.rect(color.rgbaArray(), 'rgb', [3], [0], [255], data);
-		ctx.putImageData(data, 0, 0);
-
-		createRangeCase('alpha').style.background = 'url(' + cnv.toDataURL() + ') no-repeat 0 0 / cover, ' + gridBg;
-	});
-	it('red-alpha', function(){
-		renderRange.rect(color.rgbaArray(), 'rgb', [0,3], [0,0], [255,255], data);
-		ctx.putImageData(data, 0, 0);
-
-		createRangeCase('red-alpha').style.background = 'url(' + cnv.toDataURL() + ') no-repeat 0 0 / cover, ' + gridBg;
-	});
-	it('hue-alpha', function(){
-		renderRange.rect(color.rgbaArray(), 'hsl', [0,3], [0,0], [360,255], data);
-		ctx.putImageData(data, 0, 0);
-
-		createRangeCase('hue-alpha').style.background = 'url(' + cnv.toDataURL() + ') no-repeat 0 0 / cover, ' + gridBg;
-	});
-});
 
 
 
@@ -533,7 +719,7 @@ describe('conical', function(){
 
 
 describe('radial', function(){
-		it('hue', function(){
+	it('hue', function(){
 		renderRange.polar(color.rgbArray(), 'hsl', [null, 0], [null, 0], [null, 360], data);
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('p-hue').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
@@ -817,6 +1003,38 @@ describe('polar', function(){
 	});
 	it('h-c', function(){
 		renderRange.polar(color.rgbArray(), 'lch', [2,1], [0,100], [360,0], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('c-h').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+
+	it('l-u', function(){
+		renderRange.polar(color.rgbArray(), 'luv', [0,1], [0,-100], [100,100], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('l-u').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+	it('l-v', function(){
+		renderRange.polar(color.rgbArray(), 'luv', [0,2], [0,-100], [100,100], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('l-v').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+	it('u-v', function(){
+		renderRange.polar(color.rgbArray(), 'luv', [1,2], [-100,-100], [100,100], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('u-v').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+
+	it('l-cuv', function(){
+		renderRange.polar(color.rgbArray(), 'lchuv', [0,1], [0,0], [100,100], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('l-c').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+	it('h-luv', function(){
+		renderRange.polar(color.rgbArray(), 'lchuv', [2,0], [0,100], [360,0], data);
+		ctx.putImageData(data, 0, 0);
+		createRangeCase('l-h').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	});
+	it('h-cuv', function(){
+		renderRange.polar(color.rgbArray(), 'lchuv', [2,1], [0,100], [360,0], data);
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('c-h').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
