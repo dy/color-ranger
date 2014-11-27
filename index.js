@@ -1,7 +1,6 @@
 var convert = require('color-space');
 
 
-//TODO: use color-space to get maxes & channels (instead of ids)
 //TODO: paint limits, esp. lch
 //TODO: readme
 //TODO: demo page
