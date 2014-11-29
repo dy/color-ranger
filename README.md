@@ -1,4 +1,4 @@
-# Color-ranger [WIP]
+# <img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/logo-56.png"/> Color-ranger [WIP]
 
 Render rectangular/polar color range into an ImageData.
 Useful in a color-picker both as a separate web-worker and a single flow.
