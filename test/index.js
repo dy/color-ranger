@@ -194,17 +194,17 @@ describe('horizontal',function(){
 	});
 
 	it('l', function(){
-		renderRange.rect(color.rgbArray(), 'lch', [0], [0], [100], data);
+		renderRange.rect(color.rgbArray(), 'lchab', [0], [0], [100], data);
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('l').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
 	it('c', function(){
-		renderRange.rect(color.rgbArray(), 'lch', [1], [0], [100], data);
+		renderRange.rect(color.rgbArray(), 'lchab', [1], [0], [100], data);
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('c').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
 	it('h', function(){
-		renderRange.rect(color.rgbArray(), 'lch', [2], [0], [360], data);
+		renderRange.rect(color.rgbArray(), 'lchab', [2], [0], [360], data);
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('h').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
@@ -344,17 +344,17 @@ describe('vertical',function(){
 	});
 
 	it('l', function(){
-		renderRange.rect(color.rgbArray(), 'lch', [null, 0], [null, 0], [null, 100], data);
+		renderRange.rect(color.rgbArray(), 'lchab', [null, 0], [null, 0], [null, 100], data);
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('v-l').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
 	it('c', function(){
-		renderRange.rect(color.rgbArray(), 'lch', [null, 1], [null, 0], [null, 100], data);
+		renderRange.rect(color.rgbArray(), 'lchab', [null, 1], [null, 0], [null, 100], data);
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('v-c').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
 	it('h', function(){
-		renderRange.rect(color.rgbArray(), 'lch', [null, 2], [null, 0], [null, 360], data);
+		renderRange.rect(color.rgbArray(), 'lchab', [null, 2], [null, 0], [null, 360], data);
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('v-h').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
@@ -517,17 +517,17 @@ describe('rectangular', function(){
 	});
 
 	it('l-c', function(){
-		renderRange.rect(color.rgbArray(), 'lch', [0,1], [0,0], [100,100], data);
+		renderRange.rect(color.rgbArray(), 'lchab', [0,1], [0,0], [100,100], data);
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('l-c').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
 	it('l-h', function(){
-		renderRange.rect(color.rgbArray(), 'lch', [0,2], [0,0], [100,360], data);
+		renderRange.rect(color.rgbArray(), 'lchab', [0,2], [0,0], [100,360], data);
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('l-h').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
 	it('c-h', function(){
-		renderRange.rect(color.rgbArray(), 'lch', [1,2], [0,0], [100,360], data);
+		renderRange.rect(color.rgbArray(), 'lchab', [1,2], [0,0], [100,360], data);
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('c-h').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
@@ -669,17 +669,17 @@ describe('conical', function(){
 	});
 
 	it('l', function(){
-		renderRange.polar(color.rgbArray(), 'lch', [0], [0], [100], data);
+		renderRange.polar(color.rgbArray(), 'lchab', [0], [0], [100], data);
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('p-l').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
 	it('c', function(){
-		renderRange.polar(color.rgbArray(), 'lch', [1], [0], [100], data);
+		renderRange.polar(color.rgbArray(), 'lchab', [1], [0], [100], data);
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('p-c').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
 	it('h', function(){
-		renderRange.polar(color.rgbArray(), 'lch', [2], [0], [360], data);
+		renderRange.polar(color.rgbArray(), 'lchab', [2], [0], [360], data);
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('p-h').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
@@ -818,17 +818,17 @@ describe('radial', function(){
 	});
 
 	it('l', function(){
-		renderRange.polar(color.rgbArray(), 'lch', [null, 0], [null, 0], [null, 100], data);
+		renderRange.polar(color.rgbArray(), 'lchab', [null, 0], [null, 0], [null, 100], data);
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('p-l').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
 	it('c', function(){
-		renderRange.polar(color.rgbArray(), 'lch', [null, 1], [null, 0], [null, 100], data);
+		renderRange.polar(color.rgbArray(), 'lchab', [null, 1], [null, 0], [null, 100], data);
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('p-c').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
 	it('h', function(){
-		renderRange.polar(color.rgbArray(), 'lch', [null, 2], [null, 0], [null, 360], data);
+		renderRange.polar(color.rgbArray(), 'lchab', [null, 2], [null, 0], [null, 360], data);
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('p-h').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
@@ -992,17 +992,17 @@ describe('polar', function(){
 	});
 
 	it('l-c', function(){
-		renderRange.polar(color.rgbArray(), 'lch', [0,1], [0,0], [100,100], data);
+		renderRange.polar(color.rgbArray(), 'lchab', [0,1], [0,0], [100,100], data);
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('l-c').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
 	it('h-l', function(){
-		renderRange.polar(color.rgbArray(), 'lch', [2,0], [0,100], [360,0], data);
+		renderRange.polar(color.rgbArray(), 'lchab', [2,0], [0,100], [360,0], data);
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('l-h').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
 	it('h-c', function(){
-		renderRange.polar(color.rgbArray(), 'lch', [2,1], [0,100], [360,0], data);
+		renderRange.polar(color.rgbArray(), 'lchab', [2,1], [0,100], [360,0], data);
 		ctx.putImageData(data, 0, 0);
 		createRangeCase('c-h').style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
 	});
@@ -1115,7 +1115,7 @@ describe('performance', function(){
 		var bg = createRangeCase('no-webworker')
 
 		console.time('no-webworker');
-		renderRange.rect(color.rgbArray(), 'lch', [0,2], [0,0], [100,360], data);
+		renderRange.rect(color.rgbArray(), 'lchab', [0,2], [0,0], [100,360], data);
 		ctx.putImageData(data, 0, 0);
 		console.timeEnd('no-webworker');
 
@@ -1137,7 +1137,7 @@ describe('performance', function(){
 		});
 
 		console.time('webworker-clone');
-		worker.postMessage({rgb: color.rgbArray(), space: 'lch', channels: [0,2], maxes: [100, 360], data: data, mins:[0,0], id: 1});
+		worker.postMessage({rgb: color.rgbArray(), space: 'lchab', channels: [0,2], maxes: [100, 360], data: data, mins:[0,0], id: 1});
 	});
 
 
