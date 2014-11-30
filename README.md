@@ -1,9 +1,9 @@
-<p align="center">
-	<img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/logo.png" height="200"/>
-</p>
 <h3 align="center">
 	<code>&nbsp;C&thinsp;O&thinsp;L&thinsp;O&thinsp;R&thinsp;−&thinsp;<big>R</big>&thinsp;A&thinsp;N&thinsp;G&thinsp;E&thinsp;R&thinsp;.js&nbsp;</code>
 </h3>
+<p align="center">
+	<img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/logo.png" height="200"/>
+</p>
 <p align="center">
 	<a href="https://travis-ci.org/dfcreative/color-ranger"><img src="https://travis-ci.org/dfcreative/color-ranger.svg?branch=master"/></a>
 	<a href="https://coveralls.io/r/dfcreative/color-ranger"><img src="https://img.shields.io/coveralls/dfcreative/color-ranger.svg"/></a>
