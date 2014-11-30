@@ -1,7 +1,7 @@
 <p align="center">
 	<img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/logo.png" height="240"/>
 </p>
-<h2 align="center">
+<h1 align="center">
 	<code>&nbsp;C&thinsp;O&thinsp;L&thinsp;O&thinsp;R&thinsp;−&thinsp;<big>R</big>&thinsp;A&thinsp;N&thinsp;G&thinsp;E&thinsp;R&thinsp;.js&nbsp;</code><br/><br/>
 	
 	<a href="https://travis-ci.org/dfcreative/color-ranger"><img src="https://travis-ci.org/dfcreative/color-ranger.svg?branch=master"/></a>
@@ -10,7 +10,7 @@
 	<a href="http://unlicense.org/UNLICENSE"><img src="http://upload.wikimedia.org/wikipedia/commons/6/62/PD-icon.svg" width="20"/></a>
 	<br/>
 	<br/>
-</h2>
+</h1>
 
 
 Render color space range for a color in rectangular or polar coordinate system into an ImageData. Useful for building color pickers. It can be used both in a separate web-worker and in a single flow. It is only [Nkb] minified & gzipped, but you can get your own build via browserify, by requiring only needed renderers.
