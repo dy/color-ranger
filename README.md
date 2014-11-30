@@ -1,8 +1,8 @@
 <h3>
-	<code>&nbsp;&nbsp;C&thinsp;O&thinsp;L&thinsp;O&thinsp;R&nbsp;&nbsp;</code>
+	<code>&nbsp;&nbsp;&nbsp;C&thinsp;O&thinsp;L&thinsp;O&thinsp;R&nbsp;&nbsp;&nbsp;</code>
 </h3>
 <h4>
-	<code>&nbsp;&nbsp;R&thinsp;A&thinsp;N&thinsp;G&thinsp;E&thinsp;R&nbsp;&nbsp;</code>
+	<code>&nbsp;&nbsp;&nbsp;&nbsp;R&thinsp;A&thinsp;N&thinsp;G&thinsp;E&thinsp;R&nbsp;&nbsp;&nbsp;&nbsp;</code>
 </h4>
 <p >
 	<img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/logo.png" height="200"/>
