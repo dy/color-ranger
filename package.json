@@ -1,13 +1,21 @@
 {
   "name": "color-ranger",
   "version": "2.0.0",
-  "description": "Render color range by channel or space for the color passed. Useful for creating color pickers.",
+  "description": "Render color range by a channel or a space. Useful creating for color pickers. Can be used within a web-worker.",
   "main": "index.js",
+  "files": [
+    "index.js",
+    "render.js",
+    "render-rect.js",
+    "render-grid.js",
+    "render-polar.js",
+    "get-worker.js"
+  ],
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "mocha test/index.js"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -27,7 +35,9 @@
     "color-value",
     "color-ranges",
     "color-space",
-    "cie"
+    "luv",
+    "lch",
+    "lab"
   ],
   "author": "Dmitry Ivanov",
   "license": "unlicensed",
