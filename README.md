@@ -11,7 +11,7 @@
 	<a href="http://unlicense.org/UNLICENSE"><img src="http://upload.wikimedia.org/wikipedia/commons/6/62/PD-icon.svg" width="20"/></a>
 </p>
 
-_Color-ranger_ renders a range for a color in particular color space to rectangular or polar coordinate system by manipulating _ImageData_. It is primarily needed for building color pickers.
+_Color-ranger_ renders a color range for particular space in rectangular or polar coordinate system by manipulating _ImageData_. It is primarily needed for building color pickers.
 
 * It can be used both in web-worker and in document thread.
 * It is only [Nkb] minified & gzipped.
