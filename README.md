@@ -1,9 +1,8 @@
 <h3>
-	<code>&nbsp;&nbsp;&nbsp;C&thinsp;O&thinsp;L&thinsp;O&thinsp;R&nbsp;&nbsp;&nbsp;</code><br/>
-	<code>&nbsp;&nbsp;R&thinsp;A&thinsp;N&thinsp;G&thinsp;E&thinsp;R&nbsp;&nbsp;</code>
+	<code>&nbsp;&nbsp;<sub>R</sub><sup>C</sup><sub>A</sub><sup>O</sup><sub>N</sub><sup>L</sup><sub>G</sub><sup>O</sup><sub>E</sub><sup>R</sup><sub>R</sub>&nbsp;&nbsp;</code>
 </h3>
 <p>
-	<img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/logo.png" height="215"/>
+	<img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/logo.png" height="180"/>
 </p>
 
 _Color-ranger_ renders a color range for particular space in rectangular or polar coordinate system by manipulating _ImageData_. It is primarily needed for building color pickers.
