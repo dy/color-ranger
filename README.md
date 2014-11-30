@@ -1,18 +1,12 @@
-<h3 align="center">
-	<code>&nbsp;C&thinsp;O&thinsp;L&thinsp;O&thinsp;R&nbsp;</code>
+<h3>
+	<code>&nbsp;&nbsp;C&thinsp;O&thinsp;L&thinsp;O&thinsp;R&nbsp;&nbsp;</code>
 </h3>
-<p align="center">
+<p >
 	<img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/logo.png" height="200"/>
 </p>
-<h3 align="center">
+<h3>
 	<code>&nbsp;R&thinsp;A&thinsp;N&thinsp;G&thinsp;E&thinsp;R&nbsp;</code>
 </h3>
-<p align="center">
-	<a href="https://travis-ci.org/dfcreative/color-ranger"><img src="https://travis-ci.org/dfcreative/color-ranger.svg?branch=master"/></a>
-	<a href="https://coveralls.io/r/dfcreative/color-ranger"><img src="https://img.shields.io/coveralls/dfcreative/color-ranger.svg"/></a>
-	<a href="https://david-dm.org/dfcreative/color-ranger"><img src="https://david-dm.org/dfcreative/color-ranger.svg"/></a>
-	<a href="http://unlicense.org/UNLICENSE"><img src="http://upload.wikimedia.org/wikipedia/commons/6/62/PD-icon.svg" width="20"/></a>
-</p>
 
 _Color-ranger_ renders a color range for particular space in rectangular or polar coordinate system by manipulating _ImageData_. It is primarily needed for building color pickers.
 
@@ -20,6 +14,12 @@ _Color-ranger_ renders a color range for particular space in rectangular or pola
 * It is only [Nkb] minified & gzipped.
 * You can require only needed renderers to reduce size even more.
 
+<p>
+	<a href="https://travis-ci.org/dfcreative/color-ranger"><img src="https://travis-ci.org/dfcreative/color-ranger.svg?branch=master"/></a>
+	<a href="https://coveralls.io/r/dfcreative/color-ranger"><img src="https://img.shields.io/coveralls/dfcreative/color-ranger.svg"/></a>
+	<a href="https://david-dm.org/dfcreative/color-ranger"><img src="https://david-dm.org/dfcreative/color-ranger.svg"/></a>
+	<a href="http://unlicense.org/UNLICENSE"><img src="http://upload.wikimedia.org/wikipedia/commons/6/62/PD-icon.svg" width="20"/></a>
+</p>
 
 #### [Demo](TODO:jsfiddle link)
 
