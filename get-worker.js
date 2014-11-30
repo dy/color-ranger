@@ -4,17 +4,21 @@
  * @module color-ranger/render
  */
 
+//TODO: make husl renderable via worker
+// 		move full husl maths to color-space?
+//		serialize full husl code?
+
 module.exports = getWorker;
 
 
 var render = require('./render');
 var renderPolar = require('./render-polar');
 var renderRect = require('./render-rect');
-var colorSpace = require('./color-space');
-
 
 /**
  * Return a new worker, if supported
+ *
+ * @param {object} spaces A set of spaces to init in web-worker
  *
  * @return {Worker}  A web-worker, accepting messages with data:
  *                   {
@@ -31,8 +35,9 @@ var colorSpace = require('./color-space');
  *                   except for `id`, which is returned in response unchanged
  *                   to identify the request.
  */
-function getWorker(){
-	//inline worker - isn’t slower on init & work than file loader
+function getWorker(spaces){
+	//inline worker - isn’t slower on init & work than a file loader
+	// call URL.revokeObjectURL( blobURL ); if you’re finished
 	var blobURL = URL.createObjectURL( new Blob([
 		//export `color-ranger`
 		'var render = ', render.toString() + '\n',
@@ -42,14 +47,20 @@ function getWorker(){
 		//export `color-space`
 		(function(c){
 			var res = 'var convert = {};\n';
+			var fnSrc;
 			for (var space in c) {
 				res += '\nvar ' + space + ' = convert.' + space + ' = {\n';
 
 				for (var prop in c[space]) {
-					if (typeof c[space][prop] === 'object') {
-						res += prop + ':' + JSON.stringify(c[space][prop]) + ',\n';
+					if (typeof c[space][prop] === 'function') {
+						fnSrc = c[space][prop].toString();
+						//replace medium converters refs
+						fnSrc = fnSrc.replace('[toSpaceName]', '.' + prop);
+						fnSrc = fnSrc.replace('fromSpace', space);
+
+						res += prop + ':' + fnSrc + ',\n';
 					} else {
-						res += prop + ':' + c[space][prop].toString() + ',\n';
+						res += prop + ':' + JSON.stringify(c[space][prop]) + ',\n';
 					}
 				}
 
@@ -57,7 +68,7 @@ function getWorker(){
 			}
 
 			return res;
-		})(colorSpace),
+		})(spaces),
 
 		//export message handler
 		';(',

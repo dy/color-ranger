@@ -39,10 +39,29 @@
 			width: 40px;
 			height: 200px;
 		}
+		#demo h2 {
+			clear: both;
+			font-family: sans-serif;
+			text-transform: uppercase;
+			letter-spacing: 1px;
+			padding-top: 30px;
+			margin: 1rem 0 1rem 20px;
+			font-size: 1.4rem;
+		}
+		#demo h2 + h2 {
+			clear: both;
+			font-family: sans-serif;
+			text-transform: uppercase;
+			letter-spacing: 1px;
+			margin-left: 20px;
+			padding-top: 0px;
+		}
 	</style>
 </head>
 <body>
 	<div id="mocha"></div>
+
+	<div id="demo"></div>
 
 	<script src="../node_modules/mocha/mocha.js"></script>
 	<script src="../node_modules/chai/chai.js"></script>
