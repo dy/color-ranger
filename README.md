@@ -13,9 +13,12 @@
 </h1>
 
 
-Render color space range for a color in rectangular or polar coordinate system into an ImageData. Useful for building color pickers. It can be used both in a separate web-worker and in a single flow. It is only [Nkb] minified & gzipped, but you can get your own build via browserify, by requiring only needed renderers.
+_Color-ranger_ renders a range for a color in particular color space to rectangular or polar coordinate system by manipulating _ImageData_. It is primarily needed for building color pickers.
 
-There’s an alternate lib [color-space-canvas](https://github.com/rosskettle/color-space-canvas). It renders color range in shaders, which promises to be a faster solution. But it lacks of color spaces and customization, also shaders are somewhat less supported than webworkers or plain js.
+It can be used both in web-worker and single-flow. It is only [Nkb] minified & gzipped. You can also get your own build via browserify and require only needed renderers.
+
+There’s an alternate lib [color-space-canvas](https://github.com/rosskettle/color-space-canvas). It renders color range via shaders, which promises to be a faster solution. But it lacks of some color spaces and customization, also shaders are somewhat less supported than webworkers or plain js.
+
 
 #### [Demo](TODO:jsfiddle link)
 
