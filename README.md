@@ -1,11 +1,6 @@
-<h3>
-	<code>&nbsp;&nbsp;<sub>R</sub><sup>C</sup><sub>A</sub><sup>O</sup><sub>N</sub><sup>L</sup><sub>G</sub><sup>O</sup><sub>E</sub><sup>R</sup><sub>R</sub>&nbsp;&nbsp;</code>
-</h3>
-<p>
-	<img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/logo.png" height="180"/>
-</p>
+<img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/logo.png" height="180"/>
 
-_Color-ranger_ renders a color range for particular space in rectangular or polar coordinate system by manipulating _ImageData_. It is primarily needed for building color pickers.
+__Color-ranger__ renders a color range for particular space in rectangular or polar coordinate system by manipulating _ImageData_. It is primarily needed for building color pickers.
 
 * It can be used both in web-worker and in document thread.
 * It is only [Nkb] minified & gzipped.
