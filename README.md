@@ -1,39 +1,133 @@
-# <img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/logo-32.png"/> Color-ranger [WIP]
+<img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/logo.png" align="center" height="200"/>
 
-Render rectangular/polar color range into an ImageData.
-Useful in a color-picker both as a separate web-worker and a single flow.
+[![Build Status](https://travis-ci.org/dfcreative/color-ranger.svg?branch=master)](https://travis-ci.org/dfcreative/color-ranger) [![Coverage Status](https://img.shields.io/coveralls/dfcreative/color-ranger.svg)](https://coveralls.io/r/dfcreative/color-ranger) [![Dependencies](https://david-dm.org/username/repo.png)](https://david-dm.org/dfcreative/color-ranger) <a href="http://unlicense.org/UNLICENSE"><img src="http://upload.wikimedia.org/wikipedia/commons/6/62/PD-icon.svg" width="20"/></a>
 
-[Tests](todo). [Color-Picker](todo).
+
+# Color-ranger
+
+Render color space range for a color in rectangular or polar coordinate system into an ImageData. Useful for building color pickers. It can be used both in a separate web-worker and in a single flow. It is only [Nkb] minified & gzipped, but you can get your own build via browserify, by requiring only needed renderers.
+
+There’s an alternate lib [color-space-canvas](https://github.com/rosskettle/color-space-canvas). It renders color range in shaders, which promises to be a faster solution. But it lacks of color spaces and customization, also shaders are somewhat less supported than webworkers or plain js.
+
+#### [Demo](TODO:jsfiddle link)
+
+#### [Ranges & tests](https://cdn.rawgit.com/dfcreative/color-space/master/test/index.html)
+
+
+<!--
+You may also be interesting in checking out picky - a color picker based on that.
+-->
+
+
+# Get started
+
+## Install
+
+The best way to use color ranger in browser is to [browserify](https://github.com/substack/node-browserify) it as a requirement.
+
+1. Install local package:
+
+`$ npm install --save color-ranger`
+
+2. Build bundle:
+
+`browserify -r color-ranger > bundle.js`
+
+Or if you have your own package, append color-ranger to it:
+
+`browserify -r color-ranger -r your-dependency your-package.js > bundle.js`
+
+3. include the bundle:
+
+```html
+<script src="bundle.js"></script>
+```
+
+4. Finally require color-ranger module:
+
+```html
+<script>
+	var ranger = require('color-ranger');
+</script>
+```
+
+
+Alternately you can use a standalone version. Include [color-ranger.js](https://raw.githubusercontent.com/dfcreative/color-space/master/color-space.js) before you’ll use it:
+
+```html
+<script src="https://cdn.rawgit.com/dfcreative/color-ranger/master/color-ranger.js"></script>
+```
+
+You will get a `window.colorRanger` object, containing rendering functions.
 
 
 ## Use
 
-```js
-var renderRange = require('color-ranger');
-var Color = require('color');
+You need to strap boots to make color-ranger work:
 
+```html
+<script>
+	//create a canvas
+	var canvas = document.createElement('canvas');
+	canvas.width = 50;
+	canvas.height = 50;
+	var context = canvas.getContext('2d');
+	var data = context.getImageData(0, 0, canvas.width, canvas.height);
 
-var color = new Color('rgba(10,250,30,.3)');
+	//render hue and saturation channels [0,1] for the rgb-color [127, 255, 255]
+	//with min values [0,0] and max values [360, 100]
+	data = colorRanger.renderRect([127,255,255], 'hsl', [0,1], [0,0], [360,100], data);
 
+	//put image data back to canvas
+	context.putImageData(data, 0, 0);
 
-var imageData = renderRange.rect(color.rgbaArray(), 'hsl', [0,1], data);
+	//get a background with the rendered range
+	document.body.style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+</script>
 ```
 
-## API
+You’ll see a range rendered as `body` background. You can see full list of ranges in [tests page](https://cdn.rawgit.com/dfcreative/color-space/master/test/index.html).
 
-### `rect()`
+
+# API
+
+API docs on their way.
+
+### `.renderRect()`
 
 Render rectangular range.
 
-### `polar()`
+| Parameter | Type | Default | Description |
+|----|----|----|----|
+
+
+### `.renderPolar()`
 
 Render polar range.
 
-### `grid()`
+| Parameter | Type | Default | Description |
+|----|----|----|----|
+
+
+### `.renderGrid()`
 
 Render transparency grid.
 
+| Parameter | Type | Default | Description |
+|----|----|----|----|
 
-# License
 
-<a href="http://unlicense.org/UNLICENSE"><img src="http://upload.wikimedia.org/wikipedia/commons/6/62/PD-icon.svg" width="40"/></a>
+
+# Contribute
+
+There are some things to do with this lib.
+
+* At first, it needs implementing WebGL shaders version, or combining somehow with [color-space-canvas](https://github.com/rosskettle/color-space-canvas) module.
+* At second, there’s no HUSL space in webworker available, because HUSL space requires intricated serialization of code for web-worker.
+* Also it might need to add a triangular shape rendering.
+* It’s a good idea to add server-side rendering as well.
+
+So please fork, add fixes/features, make a PR. Color-ranger is an unlicensed project in that it is free to use or modify.
+
+
+[![NPM](https://nodei.co/npm/color-ranger.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/color-ranger/)

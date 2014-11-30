@@ -1,7 +1,7 @@
 {
   "name": "color-ranger",
   "version": "2.0.0",
-  "description": "Render color range by a channel or a space. Useful creating for color pickers. Can be used within a web-worker.",
+  "description": "Render color space range for color picker. Can be used as a web-worker or single flow.",
   "main": "index.js",
   "files": [
     "index.js",
