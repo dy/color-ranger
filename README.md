@@ -40,7 +40,6 @@ Or if you have your own package, append color-ranger to it:
 ```html
 <script src="bundle.js"></script>
 ```
-
 4. Finally require color-ranger module:
 ```html
 <script>
@@ -93,23 +92,26 @@ API docs on their way.
 ###### `.renderRect(rgb, space, channels, mins, maxes, imageData)`
 ###### `.renderPolar(rgb, space, channels, mins, maxes, imageData)`
 
-Render rectangular or polar range into an `imageData`.
+Render rectangular or polar range into an `imageData`. Size of the final image is taken such that it fills the whole `imageData` area.
 
 | Parameter | Type | Description |
 |----|----|----|
-| rgb | _Array_ | An array of rgb values, representing a color. E. g. `[0,255,127]`. |
-| space | _string_ | A color space name fot the range taken from the [color-space](https://github.com/dfcreative/color-space/) module. E. g. `'hsl'`. |
+| rgb | _Array_ | An array of rgb values, representing a color. E. g. `[0, 255, 127]`. |
+| space | _string_ | A color space name for the range taken from the [color-space](https://github.com/dfcreative/color-space/) module. E. g. `'hsl'`. |
 | channels | _Array_ | A tuple of x/y space channel indexes. E. g. `[0,2]` from `'hsv'` is hue and value. One of the channels can be omitted, e. g. `[null, 1]` means render saturation on y-axis. |
 | mins, maxes | _Array_ | Arrays of left and right values for the range, corresponding to the channels in x/y axis. |
-| imageData→ |
+| imageData | _ImageData_ | An `ImageData` object to which render a range. |
 
 
-###### `.renderGrid()`
+###### `.renderGrid(rgbaA, rgbB, imageData)`
 
-Render transparency grid.
+Render chess grid, useful for transparency grid image rendering. Grid size is automatically figured out from the `imageData` size.
 
-| Parameter | Type | Default | Description |
-|----|----|----|----|
+| Parameter | Type | Description |
+|----|----|----|
+| rgbA | _Array_ | An rgb values for the "black cell" color. |
+| rgbB | _Array_ | An rgb values for the right color. |
+| imageData | _ImageData_ | An `ImageData` object to which render the grid bitmap. |
 
 
 
