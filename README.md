@@ -49,7 +49,7 @@ Or if you have your own package, append color-ranger to it:
 ```
 
 
-Alternately you can use a standalone version. Include [color-ranger.js](https://raw.githubusercontent.com/dfcreative/color-space/master/color-space.js) before you’ll use it:
+Alternately you can use a standalone version, comprising `color-space` module. Include [color-ranger.js](https://raw.githubusercontent.com/dfcreative/color-ranger/master/color-ranger.js) before you’ll use it:
 
 ```html
 <script src="https://cdn.rawgit.com/dfcreative/color-ranger/master/color-ranger.js"></script>
@@ -90,24 +90,21 @@ You’ll see a range rendered as `body` background. You can see full list of ran
 
 API docs on their way.
 
-#### `.renderRect()`
+###### `.renderRect(rgb, space, channels, mins, maxes, imageData)`
+###### `.renderPolar(rgb, space, channels, mins, maxes, imageData)`
 
-Render rectangular range.
+Render rectangular or polar range into an `imageData`.
 
-| Parameter | Type | Default | Description |
-|----|----|----|----|
-
-
-
-#### `.renderPolar()`
-
-Render polar range.
-
-| Parameter | Type | Default | Description |
-|----|----|----|----|
+| Parameter | Type | Description |
+|----|----|----|
+| rgb | _Array_ | An array of rgb values, representing a color. E. g. `[0,255,127]`. |
+| space | _string_ | A color space name fot the range taken from the [color-space](https://github.com/dfcreative/color-space/) module. E. g. `'hsl'`. |
+| channels | _Array_ | A tuple of x/y space channel indexes. E. g. `[0,2]` from `'hsv'` is hue and value. One of the channels can be omitted, e. g. `[null, 1]` means render saturation on y-axis. |
+| mins, maxes | _Array_ | Arrays of left and right values for the range, corresponding to the channels in x/y axis. |
+| imageData→ |
 
 
-#### `.renderGrid()`
+###### `.renderGrid()`
 
 Render transparency grid.
 

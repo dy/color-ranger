@@ -16,6 +16,7 @@
   },
   "scripts": {
     "test": "mocha",
+    "build": "browserify --standalone colorRanger ./index.js > color-ranger.js",
     "build-test": "browserify -r emmy -r color-space -r color -r ./index.js:../ > test/bundle.js"
   },
   "repository": {
