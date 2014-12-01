@@ -13,9 +13,7 @@
 	<a href="http://unlicense.org/UNLICENSE"><img src="http://upload.wikimedia.org/wikipedia/commons/6/62/PD-icon.svg" width="20"/></a>
 </p>
 
-#### [Demo](TODO:jsfiddle link)
-
-#### [Ranges & tests](https://cdn.rawgit.com/dfcreative/color-space/master/test/index.html)
+#### [Demo](TODO:jsfiddle link)&nbsp;&nbsp;│&nbsp;&nbsp;[Ranges & tests](https://cdn.rawgit.com/dfcreative/color-space/master/test/index.html)
 
 
 <!--
