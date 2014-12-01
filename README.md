@@ -1,4 +1,4 @@
-<img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/logo.png" height="170"/>
+<img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/logo.png" height="180"/>
 
 <code>**C O L O R − R A N G E R**</code>&nbsp; renders a color range for a particular space in rectangular or polar coordinate system by manipulating _ImageData_. It is primarily needed for building color pickers.
 
@@ -36,10 +36,7 @@ The best way to use color ranger in browser is to [browserify](https://github.co
 Or if you have your own package, append color-ranger to it:
 `browserify -r color-ranger -r your-dependency your-package.js > bundle.js`
 
-3. include the bundle:
-```html
-<script src="bundle.js"></script>
-```
+3. Include the bundle: `<script src="bundle.js"></script>`
 4. Finally require color-ranger module:
 ```html
 <script>
