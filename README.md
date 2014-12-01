@@ -86,8 +86,8 @@ You’ll see a range rendered as `body` background. You can see full list of ran
 
 API docs on their way.
 
-###### `.renderRect(rgb, space, channels, mins, maxes, imageData)`
-###### `.renderPolar(rgb, space, channels, mins, maxes, imageData)`
+##### `.renderRect(rgb, space, channels, mins, maxes, imageData)`
+##### `.renderPolar(rgb, space, channels, mins, maxes, imageData)`
 
 Render rectangular or polar range into an `imageData`. Size of the final image is taken such that it fills the whole `imageData` area.
 
