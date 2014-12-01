@@ -6,7 +6,11 @@ var convert = require('color-space');
 
 //TODO: paint limits, esp. lch
 //TODO: readme
-//TODO: demo page
+//TODO: jsfiddle get started chunk
+//TODO: base64d API images
+//TODO: acclimatize code
+//TODO: add full tests coverage
+//TODO: asmjsify
 //TODO: shaders approach https://github.com/rosskettle/color-space-canvas
 //TODO: statistical range (expanded popular areas, shrunk less needed areas)
 

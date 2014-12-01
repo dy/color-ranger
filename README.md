@@ -1,4 +1,4 @@
-<img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/logo.png" height="180"/>
+<img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/logo.png" height="186"/>
 
 <code>**C O L O R − R A N G E R**</code>&nbsp; renders a color range for a particular space in rectangular or polar coordinate system by manipulating _ImageData_. It is primarily needed for building color pickers.
 
@@ -9,7 +9,7 @@
 
 <p>
 	<a href="https://travis-ci.org/dfcreative/color-ranger"><img src="https://travis-ci.org/dfcreative/color-ranger.svg?branch=master"/></a>
-	<a href="https://codeclimate.com/github/dfcreative/color-space"><img src="https://codeclimate.com/github/dfcreative/color-space/badges/gpa.svg"/></a>
+	<a href="https://codeclimate.com/github/dfcreative/color-ranger"><img src="https://codeclimate.com/github/dfcreative/color-ranger/badges/gpa.svg"/></a>
 	<a href="https://coveralls.io/r/dfcreative/color-ranger"><img src="https://img.shields.io/coveralls/dfcreative/color-ranger.svg"/></a>
 	<a href="https://david-dm.org/dfcreative/color-ranger"><img src="https://david-dm.org/dfcreative/color-ranger.svg"/></a>
 	<a href="http://unlicense.org/UNLICENSE"><img src="http://upload.wikimedia.org/wikipedia/commons/6/62/PD-icon.svg" width="20"/></a>
@@ -26,7 +26,7 @@ You may also be interesting in checking out picky - a color picker based on that
 
 ### Install
 
-The best way to use color ranger in browser is to [browserify](https://github.com/substack/node-browserify) it as a requirement.
+The best way to use color ranger is to [browserify](https://github.com/substack/node-browserify) it as a requirement.
 
 1. Install local package:
 `$ npm install --save color-ranger`
@@ -51,7 +51,7 @@ Alternately you can use a standalone version, comprising `color-space` module. I
 <script src="https://cdn.rawgit.com/dfcreative/color-ranger/master/color-ranger.js"></script>
 ```
 
-You will get a `window.colorRanger` object, containing rendering functions.
+You will get a `window.colorRanger` object, comprising rendering functions.
 
 
 ### Use
@@ -75,7 +75,7 @@ You need to setup a canvas first to make color-ranger work:
 	context.putImageData(data, 0, 0);
 
 	//get a background with the rendered range
-	document.body.style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+	document.body.style.backgroundImage = 'url(' + canvas.toDataURL() + ')';
 </script>
 ```
 
@@ -84,8 +84,10 @@ You’ll see a range rendered as `body` background. You can see full list of ran
 
 # API
 
-##### `.renderRect(rgb, space, channels, mins, maxes, imageData)`
-##### `.renderPolar(rgb, space, channels, mins, maxes, imageData)`
+[polar/rect image]
+
+##### `.renderRect(rgb, space, channel, min, max, imageData)`
+##### `.renderPolar(rgb, space, channel, min, max, imageData)`
 
 Render rectangular or polar range into an `imageData`. Size of the final image is taken such that it fills the whole `imageData` area.
 
@@ -93,15 +95,17 @@ Render rectangular or polar range into an `imageData`. Size of the final image i
 |----|----|----|
 | rgb | _Array_ | An array of rgb values, representing a color. E. g. `[0, 255, 127]`. |
 | space | _string_ | A color space name for the range taken from the [color-space](https://github.com/dfcreative/color-space/) module. E. g. `'hsl'`. |
-| channels | _Array_ | A tuple of x/y space channel indexes. E. g. `[0,2]` from `'hsv'` is hue and value. One of the channels can be omitted, e. g. `[null, 1]` means render saturation on y-axis. |
-| mins, maxes | _Array_ | Arrays of left and right values for the range, corresponding to the channels in x/y axis. |
+| channel | _Array_ | A tuple of x/y space channel indexes. E. g. `[0,2]` from `'hsv'` is hue and value. One of the channels can be omitted, e. g. `[null, 1]` means render saturation on y-axis. |
+| min, max | _Array_ | Arrays of left and right values for the range, corresponding to the channels in x/y axis. |
 | imageData | _ImageData_ | An `ImageData` object to which render a range. |
 
 <br/>
 
+[chess grid image]
+
 ##### `.renderGrid(rgbA, rgbB, imageData)`
 
-Render chess grid, useful for transparency grid image rendering. Grid size is automatically figured out from the `imageData` size.
+Render a chess grid, useful for transparency grid image rendering. Grid size is automatically figured out from the `imageData` size.
 
 | Parameter | Type | Description |
 |----|----|----|
@@ -109,6 +113,47 @@ Render chess grid, useful for transparency grid image rendering. Grid size is au
 | rgbB | _Array_ | An rgb values for the right color. |
 | imageData | _ImageData_ | An `ImageData` object to which render the grid bitmap. |
 
+
+##### `.getWebworker(spaces)`
+
+Return a web-worker able to render any space range for the passed set of spaces. `spaces` should be a `color-space` module or it’s custom build.
+
+```js
+var spaces = require('color-space');
+
+//set up and run worker
+var rangerWorker = ranger.getWorker(spaces);
+
+//catch worker response
+rangerWorker.addEvenListener('message', function(evt){
+	if (evt.data.id !== 1) return;
+
+	//image data is returned as `event.data.data`
+	context.putImageData(evt.data.data, 0, 0);
+
+	document.body.style.backgroundImage = 'url(' + canvas.toDataURL() + ')';
+});
+
+
+//send a data to the worker
+rangerWorker.postMessage({
+	rgb: rgbArray,
+	type: 'polar',
+	space: 'lab',
+	channel: [0,1],
+	max: [360, 100],
+	min: [0, 100],
+	data: imageData,
+	id: 1
+});
+```
+
+Worker gets all the same parameters as [`.renderRect`](#.renderRect) or [`.renderPolar`](#.renderPolar) whilst there are two additional options: `type` and `id`.
+
+| Parameter | Type | Description |
+|----|----|----|
+| type | _string_ | A type of plot to render: `'rect'` or `'polar'`. |
+| id | _number_ | A number of request to identify response. Returned unchanged. |
 
 
 # Contribute
@@ -119,6 +164,7 @@ There are some things to do with this lib.
 * At second, there’s no HUSL space in webworker available, because HUSL space requires intricated serialization of code for web-worker.
 * Also it might need to add a triangular shape rendering.
 * It’s a good idea to add server-side rendering as well.
+* Asm-js calculation
 
 So please fork, add fixes/features, make a PR. Color-ranger is an unlicensed project in that it is free to use or modify.
 

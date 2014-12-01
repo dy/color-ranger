@@ -27,7 +27,7 @@ var renderRect = require('./render-rect');
  *                   	space: '<spaceName>,
  *                   	channel: <channel indexes>,
  *                   	max: [360, 100],
- *                   	min: [360, 100],
+ *                   	min: [0, 0],
  *                   	data: ImageData,
  *                   	id: 1
  *                   }
