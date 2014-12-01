@@ -84,8 +84,6 @@ You’ll see a range rendered as `body` background. You can see full list of ran
 
 # API
 
-API docs on their way.
-
 ##### `.renderRect(rgb, space, channels, mins, maxes, imageData)`
 ##### `.renderPolar(rgb, space, channels, mins, maxes, imageData)`
 
@@ -99,8 +97,9 @@ Render rectangular or polar range into an `imageData`. Size of the final image i
 | mins, maxes | _Array_ | Arrays of left and right values for the range, corresponding to the channels in x/y axis. |
 | imageData | _ImageData_ | An `ImageData` object to which render a range. |
 
+<br/>
 
-###### `.renderGrid(rgbaA, rgbB, imageData)`
+##### `.renderGrid(rgbA, rgbB, imageData)`
 
 Render chess grid, useful for transparency grid image rendering. Grid size is automatically figured out from the `imageData` size.
 
