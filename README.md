@@ -5,15 +5,15 @@
 * It can be used both in web-worker and in document thread.
 * It is only [Nkb] minified & gzipped.
 * You can require only needed renderers to reduce size even more.
-* See [demo](jsfiddle), [ranges list](https://cdn.rawgit.com/dfcreative/color-space/master/test/index.html).
+* See [demo](jsfiddle), [range list and tests](https://cdn.rawgit.com/dfcreative/color-ranger/master/test/index.html).
 
 <p>
 	<a href="https://travis-ci.org/dfcreative/color-ranger"><img src="https://travis-ci.org/dfcreative/color-ranger.svg?branch=master"/></a>
+	<a href="https://codeclimate.com/github/dfcreative/color-space"><img src="https://codeclimate.com/github/dfcreative/color-space/badges/gpa.svg"/></a>
 	<a href="https://coveralls.io/r/dfcreative/color-ranger"><img src="https://img.shields.io/coveralls/dfcreative/color-ranger.svg"/></a>
 	<a href="https://david-dm.org/dfcreative/color-ranger"><img src="https://david-dm.org/dfcreative/color-ranger.svg"/></a>
 	<a href="http://unlicense.org/UNLICENSE"><img src="http://upload.wikimedia.org/wikipedia/commons/6/62/PD-icon.svg" width="20"/></a>
 </p>
-
 
 
 
@@ -24,30 +24,24 @@ You may also be interesting in checking out picky - a color picker based on that
 
 # Get started
 
-## Install
+### Install
 
 The best way to use color ranger in browser is to [browserify](https://github.com/substack/node-browserify) it as a requirement.
 
 1. Install local package:
-
 `$ npm install --save color-ranger`
 
 2. Build bundle:
-
 `browserify -r color-ranger > bundle.js`
-
 Or if you have your own package, append color-ranger to it:
-
 `browserify -r color-ranger -r your-dependency your-package.js > bundle.js`
 
 3. include the bundle:
-
 ```html
 <script src="bundle.js"></script>
 ```
 
 4. Finally require color-ranger module:
-
 ```html
 <script>
 	var ranger = require('color-ranger');
@@ -64,9 +58,9 @@ Alternately you can use a standalone version. Include [color-ranger.js](https://
 You will get a `window.colorRanger` object, containing rendering functions.
 
 
-## Use
+### Use
 
-You need to strap boots to make color-ranger work:
+You need to setup a canvas first to make color-ranger work:
 
 ```html
 <script>
@@ -96,7 +90,7 @@ You’ll see a range rendered as `body` background. You can see full list of ran
 
 API docs on their way.
 
-### `.renderRect()`
+#### `.renderRect()`
 
 Render rectangular range.
 
@@ -104,7 +98,8 @@ Render rectangular range.
 |----|----|----|----|
 
 
-### `.renderPolar()`
+
+#### `.renderPolar()`
 
 Render polar range.
 
@@ -112,7 +107,7 @@ Render polar range.
 |----|----|----|----|
 
 
-### `.renderGrid()`
+#### `.renderGrid()`
 
 Render transparency grid.
 

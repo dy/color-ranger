@@ -15,7 +15,8 @@
     "test": "test"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "build-test": "browserify -r emmy -r color-space -r color -r ./index.js:../ > test/bundle.js"
   },
   "repository": {
     "type": "git",

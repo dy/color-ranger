@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<title>Ranges tests</title>
-	<link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
+	<link rel="stylesheet" href="mocha.css" />
 
 	<style>
 		.range-case{
@@ -67,11 +67,13 @@
 
 	<div id="demo"></div>
 
-	<script src="../node_modules/mocha/mocha.js"></script>
-	<script src="../node_modules/chai/chai.js"></script>
+	<script src="mocha.js"></script>
 
 	<!-- dev -->
-	<script src="../node_modules/require-stub/index.js"></script>
+	<!-- <script src="../node_modules/require-stub/index.js"></script> -->
+
+	<!-- prod -->
+	<script src="bundle.js"></script>
 
 	<script>
 		mocha.setup('bdd');
