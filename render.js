@@ -4,6 +4,9 @@
  * @module color-ranger/render
  */
 
+var convert = require('color-space');
+
+
 module.exports = render;
 
 /**
@@ -34,7 +37,9 @@ function render(rgba, space, channels, mins, maxes, imgData, calc){
 		values = rgba.slice();
 	} else {
 		values = convert.rgb[space](rgba);
-		if (!isCMYK && values.length === 3) values[3] = rgba[3];
+		if (!isCMYK && values.length === 3) {
+			values[3] = rgba[3];
+		}
 	}
 
 	//resolve channel indexes
@@ -44,7 +49,9 @@ function render(rgba, space, channels, mins, maxes, imgData, calc){
 
 	var noIdx = [];
 	for (var i = space.length; i--;){
-		if (i !== channels[0] && i !== channels[1]) noIdx.push(i);
+		if (i !== channels[0] && i !== channels[1]) {
+			noIdx.push(i);
+		}
 	}
 	var noIdx1 = noIdx[0];
 	var noIdx2 = noIdx[1];
@@ -62,9 +69,15 @@ function render(rgba, space, channels, mins, maxes, imgData, calc){
 			//calculate color
 			stepVals = calc(x,y, stepVals, size, channels, mins, maxes);
 
-			if (noIdx1 || noIdx1 === 0) stepVals[noIdx1] = values[noIdx1];
-			if (noIdx2 || noIdx2 === 0) stepVals[noIdx2] = values[noIdx2];
-			if (noIdx3 || noIdx3 === 0) stepVals[noIdx3] = values[noIdx3];
+			if (noIdx1 || noIdx1 === 0) {
+				stepVals[noIdx1] = values[noIdx1];
+			}
+			if (noIdx2 || noIdx2 === 0) {
+				stepVals[noIdx2] = values[noIdx2];
+			}
+			if (noIdx3 || noIdx3 === 0) {
+				stepVals[noIdx3] = values[noIdx3];
+			}
 
 			//fill image data
 			res = converter(stepVals);

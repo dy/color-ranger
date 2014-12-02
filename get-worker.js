@@ -14,6 +14,7 @@ module.exports = getWorker;
 var render = require('./render');
 var renderPolar = require('./render-polar');
 var renderRect = require('./render-rect');
+var toSource = require('color-space/util/to-source');
 
 /**
  * Return a new worker, if supported
@@ -45,30 +46,7 @@ function getWorker(spaces){
 		'var renderPolar = ', renderPolar.toString() + '\n',
 
 		//export `color-space`
-		(function(c){
-			var res = 'var convert = {};\n';
-			var fnSrc;
-			for (var space in c) {
-				res += '\nvar ' + space + ' = convert.' + space + ' = {\n';
-
-				for (var prop in c[space]) {
-					if (typeof c[space][prop] === 'function') {
-						fnSrc = c[space][prop].toString();
-						//replace medium converters refs
-						fnSrc = fnSrc.replace('[toSpaceName]', '.' + prop);
-						fnSrc = fnSrc.replace('fromSpace', space);
-
-						res += prop + ':' + fnSrc + ',\n';
-					} else {
-						res += prop + ':' + JSON.stringify(c[space][prop]) + ',\n';
-					}
-				}
-
-				res += '}\n';
-			}
-
-			return res;
-		})(spaces),
+		'var convert = ' + toSource(spaces) + '\n',
 
 		//export message handler
 		';(',

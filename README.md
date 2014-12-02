@@ -1,4 +1,4 @@
-<img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/logo.png" height="186"/>
+<img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/logo.png" height="190"/>
 
 <code>**C O L O R − R A N G E R**</code>&nbsp; renders a color range for a particular space in rectangular or polar coordinate system by manipulating _ImageData_. It is primarily needed for building color pickers.
 

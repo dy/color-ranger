@@ -6,10 +6,11 @@
 var Color = require('color');
 var ranger = require('../');
 var Emmy = require('emmy');
-var convert = require('color-space');
+var spaces = require('color-space');
 
 
 var demo = document.getElementById('demo');
+
 
 //create range case
 function createRangeCase(str, type){
@@ -1414,7 +1415,7 @@ describe('performance', function(){
 	before(function(done){
 		console.time('create-webworker');
 
-		worker = ranger.getWorker(convert);
+		worker = ranger.getWorker(spaces);
 
 		worker.postMessage('');
 		Emmy.one(worker, 'message', function(){
