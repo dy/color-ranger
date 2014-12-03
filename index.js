@@ -3,8 +3,8 @@
  */
 var convert = require('color-space');
 
-
-//TODO: paint limits, esp. lch
+//TODO: make server-side calc via Uint8ClampedArray
+//TODO: paint limits, esp. lch: how?
 //TODO: readme
 //TODO: jsfiddle get started chunk
 //TODO: base64d API images

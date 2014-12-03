@@ -18,9 +18,10 @@ module.exports = renderRect;
  * @param {array} channels Channel indexes to render
  * @param {array} mins left values for the channels
  * @param {array} maxes right values for the channels
+ * @param {UInt8CappedArray} buffer An image data buffer
  * @param {ImageData} imgData An target image data in which to render range
  */
-function renderRect(rgba, space, channels, mins, maxes, imgData){
+function renderRect(rgba, opts, buffer){
 	/**
 	 * Calculate step values for a rectangular range
 	 *
@@ -41,5 +42,5 @@ function renderRect(rgba, space, channels, mins, maxes, imgData){
 		return vals;
 	}
 
-	return render(rgba, space, channels, mins, maxes, imgData, calcRectStep);
+	return render(rgba, opts, buffer, calcRectStep);
 }

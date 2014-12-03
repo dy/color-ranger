@@ -18,9 +18,10 @@ module.exports = renderPolar;
  * @param {array} channels Channel indexes to render
  * @param {array} mins left values for the channels
  * @param {array} maxes right values for the channels
+ * @param {UInt8CappedArray} buffer An image data buffer
  * @param {ImageData} imgData An target image data in which to render range
  */
-function renderPolar(rgba, space, channels, mins, maxes, imgData){
+function renderPolar(rgba, opts, buffer){
 	/**
 	 * Calculate step values for a polar range
 	 */
@@ -54,5 +55,5 @@ function renderPolar(rgba, space, channels, mins, maxes, imgData){
 		return vals;
 	}
 
-	return render(rgba, space, channels, mins, maxes, imgData, calcPolarStep);
+	return render(rgba, opts, buffer, calcPolarStep);
 }
