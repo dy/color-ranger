@@ -90,10 +90,8 @@ function render(rgba, buffer, calc, opts){
 
 		for (x = 0; x < size[0]; x++) {
 			col = row + x * 4;
-
 			//calculate color
 			stepVals = calc(x,y, stepVals, size, channels, mins, maxes);
-
 			if (noIdx1 || noIdx1 === 0) {
 				stepVals[noIdx1] = values[noIdx1];
 			}

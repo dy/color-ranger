@@ -131,25 +131,29 @@ describe('alpha', function(){
 		var opts = {
 			channel: [3]
 		};
-		createRangeCase('alpha', 'horizontal', ranger.renderRect(color.rgbaArray(), data, opts)).style.background += ' 0 0/cover, ' + gridBg;
+		var bg = createRangeCase('alpha', 'horizontal', ranger.renderRect(color.rgbaArray(), data, opts));
+		bg.style.background = bg.style.backgroundImage + ' 0 0/cover, ' + gridBg;
 	});
 	it('red-alpha', function(){
 		var opts = {
 			channel: [0,3]
 		};
-		createRangeCase('red-alpha', 'rect', ranger.renderRect(color.rgbaArray(), data, opts)).style.background += ' 0 0/cover, ' + gridBg;
+		var bg = createRangeCase('red-alpha', 'rect', ranger.renderRect(color.rgbaArray(), data, opts));
+		bg.style.background += bg.style.backgroundImage + ' 0 0/cover, ' + gridBg;
 	});
 	it('hue-alpha', function(){
 		var opts = {
 			space: 'hsl', channel: [0,3], max:[360,255]
 		};
-		createRangeCase('hue-alpha', 'rect', ranger.renderRect(color.rgbaArray(), data, opts)).style.background += ' 0 0/cover, ' + gridBg;
+		var bg = createRangeCase('hue-alpha', 'rect', ranger.renderRect(color.rgbaArray(), data, opts));
+		bg.style.background += bg.style.backgroundImage + ' 0 0/cover, ' + gridBg;
 	});
 	it('lightness-alpha', function(){
 		var opts = {
 			space: 'luv', channel: [0,3], max:[100,255]
 		};
-		createRangeCase('lightness-alpha', 'polar', ranger.renderRect(color.rgbaArray(), data, opts)).style.background += ' 0 0/cover, ' + gridBg;
+		var bg = createRangeCase('lightness-alpha', 'polar', ranger.renderRect(color.rgbaArray(), data, opts));
+		bg.style.background += bg.style.backgroundImage + ' 0 0/cover, ' + gridBg;
 	});
 });
 
