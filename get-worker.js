@@ -59,9 +59,9 @@ function getWorker(spaces){
 				if (!data) return postMessage(false);
 
 				if (data.type === 'polar') {
-					result = renderPolar(data.rgb, data, data.data);
+					result = renderPolar(data.rgb, data.data, data);
 				} else {
-					result = renderRect(data.rgb, data, data.data);
+					result = renderRect(data.rgb, data.data, data);
 				}
 
 				postMessage({

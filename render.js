@@ -31,7 +31,7 @@ var defaults = {
  *
  * @return {ImageData} ImageData containing a range
  */
-function render(rgba, opts, buffer, calc){
+function render(rgba, buffer, calc, opts){
 	// console.time('canv');
 	var size = opts.size = opts.size || [Math.floor(Math.sqrt(buffer.length / 4))];
 	if (size.length === 1) {

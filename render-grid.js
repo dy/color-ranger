@@ -17,9 +17,9 @@ module.exports = renderGrid;
  *
  * @return {ImageData} Return updated imageData
  */
-function renderGrid(a, b, imgData){
-	var h = imgData.height,
-		w = imgData.width;
+function renderGrid(a, b, data){
+	//suppose square data
+	var w = Math.floor(Math.sqrt(data.length / 4)), h = w;
 
 	var cellH = ~~(h/2);
 	var cellW = ~~(w/2);
@@ -32,9 +32,9 @@ function renderGrid(a, b, imgData){
 		row = y * w * 4;
 		for ( var x=0; x < w; x++){
 			col = row + x * 4;
-			imgData.data.set(x >= cellW ? (y >= cellH ? a : b) : (y >= cellH ? b : a), col);
+			data.set(x >= cellW ? (y >= cellH ? a : b) : (y >= cellH ? b : a), col);
 		}
 	}
 
-	return imgData;
+	return data;
 }

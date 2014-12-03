@@ -1,4 +1,84 @@
-require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"../":[function(require,module,exports){
+require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"../get-worker":[function(require,module,exports){
+/**
+ * Create worker for rendering ranges
+ *
+ * @module color-ranger/render
+ */
+
+//TODO: make husl renderable via worker
+// 		move full husl maths to color-space?
+//		serialize full husl code?
+//TODO: make worker hookable in io.
+
+module.exports = getWorker;
+
+
+var render = require('./render');
+var renderPolar = require('./render-polar');
+var renderRect = require('./render-rect');
+var toSource = require('color-space/util/to-source');
+
+/**
+ * Return a new worker, if supported
+ *
+ * @param {object} spaces A set of spaces to init in web-worker
+ *
+ * @return {Worker}  A web-worker, accepting messages with data:
+ *                   {
+ *                   	rgb: rgbArray,
+ *                   	type: ('polar'|'rect')
+ *                   	space: '<spaceName>,
+ *                   	channel: <channel indexes>,
+ *                   	max: [360, 100],
+ *                   	min: [0, 0],
+ *                   	data: ImageData,
+ *                   	id: 1
+ *                   }
+ *                   The data is the same as arguments for the `render` method
+ *                   except for `id`, which is returned in response unchanged
+ *                   to identify the request.
+ */
+function getWorker(spaces){
+	//inline worker - isn’t slower on init & work than a file loader
+	// call URL.revokeObjectURL( blobURL ); if you’re finished
+	var blobURL = URL.createObjectURL( new Blob([
+		//export `color-ranger`
+		'var render = ', render.toString() + '\n',
+		'var renderRect = ', renderRect.toString() + '\n',
+		'var renderPolar = ', renderPolar.toString() + '\n',
+
+		//export `color-space`
+		'var convert = ' + toSource(spaces) + '\n',
+
+		//export message handler
+		';(',
+		function(){
+			self.onmessage = function(e){
+				var data = e.data, result;
+
+				//ignore empty data
+				if (!data) return postMessage(false);
+
+				if (data.type === 'polar') {
+					result = renderPolar(data.rgb, data.data, data);
+				} else {
+					result = renderRect(data.rgb, data.data, data);
+				}
+
+				postMessage({
+					data: result,
+					id: e.data.id
+				});
+			};
+		}.toString(),
+		')();'
+	], { type: 'application/javascript' } ) );
+
+	var worker = new Worker(blobURL);
+
+	return worker;
+}
+},{"./render":22,"./render-polar":20,"./render-rect":21,"color-space/util/to-source":14}],"../":[function(require,module,exports){
 /**
  * @module color-ranger
  */
@@ -23,7 +103,7 @@ module.exports = {
 	renderPolar: require('./render-polar'),
 	renderGrid: require('./render-grid')
 };
-},{"./render-grid":18,"./render-polar":19,"./render-rect":20,"color-space":"color-space"}],1:[function(require,module,exports){
+},{"./render-grid":19,"./render-polar":20,"./render-rect":21,"color-space":"color-space"}],1:[function(require,module,exports){
 /**
  * @module color-space/cmyk
  */
@@ -322,7 +402,7 @@ lchuv.husl = _husl._conv.lch.husl;
 xyz.husl = function(arg){
 	return _husl._conv.lch.husl(xyz.lchuv(arg));
 };
-},{"./lchuv":9,"./xyz":14,"husl":11}],5:[function(require,module,exports){
+},{"./lchuv":9,"./xyz":15,"husl":11}],5:[function(require,module,exports){
 /**
  * A uniform wrapper for huslp.
  * // http://www.boronine.com/husl/
@@ -352,7 +432,7 @@ module.exports = {
 //extend lchuv, xyz
 lchuv.huslp = _husl._conv.lch.huslp;
 xyz.huslp = function(arg){return _husl._conv.lch.huslp(xyz.lchuv(arg));};
-},{"./lchuv":9,"./xyz":14,"husl":11}],6:[function(require,module,exports){
+},{"./lchuv":9,"./xyz":15,"husl":11}],6:[function(require,module,exports){
 /**
  * @module color-space/hwb
  */
@@ -522,7 +602,7 @@ xyz.lab = function(xyz){
 
 	return [l, a, b];
 };
-},{"./xyz":14}],8:[function(require,module,exports){
+},{"./xyz":15}],8:[function(require,module,exports){
 /**
  * Cylindrical LAB
  *
@@ -578,7 +658,7 @@ lab.lchab = function(lab) {
 xyz.lchab = function(arg){
 	return lab.lchab(xyz.lab(arg));
 };
-},{"./lab":7,"./xyz":14}],9:[function(require,module,exports){
+},{"./lab":7,"./xyz":15}],9:[function(require,module,exports){
 /**
  * Cylindrical CIE LUV
  *
@@ -629,7 +709,7 @@ luv.lchuv = function(luv){
 xyz.lchuv = function(arg){
   return luv.lchuv(xyz.luv(arg));
 };
-},{"./luv":10,"./xyz":14}],10:[function(require,module,exports){
+},{"./luv":10,"./xyz":15}],10:[function(require,module,exports){
 /**
  * CIE LUV (C'est la vie)
  *
@@ -729,7 +809,7 @@ xyz.luv = function(arg, i, o) {
 
 	return [l, u, v];
 };
-},{"./xyz":14}],11:[function(require,module,exports){
+},{"./xyz":15}],11:[function(require,module,exports){
 // Generated by CoffeeScript 1.8.0
 (function() {
   var L_to_Y, Y_to_L, conv, distanceFromPole, dotProduct, epsilon, fromLinear, getBounds, intersectLineLine, kappa, lengthOfRayUntilIntersect, m, m_inv, maxChromaForLH, maxSafeChromaForL, refU, refV, refX, refY, refZ, rgbPrepare, root, round, toLinear;
@@ -1217,12 +1297,56 @@ function getConvertor(fromSpace, toSpace){
 		};
 	}
 
-	else throw Error('Can’t add convertor from ' + fromSpace.name + ' to ' + toSpaceName);
-
-	return fromSpace[toSpaceName];
+	throw Error('Can’t add convertor from ' + fromSpace.name + ' to ' + toSpaceName);
 }
 
-},{"../rgb":12,"../xyz":14}],14:[function(require,module,exports){
+},{"../rgb":12,"../xyz":15}],14:[function(require,module,exports){
+/**
+ * Transform set of spaces to source code.
+ * Useful to pass color-spaces source to web-worker, for example.
+ *
+ * @module  color-space/to-source
+ */
+
+
+/**
+ * Return evaluable source code of spaces set.
+ *
+ * @param {object} spaces A (sub)set of color spaces to stringify. Normally - index.js.
+ *
+ * @return {string} source code
+ */
+module.exports = function(spaces){
+	var res = '(function(){\nvar space = {};\n';
+
+	var fnSrc, space;
+	for (var spaceName in spaces) {
+		space = spaces[spaceName];
+
+		res += '\nvar ' + spaceName + ' = space.' + spaceName + ' = {\n';
+
+		for (var prop in space) {
+			if (typeof space[prop] === 'function') {
+				fnSrc = space[prop].toString();
+
+				//replace medium converters refs
+				fnSrc = fnSrc.replace('[toSpaceName]', '.' + prop);
+				fnSrc = fnSrc.replace('fromSpace', spaceName);
+
+				res += prop + ':' + fnSrc + ',\n';
+			} else {
+				res += prop + ':' + JSON.stringify(space[prop]) + ',\n';
+			}
+		}
+
+		res += '}\n';
+	}
+
+	res += '\nreturn space;})()';
+
+	return res;
+};
+},{}],15:[function(require,module,exports){
 /**
  * CIE XYZ
  *
@@ -1331,7 +1455,7 @@ rgb.xyz = function(rgb) {
 
 	return [x * 100, y *100, z * 100];
 };
-},{"./rgb":12}],15:[function(require,module,exports){
+},{"./rgb":12}],16:[function(require,module,exports){
 /* MIT license */
 var colorNames = require('color-name');
 
@@ -1551,7 +1675,7 @@ var reverseNames = {};
 for (var name in colorNames) {
   reverseNames[colorNames[name]] = name;
 }
-},{"color-name":16}],16:[function(require,module,exports){
+},{"color-name":17}],17:[function(require,module,exports){
 module.exports={
 	"aliceblue": [240, 248, 255],
 	"antiquewhite": [250, 235, 215],
@@ -1700,7 +1824,7 @@ module.exports={
 	"yellow": [255, 255, 0],
 	"yellowgreen": [154, 205, 50]
 }
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 /**
  * @module Icicle
  */
@@ -1772,7 +1896,7 @@ function isLocked(target, name){
 	var locks = lockCache.get(target);
 	return (locks && locks[name]);
 }
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 /**
  * Chess grid trivial renderer
  *
@@ -1792,9 +1916,9 @@ module.exports = renderGrid;
  *
  * @return {ImageData} Return updated imageData
  */
-function renderGrid(a, b, imgData){
-	var h = imgData.height,
-		w = imgData.width;
+function renderGrid(a, b, data){
+	//suppose square data
+	var w = Math.floor(Math.sqrt(data.length / 4)), h = w;
 
 	var cellH = ~~(h/2);
 	var cellW = ~~(w/2);
@@ -1807,13 +1931,13 @@ function renderGrid(a, b, imgData){
 		row = y * w * 4;
 		for ( var x=0; x < w; x++){
 			col = row + x * 4;
-			imgData.data.set(x >= cellW ? (y >= cellH ? a : b) : (y >= cellH ? b : a), col);
+			data.set(x >= cellW ? (y >= cellH ? a : b) : (y >= cellH ? b : a), col);
 		}
 	}
 
-	return imgData;
+	return data;
 }
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 /**
  * Polar coordinate system renderer
  *
@@ -1837,7 +1961,7 @@ module.exports = renderPolar;
  * @param {UInt8CappedArray} buffer An image data buffer
  * @param {ImageData} imgData An target image data in which to render range
  */
-function renderPolar(rgba, opts, buffer){
+function renderPolar(rgba, buffer, opts){
 	/**
 	 * Calculate step values for a polar range
 	 */
@@ -1871,9 +1995,9 @@ function renderPolar(rgba, opts, buffer){
 		return vals;
 	}
 
-	return render(rgba, opts, buffer, calcPolarStep);
+	return render(rgba, buffer, calcPolarStep, opts);
 }
-},{"./render":21}],20:[function(require,module,exports){
+},{"./render":22}],21:[function(require,module,exports){
 /**
  * Cartesian coordinate system renderer
  *
@@ -1897,7 +2021,7 @@ module.exports = renderRect;
  * @param {UInt8CappedArray} buffer An image data buffer
  * @param {ImageData} imgData An target image data in which to render range
  */
-function renderRect(rgba, opts, buffer){
+function renderRect(rgba, buffer, opts){
 	/**
 	 * Calculate step values for a rectangular range
 	 *
@@ -1918,9 +2042,9 @@ function renderRect(rgba, opts, buffer){
 		return vals;
 	}
 
-	return render(rgba, opts, buffer, calcRectStep);
+	return render(rgba, buffer, calcRectStep, opts);
 }
-},{"./render":21}],21:[function(require,module,exports){
+},{"./render":22}],22:[function(require,module,exports){
 /**
  * A somewhat abstract renderer.
  *
@@ -1954,7 +2078,7 @@ var defaults = {
  *
  * @return {ImageData} ImageData containing a range
  */
-function render(rgba, opts, buffer, calc){
+function render(rgba, buffer, calc, opts){
 	// console.time('canv');
 	var size = opts.size = opts.size || [Math.floor(Math.sqrt(buffer.length / 4))];
 	if (size.length === 1) {
@@ -2084,7 +2208,7 @@ for (var fromSpaceName in spaces) {
 
 
 module.exports = spaces;
-},{"./cmyk":1,"./hsl":2,"./hsv":3,"./husl":4,"./huslp":5,"./hwb":6,"./lab":7,"./lchab":8,"./lchuv":9,"./luv":10,"./rgb":12,"./util/add-convertor":13,"./xyz":14}],"color":[function(require,module,exports){
+},{"./cmyk":1,"./hsl":2,"./hsv":3,"./husl":4,"./huslp":5,"./hwb":6,"./lab":7,"./lchab":8,"./lchuv":9,"./luv":10,"./rgb":12,"./util/add-convertor":13,"./xyz":15}],"color":[function(require,module,exports){
 /* MIT license */
 var convert = require("color-space"),
     string = require("color-string");
@@ -2571,7 +2695,7 @@ Color.prototype.setChannel = function(space, index, val) {
 
 module.exports = Color;
 
-},{"color-space":"color-space","color-string":15}],"emmy":[function(require,module,exports){
+},{"color-space":"color-space","color-string":16}],"emmy":[function(require,module,exports){
 var icicle = require('icicle');
 
 
@@ -2927,4 +3051,4 @@ Emmy.bindStaticAPI();
 
 /** @module muevents */
 module.exports = Emmy;
-},{"icicle":17}]},{},[]);
+},{"icicle":18}]},{},[]);

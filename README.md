@@ -1,8 +1,8 @@
 <img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/logo.png" height="190"/>
 
-<code>**C O L O R − R A N G E R**</code>&nbsp; renders a color range for a particular space in rectangular or polar coordinate system by manipulating _ImageData_. It is primarily needed for building color pickers.
+<code>**C O L O R − R A N G E R**</code>&nbsp; renders a color range for a color in a particular space in rectangular or polar coordinate system by manipulating _ImageData_. It is primarily needed for building color pickers.
 
-* It can be used in a web-worker, document thread or in node.
+* It can be used in a web-worker, document thread or in io.
 * You can require renderers selectively.
 * See [demo](jsfiddle), [range list and tests](https://cdn.rawgit.com/dfcreative/color-ranger/master/test/index.html).
 
@@ -55,38 +55,47 @@ You will get a `window.colorRanger` object, comprising rendering functions.
 
 ### Use
 
-You need to setup a canvas first to make color-ranger work:
+First off you need to setup a canvas to make color-ranger work. Look for [getting-started example code](https://raw.githubusercontent.com/dfcreative/color-ranger/master/test/gettingstarted.html):
 
-```html
-<script>
-	//create a canvas
-	var canvas = document.createElement('canvas');
-	canvas.width = 50;
-	canvas.height = 50;
-	var context = canvas.getContext('2d');
-	var data = context.getImageData(0, 0, canvas.width, canvas.height);
+```js
+//create a canvas
+var canvas = document.createElement('canvas');
+canvas.width = 50;
+canvas.height = 50;
+var context = canvas.getContext('2d');
+var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
 
-	//render hue and saturation channels [0,1] for the rgb-color [127, 255, 255]
-	//with min values [0,0] and max values [360, 100]
-	data = colorRanger.renderRect([127,255,255], 'hsl', [0,1], [0,0], [360,100], data);
+//for the blue color (blue = 255, red = 0, green = 0)
+var what = [0, 0, 255];
 
-	//put image data back to canvas
-	context.putImageData(data, 0, 0);
+//to imageData’s buffer
+var where = imageData.data;
 
-	//get a background with the rendered range
-	document.body.style.backgroundImage = 'url(' + canvas.toDataURL() + ')';
-</script>
+//considering hue and saturation channels [0,1]
+var how = {
+	space: 'hsl',
+	channel: [0,1],
+	min: [0,0],
+	max: [360,100]
+};
+
+//render
+imageData.data = colorRanger.renderRect(what, where, how);
+
+//put image data back to canvas
+context.putImageData(imageData, 0, 0);
+
+//get a background with the rendered range
+document.documentElement.style.backgroundImage = 'url(' + canvas.toDataURL() + ')';
 ```
 
-You’ll see a range rendered as `body` background. You can see full list of ranges in [tests page](https://cdn.rawgit.com/dfcreative/color-space/master/test/index.html).
+You’ll see a range rendered as `html` background. You can see full list of ranges in [tests page](https://cdn.rawgit.com/dfcreative/color-space/master/test/index.html).
 
 
 # API
 
-[polar/rect image]
-
-##### `.renderRect(rgb, space, channel, min, max, imageData)`
-##### `.renderPolar(rgb, space, channel, min, max, imageData)`
+##### `.renderRect(rgb, buffer, options)`
+##### `.renderPolar(rgb, buffer, options)`
 
 Render rectangular or polar range into an `imageData`. Size of the final image is taken such that it fills the whole `imageData` area.
 
@@ -100,9 +109,10 @@ Render rectangular or polar range into an `imageData`. Size of the final image i
 
 <br/>
 
-[chess grid image]
 
-##### `.renderGrid(rgbA, rgbB, imageData)`
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAJElEQVQoU2OsqKhIY8ACOjo6ZmETZxyRGrCFBEgMV2AwjkQNAGKgIuHnlRM+AAAAAElFTkSuQmCC"/>
+
+##### `.renderGrid(rgbA, rgbB, buffer)`
 
 Render a chess grid, useful for transparency grid image rendering. Grid size is automatically figured out from the `imageData` size.
 

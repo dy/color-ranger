@@ -74,30 +74,33 @@ describe('axis', function(){
 	});
 
 	it('[x]', function(){
-		createRangeCase('x',
-			'horizontal',
-			ranger.renderRect(color.rgbArray(), {
+		var opts = {
 				space: 'hsl', channel: [0], min: [0], max: [360]
-			}, data)
+			};
+			createRangeCase('x',
+			'horizontal',
+			ranger.renderRect(color.rgbArray(), data, opts)
 		);
 	});
 
 	it('[null, y]', function(){
-		createRangeCase('y', 'vertical', ranger.renderRect(color.rgbArray(), {
+		var opts = {
 			space: 'hsl',
 			channel: [null, 0],
 			min: [0,0],
 			max: [null, 360]
-		}, data));
+		};
+		createRangeCase('y', 'vertical', ranger.renderRect(color.rgbArray(), data, opts));
 	});
 
 	it('[x,y]', function(){
-		createRangeCase('x-y', 'rect', ranger.renderRect(color.rgbArray(), {
+		var opts = {
 			space: 'hsl',
 			channel: [0, 1],
 			min: [0,0],
 			max: [360, 100]
-		}, data));
+		};
+		createRangeCase('x-y', 'rect', ranger.renderRect(color.rgbArray(), data, opts));
 	});
 });
 
@@ -115,7 +118,9 @@ describe('alpha', function(){
 
 		cnv.width = 12; cnv.height = 12;
 		var gridData = ctx.getImageData(0,0,cnv.width,cnv.height);
-		ctx.putImageData(ranger.renderGrid([120,120,120,.4], [0,0,0,0], gridData), 0, 0);
+		gridData.data = ranger.renderGrid([120,120,120,.4], [0,0,0,0], gridData.data);
+
+		ctx.putImageData(gridData, 0, 0);
 
 		gridBg = 'url(' + cnv.toDataURL() + ')';
 
@@ -123,24 +128,28 @@ describe('alpha', function(){
 	});
 
 	it('alpha', function(){
-		createRangeCase('alpha', 'horizontal', ranger.renderRect(color.rgbaArray(), {
+		var opts = {
 			channel: [3]
-		}, data)).style.background += ' 0 0/cover, ' + gridBg;
+		};
+		createRangeCase('alpha', 'horizontal', ranger.renderRect(color.rgbaArray(), data, opts)).style.background += ' 0 0/cover, ' + gridBg;
 	});
 	it('red-alpha', function(){
-		createRangeCase('red-alpha', 'rect', ranger.renderRect(color.rgbaArray(), {
+		var opts = {
 			channel: [0,3]
-		}, data)).style.background += ' 0 0/cover, ' + gridBg;
+		};
+		createRangeCase('red-alpha', 'rect', ranger.renderRect(color.rgbaArray(), data, opts)).style.background += ' 0 0/cover, ' + gridBg;
 	});
 	it('hue-alpha', function(){
-		createRangeCase('hue-alpha', 'rect', ranger.renderRect(color.rgbaArray(), {
+		var opts = {
 			space: 'hsl', channel: [0,3], max:[360,255]
-		}, data)).style.background += ' 0 0/cover, ' + gridBg;
+		};
+		createRangeCase('hue-alpha', 'rect', ranger.renderRect(color.rgbaArray(), data, opts)).style.background += ' 0 0/cover, ' + gridBg;
 	});
 	it('lightness-alpha', function(){
-		createRangeCase('lightness-alpha', 'polar', ranger.renderRect(color.rgbaArray(), {
+		var opts = {
 			space: 'luv', channel: [0,3], max:[100,255]
-		}, data)).style.background += ' 0 0/cover, ' + gridBg;
+		};
+		createRangeCase('lightness-alpha', 'polar', ranger.renderRect(color.rgbaArray(), data, opts)).style.background += ' 0 0/cover, ' + gridBg;
 	});
 });
 
@@ -155,22 +164,26 @@ describe('horizontal',function(){
 		});
 		it('hue', function(){
 
-			createRangeCase('hue', 'horizontal', ranger.renderRect(color.rgbArray(), { space: 'hsl', channel: [0], min: [0], max: [360]}, data));
+			var opts = { space: 'hsl', channel: [0], min: [0], max: [360]};
+			createRangeCase('hue', 'horizontal', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 
 		it('saturation', function(){
 
-			createRangeCase('saturation', 'horizontal', ranger.renderRect(color.rgbArray(), { space: 'hsl', channel: [1], min: [0], max: [100]}, data));
+			var opts = { space: 'hsl', channel: [1], min: [0], max: [100]};
+			createRangeCase('saturation', 'horizontal', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 
 		it('lightness', function(){
 
-			createRangeCase('lightness', 'horizontal', ranger.renderRect(color.rgbArray(), { space: 'hsl', channel: [2], min: [0], max: [100]}, data));
+			var opts = { space: 'hsl', channel: [2], min: [0], max: [100]};
+			createRangeCase('lightness', 'horizontal', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 
 		it('brightness', function(){
 
-			createRangeCase('brightness', 'horizontal', ranger.renderRect(color.rgbArray(), { space: 'hsv', channel: [2], min: [0], max: [100]}, data));
+			var opts = { space: 'hsv', channel: [2], min: [0], max: [100]};
+			createRangeCase('brightness', 'horizontal', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 	});
 
@@ -181,17 +194,20 @@ describe('horizontal',function(){
 		});
 		it('red', function(){
 
-			createRangeCase('red', 'horizontal', ranger.renderRect(color.rgbArray(), { space: 'rgb', channel: [0], min: [0], max: [255]}, data));
+			var opts = { space: 'rgb', channel: [0], min: [0], max: [255]};
+			createRangeCase('red', 'horizontal', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 
 		it('green', function(){
 
-			createRangeCase('green', 'horizontal', ranger.renderRect(color.rgbArray(), { space: 'rgb', channel: [1], min: [0], max: [255]}, data));
+			var opts = { space: 'rgb', channel: [1], min: [0], max: [255]};
+			createRangeCase('green', 'horizontal', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 
 		it('blue', function(){
 
-			createRangeCase('blue', 'horizontal', ranger.renderRect(color.rgbArray(), { space: 'rgb', channel: [2], min: [0], max: [255]}, data));
+			var opts = { space: 'rgb', channel: [2], min: [0], max: [255]};
+			createRangeCase('blue', 'horizontal', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 	});
 
@@ -202,22 +218,26 @@ describe('horizontal',function(){
 		});
 		it('cyan', function(){
 
-			createRangeCase('cyan', 'horizontal', ranger.renderRect(color.rgbArray(), { space: 'cmyk', channel: [0], min: [0], max: [100]}, data));
+			var opts = { space: 'cmyk', channel: [0], min: [0], max: [100]};
+			createRangeCase('cyan', 'horizontal', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 
 		it('magenta', function(){
 
-			createRangeCase('magenta', 'horizontal', ranger.renderRect(color.rgbArray(), { space: 'cmyk', channel: [1], min: [0], max: [100]}, data));
+			var opts = { space: 'cmyk', channel: [1], min: [0], max: [100]};
+			createRangeCase('magenta', 'horizontal', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 
 		it('yellow', function(){
 
-			createRangeCase('yellow', 'horizontal', ranger.renderRect(color.rgbArray(), { space: 'cmyk', channel: [2], min: [0], max: [100]}, data));
+			var opts = { space: 'cmyk', channel: [2], min: [0], max: [100]};
+			createRangeCase('yellow', 'horizontal', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 
 		it('black', function(){
 
-			createRangeCase('black', 'horizontal', ranger.renderRect(color.rgbArray(), { space: 'cmyk', channel: [3], min: [0], max: [100]}, data));
+			var opts = { space: 'cmyk', channel: [3], min: [0], max: [100]};
+			createRangeCase('black', 'horizontal', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 	});
 
@@ -228,15 +248,18 @@ describe('horizontal',function(){
 		});
 		it('x', function(){
 
-			createRangeCase('x', 'horizontal', ranger.renderRect(color.rgbArray(), { space: 'xyz', channel: [0], min: [0], max: [95]}, data));
+			var opts = { space: 'xyz', channel: [0], min: [0], max: [95]};
+			createRangeCase('x', 'horizontal', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 		it('y', function(){
 
-			createRangeCase('y', 'horizontal', ranger.renderRect(color.rgbArray(), { space: 'xyz', channel: [1], min: [0], max: [100]}, data));
+			var opts = { space: 'xyz', channel: [1], min: [0], max: [100]};
+			createRangeCase('y', 'horizontal', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 		it('z', function(){
 
-			createRangeCase('z', 'horizontal', ranger.renderRect(color.rgbArray(), { space: 'xyz', channel: [2], min: [0], max: [109]}, data));
+			var opts = { space: 'xyz', channel: [2], min: [0], max: [109]};
+			createRangeCase('z', 'horizontal', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 	});
 
@@ -247,28 +270,34 @@ describe('horizontal',function(){
 		});
 		it('L', function(){
 
-			createRangeCase('L', 'horizontal', ranger.renderRect(color.rgbArray(), { space: 'lab', channel: [0], min: [0], max: [100]}, data));
+			var opts = { space: 'lab', channel: [0], min: [0], max: [100]};
+			createRangeCase('L', 'horizontal', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 		it('a', function(){
 
-			createRangeCase('a', 'horizontal', ranger.renderRect(color.rgbArray(), { space: 'lab', channel: [1], min: [-100], max: [100]}, data));
+			var opts = { space: 'lab', channel: [1], min: [-100], max: [100]};
+			createRangeCase('a', 'horizontal', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 		it('b', function(){
 
-			createRangeCase('b', 'horizontal', ranger.renderRect(color.rgbArray(), { space: 'lab', channel: [2], min: [-100], max: [100]}, data));
+			var opts = { space: 'lab', channel: [2], min: [-100], max: [100]};
+			createRangeCase('b', 'horizontal', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 
 		it('l', function(){
 
-			createRangeCase('l', 'horizontal', ranger.renderRect(color.rgbArray(), { space: 'lchab', channel: [0], min: [0], max: [100]}, data));
+			var opts = { space: 'lchab', channel: [0], min: [0], max: [100]};
+			createRangeCase('l', 'horizontal', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 		it('c', function(){
 
-			createRangeCase('c', 'horizontal', ranger.renderRect(color.rgbArray(), { space: 'lchab', channel: [1], min: [0], max: [100]}, data));
+			var opts = { space: 'lchab', channel: [1], min: [0], max: [100]};
+			createRangeCase('c', 'horizontal', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 		it('h', function(){
 
-			createRangeCase('h', 'horizontal', ranger.renderRect(color.rgbArray(), { space: 'lchab', channel: [2], min: [0], max: [360]}, data));
+			var opts = { space: 'lchab', channel: [2], min: [0], max: [360]};
+			createRangeCase('h', 'horizontal', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 	});
 
@@ -279,28 +308,34 @@ describe('horizontal',function(){
 		});
 		it('L(uv)', function(){
 
-			createRangeCase('L', 'horizontal', ranger.renderRect(color.rgbArray(), { space: 'luv', channel: [0], min: [0], max: [100]}, data));
+			var opts = { space: 'luv', channel: [0], min: [0], max: [100]};
+			createRangeCase('L', 'horizontal', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 		it('υ', function(){
 
-			createRangeCase('u', 'horizontal', ranger.renderRect(color.rgbArray(), { space: 'luv', channel: [1], min: [-100], max: [100]}, data));
+			var opts = { space: 'luv', channel: [1], min: [-100], max: [100]};
+			createRangeCase('u', 'horizontal', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 		it('ν', function(){
 
-			createRangeCase('v', 'horizontal', ranger.renderRect(color.rgbArray(), { space: 'luv', channel: [2], min: [-100], max: [100]}, data));
+			var opts = { space: 'luv', channel: [2], min: [-100], max: [100]};
+			createRangeCase('v', 'horizontal', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 
 		it('l(uv)', function(){
 
-			createRangeCase('lυν', 'horizontal', ranger.renderRect(color.rgbArray(), { space: 'lchuv', channel: [0], min: [0], max: [100]}, data));
+			var opts = { space: 'lchuv', channel: [0], min: [0], max: [100]};
+			createRangeCase('lυν', 'horizontal', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 		it('c(uv)', function(){
 
-			createRangeCase('cυν', 'horizontal', ranger.renderRect(color.rgbArray(), { space: 'lchuv', channel: [1], min: [0], max: [100]}, data));
+			var opts = { space: 'lchuv', channel: [1], min: [0], max: [100]};
+			createRangeCase('cυν', 'horizontal', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 		it('h(uv)', function(){
 
-			createRangeCase('hυν', 'horizontal', ranger.renderRect(color.rgbArray(), { space: 'lchuv', channel: [2], min: [0], max: [360]}, data));
+			var opts = { space: 'lchuv', channel: [2], min: [0], max: [360]};
+			createRangeCase('hυν', 'horizontal', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 	});
 });
@@ -316,33 +351,39 @@ describe('vertical',function(){
 			createSection(this.test.parent.title);
 		});
 		it('hue', function(){
-			createRangeCase('hue', 'vertical', ranger.renderRect(color.rgbArray(),{
-			 space: 'hsl', channel: [null, 0], min: [null, 0], max: [null, 360]}, data));
+			var opts = {
+			 space: 'hsl', channel: [null, 0], min: [null, 0], max: [null, 360]};
+			 createRangeCase('hue', 'vertical', ranger.renderRect(color.rgbArray(),data, opts));
 		});
 
 		it('saturation', function(){
-			createRangeCase('saturation', 'vertical', ranger.renderRect(color.rgbArray(),{
-			 space: 'hsl', channel: [null, 1], min: [null, 0], max: [null, 100]}, data));
+			var opts = {
+			 space: 'hsl', channel: [null, 1], min: [null, 0], max: [null, 100]};
+			 createRangeCase('saturation', 'vertical', ranger.renderRect(color.rgbArray(),data, opts));
 		});
 
 		it('lightness', function(){
-			createRangeCase('lightness', 'vertical', ranger.renderRect(color.rgbArray(),{
-			 space: 'hsl', channel: [null, 2], min: [null, 0], max: [null, 100]}, data));
+			var opts = {
+			 space: 'hsl', channel: [null, 2], min: [null, 0], max: [null, 100]};
+			 createRangeCase('lightness', 'vertical', ranger.renderRect(color.rgbArray(),data, opts));
 		});
 
 		it('brightness', function(){
-			createRangeCase('brightness', 'vertical', ranger.renderRect(color.rgbArray(),{
-			 space: 'hsv', channel: [null, 2], min: [null, 0], max: [null, 100]}, data));
+			var opts = {
+			 space: 'hsv', channel: [null, 2], min: [null, 0], max: [null, 100]};
+			 createRangeCase('brightness', 'vertical', ranger.renderRect(color.rgbArray(),data, opts));
 		});
 
 		it('whiteness', function(){
-			createRangeCase('whiteness', 'vertical', ranger.renderRect(color.rgbArray(),{
-			 space: 'hwb', channel: [null, 1], min: [null, 0], max: [null, 100]}, data));
+			var opts = {
+			 space: 'hwb', channel: [null, 1], min: [null, 0], max: [null, 100]};
+			 createRangeCase('whiteness', 'vertical', ranger.renderRect(color.rgbArray(),data, opts));
 		});
 
 		it('blackness', function(){
-			createRangeCase('blackness', 'vertical', ranger.renderRect(color.rgbArray(),{
-			 space: 'hwb', channel: [null, 2], min: [null, 0], max: [null, 100]}, data));
+			var opts = {
+			 space: 'hwb', channel: [null, 2], min: [null, 0], max: [null, 100]};
+			 createRangeCase('blackness', 'vertical', ranger.renderRect(color.rgbArray(),data, opts));
 		});
 	});
 
@@ -352,18 +393,21 @@ describe('vertical',function(){
 			createSection(this.test.parent.title);
 		});
 		it('red', function(){
-			createRangeCase('red', 'vertical', ranger.renderRect(color.rgbArray(),{
-			 space: 'rgb', channel: [null, 0], min: [null, 0], max: [null, 255]}, data));
+			var opts = {
+			 space: 'rgb', channel: [null, 0], min: [null, 0], max: [null, 255]};
+			 createRangeCase('red', 'vertical', ranger.renderRect(color.rgbArray(),data, opts));
 		});
 
 		it('green', function(){
-			createRangeCase('green', 'vertical', ranger.renderRect(color.rgbArray(),{
-			 space: 'rgb', channel: [null, 1], min: [null, 0], max: [null, 255]}, data));
+			var opts = {
+			 space: 'rgb', channel: [null, 1], min: [null, 0], max: [null, 255]};
+			 createRangeCase('green', 'vertical', ranger.renderRect(color.rgbArray(),data, opts));
 		});
 
 		it('blue', function(){
-			createRangeCase('blue', 'vertical', ranger.renderRect(color.rgbArray(),{
-			 space: 'rgb', channel: [null, 2], min: [null, 0], max: [null, 255]}, data));
+			var opts = {
+			 space: 'rgb', channel: [null, 2], min: [null, 0], max: [null, 255]};
+			 createRangeCase('blue', 'vertical', ranger.renderRect(color.rgbArray(),data, opts));
 		});
 	});
 
@@ -373,23 +417,27 @@ describe('vertical',function(){
 			createSection(this.test.parent.title);
 		});
 		it('cyan', function(){
-			createRangeCase('cyan', 'vertical', ranger.renderRect(color.rgbArray(),{
-			 space: 'cmyk', channel: [null, 0], min: [null, 0], max: [null, 100]}, data));
+			var opts = {
+			 space: 'cmyk', channel: [null, 0], min: [null, 0], max: [null, 100]};
+			 createRangeCase('cyan', 'vertical', ranger.renderRect(color.rgbArray(),data, opts));
 		});
 
 		it('magenta', function(){
-			createRangeCase('magenta', 'vertical', ranger.renderRect(color.rgbArray(),{
-			 space: 'cmyk', channel: [null, 1], min: [null, 0], max: [null, 100]}, data));
+			var opts = {
+			 space: 'cmyk', channel: [null, 1], min: [null, 0], max: [null, 100]};
+			 createRangeCase('magenta', 'vertical', ranger.renderRect(color.rgbArray(),data, opts));
 		});
 
 		it('yellow', function(){
-			createRangeCase('yellow', 'vertical', ranger.renderRect(color.rgbArray(),{
-			 space: 'cmyk', channel: [null, 2], min: [null, 0], max: [null, 100]}, data));
+			var opts = {
+			 space: 'cmyk', channel: [null, 2], min: [null, 0], max: [null, 100]};
+			 createRangeCase('yellow', 'vertical', ranger.renderRect(color.rgbArray(),data, opts));
 		});
 
 		it('black', function(){
-			createRangeCase('black', 'vertical', ranger.renderRect(color.rgbArray(),{
-			 space: 'cmyk', channel: [null, 3], min: [null, 0], max: [null, 100]}, data));
+			var opts = {
+			 space: 'cmyk', channel: [null, 3], min: [null, 0], max: [null, 100]};
+			 createRangeCase('black', 'vertical', ranger.renderRect(color.rgbArray(),data, opts));
 		});
 	});
 
@@ -399,16 +447,19 @@ describe('vertical',function(){
 			createSection(this.test.parent.title);
 		});
 		it('x', function(){
-			createRangeCase('x', 'vertical', ranger.renderRect(color.rgbArray(),{
-			 space: 'xyz', channel: [null, 0], min: [null, 0], max: [null, 95]}, data));
+			var opts = {
+			 space: 'xyz', channel: [null, 0], min: [null, 0], max: [null, 95]};
+			 createRangeCase('x', 'vertical', ranger.renderRect(color.rgbArray(),data, opts));
 		});
 		it('y', function(){
-			createRangeCase('y', 'vertical', ranger.renderRect(color.rgbArray(),{
-			 space: 'xyz', channel: [null, 1], min: [null, 0], max: [null, 100]}, data));
+			var opts = {
+			 space: 'xyz', channel: [null, 1], min: [null, 0], max: [null, 100]};
+			 createRangeCase('y', 'vertical', ranger.renderRect(color.rgbArray(),data, opts));
 		});
 		it('z', function(){
-			createRangeCase('z', 'vertical', ranger.renderRect(color.rgbArray(),{
-			 space: 'xyz', channel: [null, 2], min: [null, 0], max: [null, 109]}, data));
+			var opts = {
+			 space: 'xyz', channel: [null, 2], min: [null, 0], max: [null, 109]};
+			 createRangeCase('z', 'vertical', ranger.renderRect(color.rgbArray(),data, opts));
 		});
 	});
 
@@ -418,29 +469,35 @@ describe('vertical',function(){
 			createSection(this.test.parent.title);
 		});
 		it('L', function(){
-			createRangeCase('L', 'vertical', ranger.renderRect(color.rgbArray(),{
-			 space: 'lab', channel: [null, 0], min: [null, 0], max: [null, 100]}, data));
+			var opts = {
+			 space: 'lab', channel: [null, 0], min: [null, 0], max: [null, 100]};
+			 createRangeCase('L', 'vertical', ranger.renderRect(color.rgbArray(),data, opts));
 		});
 		it('a', function(){
-			createRangeCase('a', 'vertical', ranger.renderRect(color.rgbArray(),{
-			 space: 'lab', channel: [null, 1], min: [null, 0], max: [null, 100]}, data));
+			var opts = {
+			 space: 'lab', channel: [null, 1], min: [null, 0], max: [null, 100]};
+			 createRangeCase('a', 'vertical', ranger.renderRect(color.rgbArray(),data, opts));
 		});
 		it('b', function(){
-			createRangeCase('b', 'vertical', ranger.renderRect(color.rgbArray(),{
-			 space: 'lab', channel: [null, 2], min: [null, 0], max: [null, 100]}, data));
+			var opts = {
+			 space: 'lab', channel: [null, 2], min: [null, 0], max: [null, 100]};
+			 createRangeCase('b', 'vertical', ranger.renderRect(color.rgbArray(),data, opts));
 		});
 
 		it('l', function(){
-			createRangeCase('l', 'vertical', ranger.renderRect(color.rgbArray(),{
-			 space: 'lchab', channel: [null, 0], min: [null, 0], max: [null, 100]}, data));
+			var opts = {
+			 space: 'lchab', channel: [null, 0], min: [null, 0], max: [null, 100]};
+			 createRangeCase('l', 'vertical', ranger.renderRect(color.rgbArray(),data, opts));
 		});
 		it('c', function(){
-			createRangeCase('c', 'vertical', ranger.renderRect(color.rgbArray(),{
-			 space: 'lchab', channel: [null, 1], min: [null, 0], max: [null, 100]}, data));
+			var opts = {
+			 space: 'lchab', channel: [null, 1], min: [null, 0], max: [null, 100]};
+			 createRangeCase('c', 'vertical', ranger.renderRect(color.rgbArray(),data, opts));
 		});
 		it('h', function(){
-			createRangeCase('h', 'vertical', ranger.renderRect(color.rgbArray(),{
-			 space: 'lchab', channel: [null, 2], min: [null, 0], max: [null, 360]}, data));
+			var opts = {
+			 space: 'lchab', channel: [null, 2], min: [null, 0], max: [null, 360]};
+			 createRangeCase('h', 'vertical', ranger.renderRect(color.rgbArray(),data, opts));
 		});
 	});
 
@@ -450,29 +507,35 @@ describe('vertical',function(){
 			createSection(this.test.parent.title);
 		});
 		it('L(uv)', function(){
-			createRangeCase('L', 'vertical', ranger.renderRect(color.rgbArray(),{
-			 space: 'luv', channel: [null, 0], min: [null, 0], max: [null, 100]}, data));
+			var opts = {
+			 space: 'luv', channel: [null, 0], min: [null, 0], max: [null, 100]};
+			 createRangeCase('L', 'vertical', ranger.renderRect(color.rgbArray(),data, opts));
 		});
 		it('u', function(){
-			createRangeCase('u', 'vertical', ranger.renderRect(color.rgbArray(),{
-			 space: 'luv', channel: [null, 1], min: [null, 0], max: [null, 100]}, data));
+			var opts = {
+			 space: 'luv', channel: [null, 1], min: [null, 0], max: [null, 100]};
+			 createRangeCase('u', 'vertical', ranger.renderRect(color.rgbArray(),data, opts));
 		});
 		it('v', function(){
-			createRangeCase('v', 'vertical', ranger.renderRect(color.rgbArray(),{
-			 space: 'luv', channel: [null, 2], min: [null, 0], max: [null, 100]}, data));
+			var opts = {
+			 space: 'luv', channel: [null, 2], min: [null, 0], max: [null, 100]};
+			 createRangeCase('v', 'vertical', ranger.renderRect(color.rgbArray(),data, opts));
 		});
 
 		it('l(uv)', function(){
-			createRangeCase('l', 'vertical', ranger.renderRect(color.rgbArray(),{
-			 space: 'lchuv', channel: [null, 0], min: [null, 0], max: [null, 100]}, data));
+			var opts = {
+			 space: 'lchuv', channel: [null, 0], min: [null, 0], max: [null, 100]};
+			 createRangeCase('l', 'vertical', ranger.renderRect(color.rgbArray(),data, opts));
 		});
 		it('c(uv)', function(){
-			createRangeCase('c', 'vertical', ranger.renderRect(color.rgbArray(),{
-			 space: 'lchuv', channel: [null, 1], min: [null, 0], max: [null, 100]}, data));
+			var opts = {
+			 space: 'lchuv', channel: [null, 1], min: [null, 0], max: [null, 100]};
+			 createRangeCase('c', 'vertical', ranger.renderRect(color.rgbArray(),data, opts));
 		});
 		it('h(uv)', function(){
-			createRangeCase('h', 'vertical', ranger.renderRect(color.rgbArray(),{
-			 space: 'lchuv', channel: [null, 2], min: [null, 0], max: [null, 360]}, data));
+			var opts = {
+			 space: 'lchuv', channel: [null, 2], min: [null, 0], max: [null, 360]};
+			 createRangeCase('h', 'vertical', ranger.renderRect(color.rgbArray(),data, opts));
 		});
 	});
 });
@@ -487,27 +550,33 @@ describe('rectangular', function(){
 			createSection(this.test.parent.title);
 		});
 		it('hue-lightness', function(){
-			createRangeCase('h-l', 'rect', ranger.renderRect(color.rgbArray(), {space: 'hsl', channel:[0, 2],min: [0,0],max: [360, 100]}, data));
+			var opts = {space: 'hsl', channel:[0, 2],min: [0,0],max: [360, 100]};
+			createRangeCase('h-l', 'rect', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 
 		it('hue-brightness', function(){
-			createRangeCase('h-b', 'rect', ranger.renderRect(color.rgbArray(), {space: 'hsv', channel:[0,2], min:[0,0], max:[360, 100]}, data));
+			var opts = {space: 'hsv', channel:[0,2], min:[0,0], max:[360, 100]};
+			createRangeCase('h-b', 'rect', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 
 		it('hue-saturation', function(){
-			createRangeCase('h-s', 'rect', ranger.renderRect(color.rgbArray(), {space: 'hsl', channel:[0,1], min:[0,0], max:[360, 100]}, data));
+			var opts = {space: 'hsl', channel:[0,1], min:[0,0], max:[360, 100]};
+			createRangeCase('h-s', 'rect', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 
 		it('hue-saturationv', function(){
-			createRangeCase('h-sv', 'rect', ranger.renderRect(color.rgbArray(), {space: 'hsv', channel:[0,1], min:[0,0], max:[360, 100]}, data));
+			var opts = {space: 'hsv', channel:[0,1], min:[0,0], max:[360, 100]};
+			createRangeCase('h-sv', 'rect', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 
 		it('saturation-lightness', function(){
-			createRangeCase('s-l', 'rect', ranger.renderRect(color.rgbArray(), {space: 'hsl', channel:[1,2], min:[0,0], max:[100,100]}, data));
+			var opts = {space: 'hsl', channel:[1,2], min:[0,0], max:[100,100]};
+			createRangeCase('s-l', 'rect', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 
 		it('saturation-brightness', function(){
-			createRangeCase('s-b', 'rect', ranger.renderRect(color.rgbArray(), {space: 'hsv', channel:[1,2], min:[0,0], max:[100,100]}, data));
+			var opts = {space: 'hsv', channel:[1,2], min:[0,0], max:[100,100]};
+			createRangeCase('s-b', 'rect', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 	});
 
@@ -517,15 +586,18 @@ describe('rectangular', function(){
 			createSection(this.test.parent.title);
 		});
 		it('red-green', function(){
-			createRangeCase('r-g', 'rect', ranger.renderRect(color.rgbArray(), {space: 'rgb', channel:[0,1], min:[0,0], max:[255,255]}, data));
+			var opts = {space: 'rgb', channel:[0,1], min:[0,0], max:[255,255]};
+			createRangeCase('r-g', 'rect', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 
 		it('red-blue', function(){
-			createRangeCase('r-b', 'rect', ranger.renderRect(color.rgbArray(), {space: 'rgb', channel:[0,2], min:[0,0], max:[255,255]},  data));
+			var opts = {space: 'rgb', channel:[0,2], min:[0,0], max:[255,255]};
+			createRangeCase('r-b', 'rect', ranger.renderRect(color.rgbArray(),  data, opts));
 		});
 
 		it('green-blue', function(){
-			createRangeCase('g-b', 'rect', ranger.renderRect(color.rgbArray(), {space: 'rgb', channel:[1,2], min:[0,0], max:[255,255]},  data));
+			var opts = {space: 'rgb', channel:[1,2], min:[0,0], max:[255,255]};
+			createRangeCase('g-b', 'rect', ranger.renderRect(color.rgbArray(),  data, opts));
 		});
 	});
 
@@ -535,27 +607,33 @@ describe('rectangular', function(){
 			createSection(this.test.parent.title);
 		});
 		it('cyan-magenta', function(){
-			createRangeCase('c-m', 'rect', ranger.renderRect(color.rgbArray(), {space: 'cmyk', channel:[0,1], min:[0,0], max:[100,100]}, data));
+			var opts = {space: 'cmyk', channel:[0,1], min:[0,0], max:[100,100]};
+			createRangeCase('c-m', 'rect', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 
 		it('cyan-yellow', function(){
-			createRangeCase('c-y', 'rect', ranger.renderRect(color.rgbArray(), {space: 'cmyk', channel:[0,2], min:[0,0], max:[100,100]}, data));
+			var opts = {space: 'cmyk', channel:[0,2], min:[0,0], max:[100,100]};
+			createRangeCase('c-y', 'rect', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 
 		it('cyan-black', function(){
-			createRangeCase('c-k', 'rect', ranger.renderRect(color.rgbArray(), {space: 'cmyk', channel:[0,3], min:[0,0], max:[100,100]}, data));
+			var opts = {space: 'cmyk', channel:[0,3], min:[0,0], max:[100,100]};
+			createRangeCase('c-k', 'rect', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 
 		it('magenta-yellow', function(){
-			createRangeCase('m-y', 'rect', ranger.renderRect(color.rgbArray(), {space: 'cmyk', channel:[1,2], min:[0,0], max:[100,100]}, data));
+			var opts = {space: 'cmyk', channel:[1,2], min:[0,0], max:[100,100]};
+			createRangeCase('m-y', 'rect', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 
 		it('magenta-black', function(){
-			createRangeCase('m-k', 'rect', ranger.renderRect(color.rgbArray(), {space: 'cmyk', channel:[1,3], min:[0,0], max:[100,100]}, data));
+			var opts = {space: 'cmyk', channel:[1,3], min:[0,0], max:[100,100]};
+			createRangeCase('m-k', 'rect', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 
 		it('yellow-black', function(){
-			createRangeCase('y-k', 'rect', ranger.renderRect(color.rgbArray(), {space: 'cmyk', channel:[2,3], min:[0,0], max:[100,100]}, data));
+			var opts = {space: 'cmyk', channel:[2,3], min:[0,0], max:[100,100]};
+			createRangeCase('y-k', 'rect', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 	});
 
@@ -565,13 +643,16 @@ describe('rectangular', function(){
 			createSection(this.test.parent.title);
 		});
 		it('x-y', function(){
-			createRangeCase('x-y', 'rect', ranger.renderRect(color.rgbArray(), {space: 'xyz', channel:[0,1], min:[0,0], max:[95,100]}, data));
+			var opts = {space: 'xyz', channel:[0,1], min:[0,0], max:[95,100]};
+			createRangeCase('x-y', 'rect', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 		it('x-z', function(){
-			createRangeCase('x-z', 'rect', ranger.renderRect(color.rgbArray(), {space: 'xyz', channel:[0,2], min:[0,0], max:[95,109]}, data));
+			var opts = {space: 'xyz', channel:[0,2], min:[0,0], max:[95,109]};
+			createRangeCase('x-z', 'rect', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 		it('y-z', function(){
-			createRangeCase('y-z', 'rect', ranger.renderRect(color.rgbArray(), {space: 'xyz', channel:[1,2], min:[0,0], max:[100, 109]}, data));
+			var opts = {space: 'xyz', channel:[1,2], min:[0,0], max:[100, 109]};
+			createRangeCase('y-z', 'rect', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 	});
 
@@ -581,23 +662,29 @@ describe('rectangular', function(){
 			createSection(this.test.parent.title);
 		});
 		it('l-a', function(){
-			createRangeCase('l-a', 'rect', ranger.renderRect(color.rgbArray(), {space: 'lab', channel:[0,1], min:[0,-100], max:[100,100]}, data));
+			var opts = {space: 'lab', channel:[0,1], min:[0,-100], max:[100,100]};
+			createRangeCase('l-a', 'rect', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 		it('l-b', function(){
-			createRangeCase('l-b', 'rect', ranger.renderRect(color.rgbArray(), {space: 'lab', channel:[0,2], min:[0,-100], max:[100,100]}, data));
+			var opts = {space: 'lab', channel:[0,2], min:[0,-100], max:[100,100]};
+			createRangeCase('l-b', 'rect', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 		it('a-b', function(){
-			createRangeCase('a-b', 'rect', ranger.renderRect(color.rgbArray(), {space: 'lab', channel:[1,2], min:[-100,-100], max:[100,100]}, data));
+			var opts = {space: 'lab', channel:[1,2], min:[-100,-100], max:[100,100]};
+			createRangeCase('a-b', 'rect', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 
 		it('l-c', function(){
-			createRangeCase('l-c', 'rect', ranger.renderRect(color.rgbArray(), {space: 'lchab', channel:[0,1], min:[0,0], max:[100,100]}, data));
+			var opts = {space: 'lchab', channel:[0,1], min:[0,0], max:[100,100]};
+			createRangeCase('l-c', 'rect', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 		it('l-h', function(){
-			createRangeCase('l-h', 'rect', ranger.renderRect(color.rgbArray(), {space: 'lchab', channel:[0,2], min:[0,0], max:[100,360]}, data));
+			var opts = {space: 'lchab', channel:[0,2], min:[0,0], max:[100,360]};
+			createRangeCase('l-h', 'rect', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 		it('c-h', function(){
-			createRangeCase('c-h', 'rect', ranger.renderRect(color.rgbArray(), {space: 'lchab', channel:[1,2], min:[0,0], max:[100,360]}, data));
+			var opts = {space: 'lchab', channel:[1,2], min:[0,0], max:[100,360]};
+			createRangeCase('c-h', 'rect', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 	});
 
@@ -607,23 +694,29 @@ describe('rectangular', function(){
 			createSection(this.test.parent.title);
 		});
 		it('l-u', function(){
-			createRangeCase('l-u', 'rect', ranger.renderRect(color.rgbArray(), {space: 'luv', channel:[0,1], min:[0,-100], max:[100,100]}, data));
+			var opts = {space: 'luv', channel:[0,1], min:[0,-100], max:[100,100]};
+			createRangeCase('l-u', 'rect', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 		it('l-v', function(){
-			createRangeCase('l-v', 'rect', ranger.renderRect(color.rgbArray(), {space: 'luv', channel:[0,2], min:[0,-100], max:[100,100]}, data));
+			var opts = {space: 'luv', channel:[0,2], min:[0,-100], max:[100,100]};
+			createRangeCase('l-v', 'rect', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 		it('u-v', function(){
-			createRangeCase('u-v', 'rect', ranger.renderRect(color.rgbArray(), {space: 'luv', channel: [1,2], min: [-100,-100], max:[100,100]}, data));
+			var opts = {space: 'luv', channel: [1,2], min: [-100,-100], max:[100,100]};
+			createRangeCase('u-v', 'rect', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 
 		it('l-cυν', function(){
-			createRangeCase('l-cυν', 'rect', ranger.renderRect(color.rgbArray(), {space: 'lchuv', channel:[0,1], min:[0,0], max:[100,100]}, data));
+			var opts = {space: 'lchuv', channel:[0,1], min:[0,0], max:[100,100]};
+			createRangeCase('l-cυν', 'rect', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 		it('l-hυν', function(){
-			createRangeCase('l-hυν', 'rect', ranger.renderRect(color.rgbArray(), {space: 'lchuv', channel:[0,2], min:[0,0], max:[100,360]}, data));
+			var opts = {space: 'lchuv', channel:[0,2], min:[0,0], max:[100,360]};
+			createRangeCase('l-hυν', 'rect', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 		it('c-hυν', function(){
-			createRangeCase('c-hυν', 'rect', ranger.renderRect(color.rgbArray(), {space: 'lchuv', channel:[1,2], min:[0,0], max:[100,360]}, data));
+			var opts = {space: 'lchuv', channel:[1,2], min:[0,0], max:[100,360]};
+			createRangeCase('c-hυν', 'rect', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 	});
 
@@ -633,24 +726,30 @@ describe('rectangular', function(){
 			createSection(this.test.parent.title);
 		});
 		it('husl-hs', function(){
-			createRangeCase('husl-hs', 'rect', ranger.renderRect(color.rgbArray(), {space: 'husl', channel:[0,1], min:[0,0], max:[360,100]}, data));
+			var opts = {space: 'husl', channel:[0,1], min:[0,0], max:[360,100]};
+			createRangeCase('husl-hs', 'rect', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 		it('husl-hl', function(){
-			createRangeCase('husl-hl', 'rect', ranger.renderRect(color.rgbArray(), {space: 'husl', channel:[0,2], min:[0,0], max:[360,100]}, data));
+			var opts = {space: 'husl', channel:[0,2], min:[0,0], max:[360,100]};
+			createRangeCase('husl-hl', 'rect', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 		it('husl-sl', function(){
-			createRangeCase('husl-sl', 'rect', ranger.renderRect(color.rgbArray(), {space: 'husl', channel:[1,2], min:[0,0], max:[100,100]}, data));
+			var opts = {space: 'husl', channel:[1,2], min:[0,0], max:[100,100]};
+			createRangeCase('husl-sl', 'rect', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 
 
 		it('huslp-hs', function(){
-			createRangeCase('huslp-hs', 'rect', ranger.renderRect(color.rgbArray(), {space: 'huslp', channel:[0,1], min:[0,0], max:[360,100]}, data));
+			var opts = {space: 'huslp', channel:[0,1], min:[0,0], max:[360,100]};
+			createRangeCase('huslp-hs', 'rect', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 		it('huslp-hl', function(){
-			createRangeCase('huslp-hl', 'rect', ranger.renderRect(color.rgbArray(), {space: 'huslp', channel:[0,2], min:[0,0], max:[360,100]}, data));
+			var opts = {space: 'huslp', channel:[0,2], min:[0,0], max:[360,100]};
+			createRangeCase('huslp-hl', 'rect', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 		it('huslp-sl', function(){
-			createRangeCase('huslp-sl', 'rect', ranger.renderRect(color.rgbArray(), {space: 'huslp', channel:[1,2], min:[0,0], max:[100,100]}, data));
+			var opts = {space: 'huslp', channel:[1,2], min:[0,0], max:[100,100]};
+			createRangeCase('huslp-sl', 'rect', ranger.renderRect(color.rgbArray(), data, opts));
 		});
 	});
 });
@@ -668,19 +767,23 @@ describe('conical', function(){
 			createSection(this.test.parent.title);
 		});
 		it('hue', function(){
-			createRangeCase('hue', 'polar', ranger.renderPolar(color.rgbArray(), {space:'hsl', channel:[0],min: [0], max:[360]}, data));
+			var opts = {space:'hsl', channel:[0],min: [0], max:[360]};
+			createRangeCase('hue', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 
 		it('saturation', function(){
-			createRangeCase('saturation', 'polar', ranger.renderPolar(color.rgbArray(), {space:'hsl', channel:[1],min: [0], max:[100]}, data));
+			var opts = {space:'hsl', channel:[1],min: [0], max:[100]};
+			createRangeCase('saturation', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 
 		it('lightness', function(){
-			createRangeCase('lightness', 'polar', ranger.renderPolar(color.rgbArray(), {space:'hsl', channel:[2],min: [0], max:[100]}, data));
+			var opts = {space:'hsl', channel:[2],min: [0], max:[100]};
+			createRangeCase('lightness', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 
 		it('brightness', function(){
-			createRangeCase('brightness', 'polar', ranger.renderPolar(color.rgbArray(), {space:'hsv', channel:[2],min: [0], max:[100]}, data));
+			var opts = {space:'hsv', channel:[2],min: [0], max:[100]};
+			createRangeCase('brightness', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 	});
 
@@ -689,15 +792,18 @@ describe('conical', function(){
 			createSection(this.test.parent.title);
 		});
 		it('red', function(){
-			createRangeCase('red', 'polar', ranger.renderPolar(color.rgbArray(), {space:'rgb', channel:[0],min: [0], max:[255]}, data));
+			var opts = {space:'rgb', channel:[0],min: [0], max:[255]};
+			createRangeCase('red', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 
 		it('green', function(){
-			createRangeCase('green', 'polar', ranger.renderPolar(color.rgbArray(), {space:'rgb', channel:[1],min: [0], max:[255]}, data));
+			var opts = {space:'rgb', channel:[1],min: [0], max:[255]};
+			createRangeCase('green', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 
 		it('blue', function(){
-			createRangeCase('blue', 'polar', ranger.renderPolar(color.rgbArray(), {space:'rgb', channel:[2],min: [0], max:[255]}, data));
+			var opts = {space:'rgb', channel:[2],min: [0], max:[255]};
+			createRangeCase('blue', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 	});
 
@@ -706,19 +812,23 @@ describe('conical', function(){
 			createSection(this.test.parent.title);
 		});
 		it('cyan', function(){
-			createRangeCase('cyan', 'polar', ranger.renderPolar(color.rgbArray(), {space:'cmyk', channel:[0],min: [0], max:[100]}, data));
+			var opts = {space:'cmyk', channel:[0],min: [0], max:[100]};
+			createRangeCase('cyan', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 
 		it('magenta', function(){
-			createRangeCase('magenta', 'polar', ranger.renderPolar(color.rgbArray(), {space:'cmyk', channel:[1],min: [0], max:[100]}, data));
+			var opts = {space:'cmyk', channel:[1],min: [0], max:[100]};
+			createRangeCase('magenta', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 
 		it('yellow', function(){
-			createRangeCase('yellow', 'polar', ranger.renderPolar(color.rgbArray(), {space:'cmyk', channel:[2],min: [0], max:[100]}, data));
+			var opts = {space:'cmyk', channel:[2],min: [0], max:[100]};
+			createRangeCase('yellow', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 
 		it('black', function(){
-			createRangeCase('black', 'polar', ranger.renderPolar(color.rgbArray(), {space:'cmyk', channel:[3],min: [0], max:[100]}, data));
+			var opts = {space:'cmyk', channel:[3],min: [0], max:[100]};
+			createRangeCase('black', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 	});
 
@@ -727,13 +837,16 @@ describe('conical', function(){
 			createSection(this.test.parent.title);
 		});
 		it('x', function(){
-			createRangeCase('x', 'polar', ranger.renderPolar(color.rgbArray(), {space:'xyz', channel:[0],min: [0], max:[95]}, data));
+			var opts = {space:'xyz', channel:[0],min: [0], max:[95]};
+			createRangeCase('x', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('y', function(){
-			createRangeCase('y', 'polar', ranger.renderPolar(color.rgbArray(), {space:'xyz', channel:[1],min: [0], max:[100]}, data));
+			var opts = {space:'xyz', channel:[1],min: [0], max:[100]};
+			createRangeCase('y', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('z', function(){
-			createRangeCase('z', 'polar', ranger.renderPolar(color.rgbArray(), {space:'xyz', channel:[2],min: [0], max:[109]}, data));
+			var opts = {space:'xyz', channel:[2],min: [0], max:[109]};
+			createRangeCase('z', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 	});
 
@@ -742,23 +855,29 @@ describe('conical', function(){
 			createSection(this.test.parent.title);
 		});
 		it('L', function(){
-			createRangeCase('L', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lab', channel:[0],min: [0], max:[100]}, data));
+			var opts = {space:'lab', channel:[0],min: [0], max:[100]};
+			createRangeCase('L', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('a', function(){
-			createRangeCase('a', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lab', channel:[1], min:[-100], max:[100]}, data));
+			var opts = {space:'lab', channel:[1], min:[-100], max:[100]};
+			createRangeCase('a', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('b', function(){
-			createRangeCase('b', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lab', channel:[2], min:[-100], max:[100]}, data));
+			var opts = {space:'lab', channel:[2], min:[-100], max:[100]};
+			createRangeCase('b', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 
 		it('l', function(){
-			createRangeCase('l', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lchab', channel:[0],min: [0], max:[100]}, data));
+			var opts = {space:'lchab', channel:[0],min: [0], max:[100]};
+			createRangeCase('l', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('c', function(){
-			createRangeCase('c', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lchab', channel:[1],min: [0], max:[100]}, data));
+			var opts = {space:'lchab', channel:[1],min: [0], max:[100]};
+			createRangeCase('c', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('h', function(){
-			createRangeCase('h', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lchab', channel:[2],min: [0], max:[360]}, data));
+			var opts = {space:'lchab', channel:[2],min: [0], max:[360]};
+			createRangeCase('h', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 	});
 
@@ -767,23 +886,29 @@ describe('conical', function(){
 			createSection(this.test.parent.title);
 		});
 		it('L(uv)', function(){
-			createRangeCase('L', 'polar', ranger.renderPolar(color.rgbArray(), {space:'luv', channel:[0],min: [0], max:[100]}, data));
+			var opts = {space:'luv', channel:[0],min: [0], max:[100]};
+			createRangeCase('L', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('u', function(){
-			createRangeCase('u', 'polar', ranger.renderPolar(color.rgbArray(), {space:'luv', channel:[1], min:[-100], max:[100]}, data));
+			var opts = {space:'luv', channel:[1], min:[-100], max:[100]};
+			createRangeCase('u', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('v', function(){
-			createRangeCase('v', 'polar', ranger.renderPolar(color.rgbArray(), {space:'luv', channel:[2], min:[-100], max:[100]}, data));
+			var opts = {space:'luv', channel:[2], min:[-100], max:[100]};
+			createRangeCase('v', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 
 		it('l(uv)', function(){
-			createRangeCase('lυν', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lchuv', channel:[0],min: [0], max:[100]}, data));
+			var opts = {space:'lchuv', channel:[0],min: [0], max:[100]};
+			createRangeCase('lυν', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('c(uv)', function(){
-			createRangeCase('cυν', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lchuv', channel:[1],min: [0], max:[100]}, data));
+			var opts = {space:'lchuv', channel:[1],min: [0], max:[100]};
+			createRangeCase('cυν', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('h(uv)', function(){
-			createRangeCase('hυν', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lchuv', channel:[2],min: [0], max:[360]}, data));
+			var opts = {space:'lchuv', channel:[2],min: [0], max:[360]};
+			createRangeCase('hυν', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 	});
 
@@ -793,24 +918,30 @@ describe('conical', function(){
 			createSection(this.test.parent.title);
 		});
 		it('husl-hue', function(){
-			createRangeCase('h', 'polar', ranger.renderPolar(color.rgbArray(), {space:'husl', channel:[0],min: [0], max:[360]}, data));
+			var opts = {space:'husl', channel:[0],min: [0], max:[360]};
+			createRangeCase('h', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('husl-sat', function(){
-			createRangeCase('s', 'polar', ranger.renderPolar(color.rgbArray(), {space:'husl', channel:[1],min: [0], max:[100]}, data));
+			var opts = {space:'husl', channel:[1],min: [0], max:[100]};
+			createRangeCase('s', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('husl-l', function(){
-			createRangeCase('l', 'polar', ranger.renderPolar(color.rgbArray(), {space:'husl', channel:[2],min: [0], max:[100]}, data));
+			var opts = {space:'husl', channel:[2],min: [0], max:[100]};
+			createRangeCase('l', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 
 
 		it('huslp-hue', function(){
-			createRangeCase('h', 'polar', ranger.renderPolar(color.rgbArray(), {space:'huslp', channel:[0],min: [0], max:[360]}, data));
+			var opts = {space:'huslp', channel:[0],min: [0], max:[360]};
+			createRangeCase('h', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('huslp-sat', function(){
-			createRangeCase('s', 'polar', ranger.renderPolar(color.rgbArray(), {space:'huslp', channel:[1],min: [0], max:[100]}, data));
+			var opts = {space:'huslp', channel:[1],min: [0], max:[100]};
+			createRangeCase('s', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('huslp-l', function(){
-			createRangeCase('l', 'polar', ranger.renderPolar(color.rgbArray(), {space:'huslp', channel:[2],min: [0], max:[100]}, data));
+			var opts = {space:'huslp', channel:[2],min: [0], max:[100]};
+			createRangeCase('l', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 	});
 });
@@ -826,19 +957,23 @@ describe('radial', function(){
 			createSection(this.test.parent.title);
 		});
 		it('hue', function(){
-			createRangeCase('hue', 'polar', ranger.renderPolar(color.rgbArray(), {space:'hsl', channel:[null, 0], min:[null, 0], max:[null, 360]}, data));
+			var opts = {space:'hsl', channel:[null, 0], min:[null, 0], max:[null, 360]};
+			createRangeCase('hue', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 
 		it('saturation', function(){
-			createRangeCase('saturation', 'polar', ranger.renderPolar(color.rgbArray(), {space:'hsl', channel:[null, 1], min:[null, 0], max:[null, 100]}, data));
+			var opts = {space:'hsl', channel:[null, 1], min:[null, 0], max:[null, 100]};
+			createRangeCase('saturation', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 
 		it('lightness', function(){
-			createRangeCase('lightness', 'polar', ranger.renderPolar(color.rgbArray(), {space:'hsl', channel:[null, 2], min:[null, 0], max:[null, 100]}, data));
+			var opts = {space:'hsl', channel:[null, 2], min:[null, 0], max:[null, 100]};
+			createRangeCase('lightness', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 
 		it('brightness', function(){
-			createRangeCase('brightness', 'polar', ranger.renderPolar(color.rgbArray(), {space:'hsv', channel:[null, 2], min:[null, 0], max:[null, 100]}, data));
+			var opts = {space:'hsv', channel:[null, 2], min:[null, 0], max:[null, 100]};
+			createRangeCase('brightness', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 	});
 
@@ -847,15 +982,18 @@ describe('radial', function(){
 			createSection(this.test.parent.title);
 		});
 		it('red', function(){
-			createRangeCase('red', 'polar', ranger.renderPolar(color.rgbArray(), {space:'rgb', channel:[null, 0], min:[null, 0], max:[null, 255]}, data));
+			var opts = {space:'rgb', channel:[null, 0], min:[null, 0], max:[null, 255]};
+			createRangeCase('red', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 
 		it('green', function(){
-			createRangeCase('green', 'polar', ranger.renderPolar(color.rgbArray(), {space:'rgb', channel:[null, 1], min:[null, 0], max:[null, 255]}, data));
+			var opts = {space:'rgb', channel:[null, 1], min:[null, 0], max:[null, 255]};
+			createRangeCase('green', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 
 		it('blue', function(){
-			createRangeCase('blue', 'polar', ranger.renderPolar(color.rgbArray(), {space:'rgb', channel:[null, 2], min:[null, 0], max:[null, 255]}, data));
+			var opts = {space:'rgb', channel:[null, 2], min:[null, 0], max:[null, 255]};
+			createRangeCase('blue', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 	});
 
@@ -864,19 +1002,23 @@ describe('radial', function(){
 			createSection(this.test.parent.title);
 		});
 		it('cyan', function(){
-			createRangeCase('cyan', 'polar', ranger.renderPolar(color.rgbArray(), {space:'cmyk', channel:[null, 0], min:[null, 0], max:[null, 100]}, data));
+			var opts = {space:'cmyk', channel:[null, 0], min:[null, 0], max:[null, 100]};
+			createRangeCase('cyan', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 
 		it('magenta', function(){
-			createRangeCase('magenta', 'polar', ranger.renderPolar(color.rgbArray(), {space:'cmyk', channel:[null, 1], min:[null, 0], max:[null, 100]}, data));
+			var opts = {space:'cmyk', channel:[null, 1], min:[null, 0], max:[null, 100]};
+			createRangeCase('magenta', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 
 		it('yellow', function(){
-			createRangeCase('yellow', 'polar', ranger.renderPolar(color.rgbArray(), {space:'cmyk', channel:[null, 2], min:[null, 0], max:[null, 100]}, data));
+			var opts = {space:'cmyk', channel:[null, 2], min:[null, 0], max:[null, 100]};
+			createRangeCase('yellow', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 
 		it('black', function(){
-			createRangeCase('black', 'polar', ranger.renderPolar(color.rgbArray(), {space:'cmyk', channel:[null, 3], min:[null, 0], max:[null, 100]}, data));
+			var opts = {space:'cmyk', channel:[null, 3], min:[null, 0], max:[null, 100]};
+			createRangeCase('black', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 	});
 
@@ -885,13 +1027,16 @@ describe('radial', function(){
 			createSection(this.test.parent.title);
 		});
 		it('x', function(){
-			createRangeCase('x', 'polar', ranger.renderPolar(color.rgbArray(), {space:'xyz', channel:[null, 0], min:[null, 0], max:[null, 95]}, data));
+			var opts = {space:'xyz', channel:[null, 0], min:[null, 0], max:[null, 95]};
+			createRangeCase('x', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('y', function(){
-			createRangeCase('y', 'polar', ranger.renderPolar(color.rgbArray(), {space:'xyz', channel:[null, 1], min:[null, 0], max:[null, 100]}, data));
+			var opts = {space:'xyz', channel:[null, 1], min:[null, 0], max:[null, 100]};
+			createRangeCase('y', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('z', function(){
-			createRangeCase('z', 'polar', ranger.renderPolar(color.rgbArray(), {space:'xyz', channel:[null, 2], min:[null, 0], max:[null, 109]}, data));
+			var opts = {space:'xyz', channel:[null, 2], min:[null, 0], max:[null, 109]};
+			createRangeCase('z', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 	});
 
@@ -900,23 +1045,29 @@ describe('radial', function(){
 			createSection(this.test.parent.title);
 		});
 		it('L', function(){
-			createRangeCase('L', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lab', channel:[null, 0], min:[null, 0], max:[null, 100]}, data));
+			var opts = {space:'lab', channel:[null, 0], min:[null, 0], max:[null, 100]};
+			createRangeCase('L', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('a', function(){
-			createRangeCase('a', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lab', channel:[null, 1], min:[null, 0], max:[null, 100]}, data));
+			var opts = {space:'lab', channel:[null, 1], min:[null, 0], max:[null, 100]};
+			createRangeCase('a', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('b', function(){
-			createRangeCase('b', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lab', channel:[null, 2], min:[null, 0], max:[null, 100]}, data));
+			var opts = {space:'lab', channel:[null, 2], min:[null, 0], max:[null, 100]};
+			createRangeCase('b', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 
 		it('l', function(){
-			createRangeCase('l', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lchab', channel:[null, 0], min:[null, 0], max:[null, 100]}, data));
+			var opts = {space:'lchab', channel:[null, 0], min:[null, 0], max:[null, 100]};
+			createRangeCase('l', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('c', function(){
-			createRangeCase('c', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lchab', channel:[null, 1], min:[null, 0], max:[null, 100]}, data));
+			var opts = {space:'lchab', channel:[null, 1], min:[null, 0], max:[null, 100]};
+			createRangeCase('c', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('h', function(){
-			createRangeCase('h', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lchab', channel:[null, 2], min:[null, 0], max:[null, 360]}, data));
+			var opts = {space:'lchab', channel:[null, 2], min:[null, 0], max:[null, 360]};
+			createRangeCase('h', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 	});
 
@@ -925,23 +1076,29 @@ describe('radial', function(){
 			createSection(this.test.parent.title);
 		});
 		it('L(uv)', function(){
-			createRangeCase('L', 'polar', ranger.renderPolar(color.rgbArray(), {space:'luv', channel:[null, 0], min:[null, 0], max:[null, 100]}, data));
+			var opts = {space:'luv', channel:[null, 0], min:[null, 0], max:[null, 100]};
+			createRangeCase('L', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('u', function(){
-			createRangeCase('u', 'polar', ranger.renderPolar(color.rgbArray(), {space:'luv', channel:[null, 1], min:[null, 0], max:[null, 100]}, data));
+			var opts = {space:'luv', channel:[null, 1], min:[null, 0], max:[null, 100]};
+			createRangeCase('u', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('v', function(){
-			createRangeCase('v', 'polar', ranger.renderPolar(color.rgbArray(), {space:'luv', channel:[null, 2], min:[null, 0], max:[null, 100]}, data));
+			var opts = {space:'luv', channel:[null, 2], min:[null, 0], max:[null, 100]};
+			createRangeCase('v', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 
 		it('l(uv)', function(){
-			createRangeCase('lυν', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lchuv', channel:[null, 0], min:[null, 0], max:[null, 100]}, data));
+			var opts = {space:'lchuv', channel:[null, 0], min:[null, 0], max:[null, 100]};
+			createRangeCase('lυν', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('c(uv)', function(){
-			createRangeCase('cυν', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lchuv', channel:[null, 1], min:[null, 0], max:[null, 100]}, data));
+			var opts = {space:'lchuv', channel:[null, 1], min:[null, 0], max:[null, 100]};
+			createRangeCase('cυν', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('h(uv)', function(){
-			createRangeCase('hυν', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lchuv', channel:[null, 2], min:[null, 0], max:[null, 360]}, data));
+			var opts = {space:'lchuv', channel:[null, 2], min:[null, 0], max:[null, 360]};
+			createRangeCase('hυν', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 	});
 });
@@ -958,27 +1115,33 @@ describe('polar', function(){
 			createSection(this.test.parent.title);
 		});
 		it('hue-lightness', function(){
-			createRangeCase('h-l', 'polar', ranger.renderPolar(color.rgbArray(), {space:'hsl', channel:[0, 2], min:[0,100], max:[360, 0]}, data));
+			var opts = {space:'hsl', channel:[0, 2], min:[0,100], max:[360, 0]};
+			createRangeCase('h-l', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 
 		it('hue-brightness', function(){
-			createRangeCase('h-b', 'polar', ranger.renderPolar(color.rgbArray(), {space:'hsv', channel:[0,2], min:[0,100], max:[360, 0]}, data));
+			var opts = {space:'hsv', channel:[0,2], min:[0,100], max:[360, 0]};
+			createRangeCase('h-b', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 
 		it('hue-saturation', function(){
-			createRangeCase('h-s', 'polar', ranger.renderPolar(color.rgbArray(), {space:'hsl', channel:[0,1], min:[0,100], max:[360, 0]}, data));
+			var opts = {space:'hsl', channel:[0,1], min:[0,100], max:[360, 0]};
+			createRangeCase('h-s', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 
 		it('hue-saturationv', function(){
-			createRangeCase('h-sv', 'polar', ranger.renderPolar(color.rgbArray(), {space:'hsv', channel:[0,1], min:[0,100], max:[360, 0]}, data));
+			var opts = {space:'hsv', channel:[0,1], min:[0,100], max:[360, 0]};
+			createRangeCase('h-sv', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 
 		it('lightness-saturation', function(){
-			createRangeCase('l-s', 'polar', ranger.renderPolar(color.rgbArray(), {space:'hsl', channel:[2,1], min:[0,0], max:[100,100]}, data));
+			var opts = {space:'hsl', channel:[2,1], min:[0,0], max:[100,100]};
+			createRangeCase('l-s', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 
 		it('saturation-brightness', function(){
-			createRangeCase('s-b', 'polar', ranger.renderPolar(color.rgbArray(), {space:'hsv', channel:[1,2], min:[0,0], max:[100,100]}, data));
+			var opts = {space:'hsv', channel:[1,2], min:[0,0], max:[100,100]};
+			createRangeCase('s-b', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 	});
 
@@ -987,15 +1150,18 @@ describe('polar', function(){
 			createSection(this.test.parent.title);
 		});
 		it('red-green', function(){
-			createRangeCase('r-g', 'polar', ranger.renderPolar(color.rgbArray(), {space:'rgb', channel:[0,1], min:[0,0], max:[255,255]}, data));
+			var opts = {space:'rgb', channel:[0,1], min:[0,0], max:[255,255]};
+			createRangeCase('r-g', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 
 		it('red-blue', function(){
-			createRangeCase('r-b', 'polar', ranger.renderPolar(color.rgbArray(), {space:'rgb', channel:[0,2], min:[0,0], max:[255,255]},  data));
+			var opts = {space:'rgb', channel:[0,2], min:[0,0], max:[255,255]};
+			createRangeCase('r-b', 'polar', ranger.renderPolar(color.rgbArray(),  data, opts));
 		});
 
 		it('green-blue', function(){
-			createRangeCase('g-b', 'polar', ranger.renderPolar(color.rgbArray(), {space:'rgb', channel:[1,2], min:[0,0], max:[255,255]},  data));
+			var opts = {space:'rgb', channel:[1,2], min:[0,0], max:[255,255]};
+			createRangeCase('g-b', 'polar', ranger.renderPolar(color.rgbArray(),  data, opts));
 		});
 	});
 
@@ -1004,27 +1170,33 @@ describe('polar', function(){
 			createSection(this.test.parent.title);
 		});
 		it('cyan-magenta', function(){
-			createRangeCase('c-m', 'polar', ranger.renderPolar(color.rgbArray(), {space:'cmyk', channel:[0,1], min:[0,0], max:[100,100]}, data));
+			var opts = {space:'cmyk', channel:[0,1], min:[0,0], max:[100,100]};
+			createRangeCase('c-m', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 
 		it('cyan-yellow', function(){
-			createRangeCase('c-y', 'polar', ranger.renderPolar(color.rgbArray(), {space:'cmyk', channel:[0,2], min:[0,0], max:[100,100]}, data));
+			var opts = {space:'cmyk', channel:[0,2], min:[0,0], max:[100,100]};
+			createRangeCase('c-y', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 
 		it('cyan-black', function(){
-			createRangeCase('c-k', 'polar', ranger.renderPolar(color.rgbArray(), {space:'cmyk', channel:[0,3], min:[0,0], max:[100,100]}, data));
+			var opts = {space:'cmyk', channel:[0,3], min:[0,0], max:[100,100]};
+			createRangeCase('c-k', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 
 		it('magenta-yellow', function(){
-			createRangeCase('m-y', 'polar', ranger.renderPolar(color.rgbArray(), {space:'cmyk', channel:[1,2], min:[0,0], max:[100,100]}, data));
+			var opts = {space:'cmyk', channel:[1,2], min:[0,0], max:[100,100]};
+			createRangeCase('m-y', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 
 		it('magenta-black', function(){
-			createRangeCase('m-k', 'polar', ranger.renderPolar(color.rgbArray(), {space:'cmyk', channel:[1,3], min:[0,0], max:[100,100]}, data));
+			var opts = {space:'cmyk', channel:[1,3], min:[0,0], max:[100,100]};
+			createRangeCase('m-k', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 
 		it('yellow-black', function(){
-			createRangeCase('y-k', 'polar', ranger.renderPolar(color.rgbArray(), {space:'cmyk', channel:[2,3], min:[0,0], max:[100,100]}, data));
+			var opts = {space:'cmyk', channel:[2,3], min:[0,0], max:[100,100]};
+			createRangeCase('y-k', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 	});
 
@@ -1033,13 +1205,16 @@ describe('polar', function(){
 			createSection(this.test.parent.title);
 		});
 		it('x-y', function(){
-			createRangeCase('x-y', 'polar', ranger.renderPolar(color.rgbArray(), {space:'xyz', channel:[0,1], min:[0,0], max:[95,100]}, data));
+			var opts = {space:'xyz', channel:[0,1], min:[0,0], max:[95,100]};
+			createRangeCase('x-y', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('x-z', function(){
-			createRangeCase('x-z', 'polar', ranger.renderPolar(color.rgbArray(), {space:'xyz', channel:[0,2], min:[0,0], max:[95,108]}, data));
+			var opts = {space:'xyz', channel:[0,2], min:[0,0], max:[95,108]};
+			createRangeCase('x-z', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('y-z', function(){
-			createRangeCase('y-z', 'polar', ranger.renderPolar(color.rgbArray(), {space:'xyz', channel:[1,2], min:[0,0], max:[100, 108]}, data));
+			var opts = {space:'xyz', channel:[1,2], min:[0,0], max:[100, 108]};
+			createRangeCase('y-z', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 	});
 
@@ -1048,22 +1223,28 @@ describe('polar', function(){
 			createSection(this.test.parent.title);
 		});
 		it('l-a', function(){
-			createRangeCase('l-a', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lab', channel:[0,1], min:[0,-100], max:[100,100]}, data));
+			var opts = {space:'lab', channel:[0,1], min:[0,-100], max:[100,100]};
+			createRangeCase('l-a', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('l-b', function(){
-			createRangeCase('l-b', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lab', channel:[0,2], min:[0,-100], max:[100,100]}, data));
+			var opts = {space:'lab', channel:[0,2], min:[0,-100], max:[100,100]};
+			createRangeCase('l-b', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('a-b', function(){
-			createRangeCase('a-b', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lab', channel:[1,2], min:[-100,-100], max:[100,100]}, data));
+			var opts = {space:'lab', channel:[1,2], min:[-100,-100], max:[100,100]};
+			createRangeCase('a-b', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('l-c', function(){
-			createRangeCase('l-c', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lchab', channel:[0,1], min:[0,0], max:[100,100]}, data));
+			var opts = {space:'lchab', channel:[0,1], min:[0,0], max:[100,100]};
+			createRangeCase('l-c', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('h-l', function(){
-			createRangeCase('l-h', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lchab', channel:[2,0], min:[0,100], max:[360,0]}, data));
+			var opts = {space:'lchab', channel:[2,0], min:[0,100], max:[360,0]};
+			createRangeCase('l-h', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('h-c', function(){
-			createRangeCase('c-h', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lchab', channel:[2,1], min:[0,100], max:[360,0]}, data));
+			var opts = {space:'lchab', channel:[2,1], min:[0,100], max:[360,0]};
+			createRangeCase('c-h', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 	});
 
@@ -1072,22 +1253,28 @@ describe('polar', function(){
 			createSection(this.test.parent.title);
 		});
 		it('l-u', function(){
-			createRangeCase('l-u', 'polar', ranger.renderPolar(color.rgbArray(), {space:'luv', channel:[0,1], min:[0,-100], max:[100,100]}, data));
+			var opts = {space:'luv', channel:[0,1], min:[0,-100], max:[100,100]};
+			createRangeCase('l-u', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('l-v', function(){
-			createRangeCase('l-v', 'polar', ranger.renderPolar(color.rgbArray(), {space:'luv', channel:[0,1], min:[0,-100], max:[100,100]}, data));
+			var opts = {space:'luv', channel:[0,1], min:[0,-100], max:[100,100]};
+			createRangeCase('l-v', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('u-v', function(){
-			createRangeCase('u-v', 'polar', ranger.renderPolar(color.rgbArray(), {space:'luv', channel:[1,2], min:[-100,-100], max:[100,100]}, data));
+			var opts = {space:'luv', channel:[1,2], min:[-100,-100], max:[100,100]};
+			createRangeCase('u-v', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('l-cuv', function(){
-			createRangeCase('l-c', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lchuv', channel:[0,1], min:[0,0], max:[100,100]}, data));
+			var opts = {space:'lchuv', channel:[0,1], min:[0,0], max:[100,100]};
+			createRangeCase('l-c', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('h-luv', function(){
-			createRangeCase('l-h', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lchuv', channel:[2,0], min:[0,100], max:[360,0]}, data));
+			var opts = {space:'lchuv', channel:[2,0], min:[0,100], max:[360,0]};
+			createRangeCase('l-h', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('h-cuv', function(){
-			createRangeCase('c-h', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lchuv', channel:[2,1], min:[0,100], max:[360,0]}, data));
+			var opts = {space:'lchuv', channel:[2,1], min:[0,100], max:[360,0]};
+			createRangeCase('c-h', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 	});
 
@@ -1096,24 +1283,30 @@ describe('polar', function(){
 			createSection(this.test.parent.title);
 		});
 		it('husl-hs', function(){
-			createRangeCase('husl-hs', 'polar', ranger.renderPolar(color.rgbArray(), {space:'husl', channel:[0,1], min:[0,100], max:[360,0]}, data));
+			var opts = {space:'husl', channel:[0,1], min:[0,100], max:[360,0]};
+			createRangeCase('husl-hs', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('husl-hl', function(){
-			createRangeCase('husl-hl', 'polar', ranger.renderPolar(color.rgbArray(), {space:'husl', channel:[0,2], min:[0,100], max:[360,0]}, data));
+			var opts = {space:'husl', channel:[0,2], min:[0,100], max:[360,0]};
+			createRangeCase('husl-hl', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('husl-sl', function(){
-			createRangeCase('husl-sl', 'polar', ranger.renderPolar(color.rgbArray(), {space:'husl', channel:[1,2], min:[0,0], max:[100,100]}, data));
+			var opts = {space:'husl', channel:[1,2], min:[0,0], max:[100,100]};
+			createRangeCase('husl-sl', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 
 
 		it('huslp-hs', function(){
-			createRangeCase('huslp-hs', 'polar', ranger.renderPolar(color.rgbArray(), {space:'huslp', channel:[0,1], min:[0,100], max:[360,0]}, data));
+			var opts = {space:'huslp', channel:[0,1], min:[0,100], max:[360,0]};
+			createRangeCase('huslp-hs', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('huslp-hl', function(){
-			createRangeCase('huslp-hl', 'polar', ranger.renderPolar(color.rgbArray(), {space:'huslp', channel:[0,2], min:[0,100], max:[360,0]}, data));
+			var opts = {space:'huslp', channel:[0,2], min:[0,100], max:[360,0]};
+			createRangeCase('huslp-hl', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 		it('huslp-sl', function(){
-			createRangeCase('huslp-sl', 'polar', ranger.renderPolar(color.rgbArray(), {space:'huslp', channel:[1,2], min:[0,0], max:[100,100]}, data));
+			var opts = {space:'huslp', channel:[1,2], min:[0,0], max:[100,100]};
+			createRangeCase('huslp-sl', 'polar', ranger.renderPolar(color.rgbArray(), data, opts));
 		});
 	});
 });
@@ -1148,12 +1341,13 @@ describe('performance', function(){
 	it('no-webworker', function(){
 		console.time('no-webworker');
 
-		createRangeCase('no-webworker', 'rect', ranger.renderRect(color.rgbArray(), {
+		var opts = {
 			space:'lchab',
 			channel:[0,2],
 			min:[0,0],
 			max:[100,360]
-		}, data));
+		};
+		createRangeCase('no-webworker', 'rect', ranger.renderRect(color.rgbArray(), data, opts));
 
 		console.timeEnd('no-webworker');
 	});
@@ -1183,6 +1377,7 @@ describe('performance', function(){
 		Emmy.on(worker, 'message', function(e){
 			if (e.data.id !== 1) return;
 
+			var opts = {rgb: color.rgbArray(), space: 'lchab', channel: [0,2], max: [100, 360], data: data, min:[0,0], id: 1};
 			createRangeCase('webworker-transfer', 'rect', e.data.data);
 
 			console.timeEnd('webworker-transfer');
@@ -1192,7 +1387,7 @@ describe('performance', function(){
 
 		//send request
 		console.time('webworker-transfer');
-		worker.postMessage({rgb: color.rgbArray(), space: 'lchab', channel: [0,2], max: [100, 360], data: data, min:[0,0], id: 1}, [data]);
+		worker.postMessage([data], opts);
 	});
 
 

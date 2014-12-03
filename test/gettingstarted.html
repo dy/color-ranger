@@ -1,0 +1,36 @@
+<!doctype html>
+<!-- getting started example test -->
+
+<script src="../dist/color-ranger.min.js"></script>
+
+<script>
+	//create a canvas
+	var canvas = document.createElement('canvas');
+	canvas.width = 50;
+	canvas.height = 50;
+	var context = canvas.getContext('2d');
+	var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+
+	//for the blue color (blue = 255, red = 0, green = 0)
+	var what = [0, 0, 255];
+
+	//to imageData’s buffer
+	var where = imageData.data;
+
+	//hue and saturation channels [0,1]
+	var how = {
+		space: 'hsl',
+		channel: [0,1],
+		min: [0,0],
+		max: [360,100]
+	};
+
+	//render
+	imageData.data = colorRanger.renderRect(what, where, how);
+
+	//put image data back to canvas
+	context.putImageData(imageData, 0, 0);
+
+	//get a background with the rendered range
+	document.documentElement.style.backgroundImage = 'url(' + canvas.toDataURL() + ')';
+</script>

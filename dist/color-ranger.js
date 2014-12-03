@@ -1264,9 +1264,7 @@ function getConvertor(fromSpace, toSpace){
 		};
 	}
 
-	else throw Error('Can’t add convertor from ' + fromSpace.name + ' to ' + toSpaceName);
-
-	return fromSpace[toSpaceName];
+	throw Error('Can’t add convertor from ' + fromSpace.name + ' to ' + toSpaceName);
 }
 
 },{"../rgb":14,"../xyz":16}],16:[function(require,module,exports){
@@ -1398,9 +1396,9 @@ module.exports = renderGrid;
  *
  * @return {ImageData} Return updated imageData
  */
-function renderGrid(a, b, imgData){
-	var h = imgData.height,
-		w = imgData.width;
+function renderGrid(a, b, data){
+	//suppose square data
+	var w = Math.floor(Math.sqrt(data.length / 4)), h = w;
 
 	var cellH = ~~(h/2);
 	var cellW = ~~(w/2);
@@ -1413,11 +1411,11 @@ function renderGrid(a, b, imgData){
 		row = y * w * 4;
 		for ( var x=0; x < w; x++){
 			col = row + x * 4;
-			imgData.data.set(x >= cellW ? (y >= cellH ? a : b) : (y >= cellH ? b : a), col);
+			data.set(x >= cellW ? (y >= cellH ? a : b) : (y >= cellH ? b : a), col);
 		}
 	}
 
-	return imgData;
+	return data;
 }
 },{}],18:[function(require,module,exports){
 /**
@@ -1443,7 +1441,7 @@ module.exports = renderPolar;
  * @param {UInt8CappedArray} buffer An image data buffer
  * @param {ImageData} imgData An target image data in which to render range
  */
-function renderPolar(rgba, opts, buffer){
+function renderPolar(rgba, buffer, opts){
 	/**
 	 * Calculate step values for a polar range
 	 */
@@ -1477,7 +1475,7 @@ function renderPolar(rgba, opts, buffer){
 		return vals;
 	}
 
-	return render(rgba, opts, buffer, calcPolarStep);
+	return render(rgba, buffer, calcPolarStep, opts);
 }
 },{"./render":20}],19:[function(require,module,exports){
 /**
@@ -1503,7 +1501,7 @@ module.exports = renderRect;
  * @param {UInt8CappedArray} buffer An image data buffer
  * @param {ImageData} imgData An target image data in which to render range
  */
-function renderRect(rgba, opts, buffer){
+function renderRect(rgba, buffer, opts){
 	/**
 	 * Calculate step values for a rectangular range
 	 *
@@ -1524,7 +1522,7 @@ function renderRect(rgba, opts, buffer){
 		return vals;
 	}
 
-	return render(rgba, opts, buffer, calcRectStep);
+	return render(rgba, buffer, calcRectStep, opts);
 }
 },{"./render":20}],20:[function(require,module,exports){
 /**
@@ -1560,7 +1558,7 @@ var defaults = {
  *
  * @return {ImageData} ImageData containing a range
  */
-function render(rgba, opts, buffer, calc){
+function render(rgba, buffer, calc, opts){
 	// console.time('canv');
 	var size = opts.size = opts.size || [Math.floor(Math.sqrt(buffer.length / 4))];
 	if (size.length === 1) {

@@ -21,7 +21,7 @@ module.exports = renderPolar;
  * @param {UInt8CappedArray} buffer An image data buffer
  * @param {ImageData} imgData An target image data in which to render range
  */
-function renderPolar(rgba, opts, buffer){
+function renderPolar(rgba, buffer, opts){
 	/**
 	 * Calculate step values for a polar range
 	 */
@@ -55,5 +55,5 @@ function renderPolar(rgba, opts, buffer){
 		return vals;
 	}
 
-	return render(rgba, opts, buffer, calcPolarStep);
+	return render(rgba, buffer, calcPolarStep, opts);
 }

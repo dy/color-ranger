@@ -21,7 +21,7 @@ module.exports = renderRect;
  * @param {UInt8CappedArray} buffer An image data buffer
  * @param {ImageData} imgData An target image data in which to render range
  */
-function renderRect(rgba, opts, buffer){
+function renderRect(rgba, buffer, opts){
 	/**
 	 * Calculate step values for a rectangular range
 	 *
@@ -42,5 +42,5 @@ function renderRect(rgba, opts, buffer){
 		return vals;
 	}
 
-	return render(rgba, opts, buffer, calcRectStep);
+	return render(rgba, buffer, calcRectStep, opts);
 }
