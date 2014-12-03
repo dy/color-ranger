@@ -69,7 +69,7 @@ var what = [0, 0, 255];
 //to imageData’s buffer
 var where = imageData.data;
 
-//considering hue and saturation channels [0,1]
+//for hue and saturation channels [0,1]
 var how = {
 	space: 'hsl',
 	channel: [0,1],
