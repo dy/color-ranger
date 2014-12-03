@@ -53,7 +53,7 @@ You will get a `window.colorRanger` object with rendering functions.
 
 # Use
 
-First off you need to setup a canvas to make color-ranger work. Look for [getting-started example](http://jsfiddle.net/dfcreative/3ng2wg59/):
+First off you need to setup a canvas to make color-ranger work. Look at [getting-started example](http://jsfiddle.net/dfcreative/3ng2wg59/):
 
 ```js
 //create a canvas
