@@ -4,10 +4,13 @@ require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof requ
  */
 var convert = require('color-space');
 
-
-//TODO: paint limits, esp. lch
+//TODO: paint limits, esp. lch, xyz: how?
 //TODO: readme
-//TODO: demo page
+//TODO: jsfiddle get started chunk
+//TODO: base64d API images
+//TODO: acclimatize code
+//TODO: add full tests coverage
+//TODO: asmjsify
 //TODO: shaders approach https://github.com/rosskettle/color-space-canvas
 //TODO: statistical range (expanded popular areas, shrunk less needed areas)
 
@@ -18,157 +21,9 @@ var convert = require('color-space');
 module.exports = {
 	renderRect: require('./render-rect'),
 	renderPolar: require('./render-polar'),
-	renderGrid: require('./render-grid'),
-	getWorker: require('./get-worker')
+	renderGrid: require('./render-grid')
 };
-},{"./get-worker":1,"./render-grid":19,"./render-polar":20,"./render-rect":21,"color-space":"color-space"}],1:[function(require,module,exports){
-/**
- * Create worker for rendering ranges
- *
- * @module color-ranger/render
- */
-
-//TODO: make husl renderable via worker
-// 		move full husl maths to color-space?
-//		serialize full husl code?
-
-module.exports = getWorker;
-
-
-var render = require('./render');
-var renderPolar = require('./render-polar');
-var renderRect = require('./render-rect');
-
-/**
- * Return a new worker, if supported
- *
- * @param {object} spaces A set of spaces to init in web-worker
- *
- * @return {Worker}  A web-worker, accepting messages with data:
- *                   {
- *                   	rgb: rgbArray,
- *                   	type: ('polar'|'rect')
- *                   	space: '<spaceName>,
- *                   	channel: <channel indexes>,
- *                   	max: [360, 100],
- *                   	min: [360, 100],
- *                   	data: ImageData,
- *                   	id: 1
- *                   }
- *                   The data is the same as arguments for the `render` method
- *                   except for `id`, which is returned in response unchanged
- *                   to identify the request.
- */
-function getWorker(spaces){
-	//inline worker - isn’t slower on init & work than a file loader
-	// call URL.revokeObjectURL( blobURL ); if you’re finished
-	var blobURL = URL.createObjectURL( new Blob([
-		//export `color-ranger`
-		'var render = ', render.toString() + '\n',
-		'var renderRect = ', renderRect.toString() + '\n',
-		'var renderPolar = ', renderPolar.toString() + '\n',
-
-		//export `color-space`
-		(function(c){
-			var res = 'var convert = {};\n';
-			var fnSrc;
-			for (var space in c) {
-				res += '\nvar ' + space + ' = convert.' + space + ' = {\n';
-
-				for (var prop in c[space]) {
-					if (typeof c[space][prop] === 'function') {
-						fnSrc = c[space][prop].toString();
-						//replace medium converters refs
-						fnSrc = fnSrc.replace('[toSpaceName]', '.' + prop);
-						fnSrc = fnSrc.replace('fromSpace', space);
-
-						res += prop + ':' + fnSrc + ',\n';
-					} else {
-						res += prop + ':' + JSON.stringify(c[space][prop]) + ',\n';
-					}
-				}
-
-				res += '}\n';
-			}
-
-			return res;
-		})(spaces),
-
-		//export message handler
-		';(',
-		function(){
-			self.onmessage = function(e){
-				var data = e.data, result;
-
-				//ignore empty data
-				if (!data) return postMessage(false);
-
-				if (data.type === 'polar') {
-					result = renderPolar(data.rgb, data.space, data.channel, data.min, data.max, data.data);
-				} else {
-					result = renderRect(data.rgb, data.space, data.channel, data.min, data.max, data.data);
-				}
-
-				postMessage({
-					data: result,
-					id: e.data.id
-				});
-			};
-		}.toString(),
-		')();'
-	], { type: 'application/javascript' } ) );
-
-	var worker = new Worker(blobURL);
-
-	return worker;
-}
-},{"./render":22,"./render-polar":20,"./render-rect":21}],2:[function(require,module,exports){
-/**
- * Add a convertor from one to another space via XYZ or RGB space as a medium.
- *
- * @module  color-space/add-convertor
- */
-
-var xyz = require('./xyz');
-var rgb = require('./rgb');
-
-module.exports = addConvertor;
-
-
-/**
- * Add convertor from space A to space B.
- * So space A will be able to transform to B.
- */
-function addConvertor(fromSpace, toSpace){
-	if (!fromSpace[toSpace.name]) {
-		fromSpace[toSpace.name] = getConvertor(fromSpace, toSpace);
-	}
-
-	return fromSpace;
-}
-
-
-/** return converter through xyz/rgb space */
-function getConvertor(fromSpace, toSpace){
-	var toSpaceName = toSpace.name;
-
-	//create xyz converter, if available
-	if (fromSpace.xyz && xyz[toSpaceName]) {
-		return function(arg){
-			return xyz[toSpaceName](fromSpace.xyz(arg));
-		};
-	}
-	//create rgb converter
-	else if (fromSpace.rgb && rgb[toSpaceName]) {
-		return function(arg){
-			return rgb[toSpaceName](fromSpace.rgb(arg));
-		};
-	}
-
-	return fromSpace[toSpaceName];
-}
-
-},{"./rgb":14,"./xyz":15}],3:[function(require,module,exports){
+},{"./render-grid":18,"./render-polar":19,"./render-rect":20,"color-space":"color-space"}],1:[function(require,module,exports){
 /**
  * @module color-space/cmyk
  */
@@ -209,7 +64,7 @@ rgb.cmyk = function(rgb) {
 	y = (1 - b - k) / (1 - k) || 0;
 	return [c * 100, m * 100, y * 100, k * 100];
 };
-},{"./rgb":14}],4:[function(require,module,exports){
+},{"./rgb":12}],2:[function(require,module,exports){
 /**
  * @module color-space/hsl
  */
@@ -228,31 +83,41 @@ module.exports = {
 				l = hsl[2] / 100,
 				t1, t2, t3, rgb, val;
 
-		if (s == 0) {
+		if (s === 0) {
 			val = l * 255;
 			return [val, val, val];
 		}
 
-		if (l < 0.5)
+		if (l < 0.5) {
 			t2 = l * (1 + s);
-		else
+		}
+		else {
 			t2 = l + s - l * s;
+		}
 		t1 = 2 * l - t2;
 
 		rgb = [0, 0, 0];
 		for (var i = 0; i < 3; i++) {
 			t3 = h + 1 / 3 * - (i - 1);
-			t3 < 0 && t3++;
-			t3 > 1 && t3--;
+			if (t3 < 0) {
+				t3++;
+			}
+			else if (t3 > 1) {
+				t3--;
+			}
 
-			if (6 * t3 < 1)
+			if (6 * t3 < 1) {
 				val = t1 + (t2 - t1) * 6 * t3;
-			else if (2 * t3 < 1)
+			}
+			else if (2 * t3 < 1) {
 				val = t2;
-			else if (3 * t3 < 2)
+			}
+			else if (3 * t3 < 2) {
 				val = t1 + (t2 - t1) * (2 / 3 - t3) * 6;
-			else
+			}
+			else {
 				val = t1;
+			}
 
 			rgb[i] = val * 255;
 		}
@@ -272,32 +137,40 @@ rgb.hsl = function(rgb) {
 			delta = max - min,
 			h, s, l;
 
-	if (max == min)
+	if (max === min) {
 		h = 0;
-	else if (r == max)
+	}
+	else if (r === max) {
 		h = (g - b) / delta;
-	else if (g == max)
+	}
+	else if (g === max) {
 		h = 2 + (b - r) / delta;
-	else if (b == max)
+	}
+	else if (b === max) {
 		h = 4 + (r - g)/ delta;
+	}
 
 	h = Math.min(h * 60, 360);
 
-	if (h < 0)
+	if (h < 0) {
 		h += 360;
+	}
 
 	l = (min + max) / 2;
 
-	if (max == min)
+	if (max === min) {
 		s = 0;
-	else if (l <= 0.5)
+	}
+	else if (l <= 0.5) {
 		s = delta / (max + min);
-	else
+	}
+	else {
 		s = delta / (2 - max - min);
+	}
 
 	return [h, s * 100, l * 100];
 };
-},{"./rgb":14}],5:[function(require,module,exports){
+},{"./rgb":12}],3:[function(require,module,exports){
 /**
  * @module color-space/hsv
  */
@@ -321,8 +194,8 @@ module.exports = {
 		var f = h - Math.floor(h),
 				p = 255 * v * (1 - s),
 				q = 255 * v * (1 - (s * f)),
-				t = 255 * v * (1 - (s * (1 - f))),
-				v = 255 * v;
+				t = 255 * v * (1 - (s * (1 - f)));
+		v *= 255;
 
 		switch(hi) {
 			case 0:
@@ -351,6 +224,7 @@ module.exports = {
 		sl /= (l <= 1) ? l : 2 - l;
 		sl = sl || 0;
 		l /= 2;
+
 		return [h, sl * 100, l * 100];
 	}
 };
@@ -366,24 +240,31 @@ rgb.hsv = function(rgb) {
 			delta = max - min,
 			h, s, v;
 
-	if (max === 0)
+	if (max === 0) {
 		s = 0;
-	else
+	}
+	else {
 		s = (delta/max * 1000)/10;
+	}
 
-	if (max == min)
+	if (max === min) {
 		h = 0;
-	else if (r == max)
+	}
+	else if (r === max) {
 		h = (g - b) / delta;
-	else if (g == max)
+	}
+	else if (g === max) {
 		h = 2 + (b - r) / delta;
-	else if (b == max)
+	}
+	else if (b === max) {
 		h = 4 + (r - g) / delta;
+	}
 
 	h = Math.min(h * 60, 360);
 
-	if (h < 0)
+	if (h < 0) {
 		h += 360;
+	}
 
 	v = ((max / 255) * 1000) / 10;
 
@@ -402,9 +283,10 @@ hsl.hsv = function(hsl) {
 	s *= (l <= 1) ? l : 2 - l;
 	v = (l + s) / 2;
 	sv = (2 * s) / (l + s) || 0;
+
 	return [h, sv * 100, v * 100];
 };
-},{"./hsl":4,"./rgb":14}],6:[function(require,module,exports){
+},{"./hsl":2,"./rgb":12}],4:[function(require,module,exports){
 /**
  * A uniform wrapper for husl.
  * // http://www.boronine.com/husl/
@@ -440,7 +322,7 @@ lchuv.husl = _husl._conv.lch.husl;
 xyz.husl = function(arg){
 	return _husl._conv.lch.husl(xyz.lchuv(arg));
 };
-},{"./lchuv":11,"./xyz":15,"husl":13}],7:[function(require,module,exports){
+},{"./lchuv":9,"./xyz":14,"husl":11}],5:[function(require,module,exports){
 /**
  * A uniform wrapper for huslp.
  * // http://www.boronine.com/husl/
@@ -470,7 +352,7 @@ module.exports = {
 //extend lchuv, xyz
 lchuv.huslp = _husl._conv.lch.huslp;
 xyz.huslp = function(arg){return _husl._conv.lch.huslp(xyz.lchuv(arg));};
-},{"./lchuv":11,"./xyz":15,"husl":13}],8:[function(require,module,exports){
+},{"./lchuv":9,"./xyz":14,"husl":11}],6:[function(require,module,exports){
 /**
  * @module color-space/hwb
  */
@@ -489,10 +371,10 @@ var hwb = module.exports = {
 	// http://dev.w3.org/csswg/css-color/#hwb-to-rgb
 	rgb: function(hwb) {
 		var h = hwb[0] / 360,
-				wh = hwb[1] / 100,
-				bl = hwb[2] / 100,
-				ratio = wh + bl,
-				i, v, f, n;
+			wh = hwb[1] / 100,
+			bl = hwb[2] / 100,
+			ratio = wh + bl,
+			i, v, f, n;
 
 		var r, g, b;
 
@@ -505,9 +387,12 @@ var hwb = module.exports = {
 		i = Math.floor(6 * h);
 		v = 1 - bl;
 		f = 6 * h - i;
-		if ((i & 0x01) != 0) {
+
+		//if it is even
+		if ((i & 0x01) !== 0) {
 			f = 1 - f;
 		}
+
 		n = wh + f * (v - wh);  // linear interpolation
 
 		switch (i) {
@@ -557,7 +442,8 @@ rgb.hwb = function(val) {
 			g = val[1],
 			b = val[2],
 			h = rgb.hsl(val)[0],
-			w = 1/255 * Math.min(r, Math.min(g, b)),
+			w = 1/255 * Math.min(r, Math.min(g, b));
+
 			b = 1 - 1/255 * Math.max(r, Math.max(g, b));
 
 	return [h, w * 100, b * 100];
@@ -576,7 +462,7 @@ hsv.hwb = function(arg){
 hsl.hwb = function(arg){
 	return hsv.hwb(hsl.hsv(arg));
 };
-},{"./hsl":4,"./hsv":5,"./rgb":14}],9:[function(require,module,exports){
+},{"./hsl":2,"./hsv":3,"./rgb":12}],7:[function(require,module,exports){
 /**
  * CIE LAB space model
  *
@@ -636,7 +522,7 @@ xyz.lab = function(xyz){
 
 	return [l, a, b];
 };
-},{"./xyz":15}],10:[function(require,module,exports){
+},{"./xyz":14}],8:[function(require,module,exports){
 /**
  * Cylindrical LAB
  *
@@ -692,7 +578,7 @@ lab.lchab = function(lab) {
 xyz.lchab = function(arg){
 	return lab.lchab(xyz.lab(arg));
 };
-},{"./lab":9,"./xyz":15}],11:[function(require,module,exports){
+},{"./lab":7,"./xyz":14}],9:[function(require,module,exports){
 /**
  * Cylindrical CIE LUV
  *
@@ -743,7 +629,7 @@ luv.lchuv = function(luv){
 xyz.lchuv = function(arg){
   return luv.lchuv(xyz.luv(arg));
 };
-},{"./luv":12,"./xyz":15}],12:[function(require,module,exports){
+},{"./luv":10,"./xyz":14}],10:[function(require,module,exports){
 /**
  * CIE LUV (C'est la vie)
  *
@@ -843,7 +729,7 @@ xyz.luv = function(arg, i, o) {
 
 	return [l, u, v];
 };
-},{"./xyz":15}],13:[function(require,module,exports){
+},{"./xyz":14}],11:[function(require,module,exports){
 // Generated by CoffeeScript 1.8.0
 (function() {
   var L_to_Y, Y_to_L, conv, distanceFromPole, dotProduct, epsilon, fromLinear, getBounds, intersectLineLine, kappa, lengthOfRayUntilIntersect, m, m_inv, maxChromaForLH, maxSafeChromaForL, refU, refV, refX, refY, refZ, rgbPrepare, root, round, toLinear;
@@ -1275,7 +1161,7 @@ xyz.luv = function(arg, i, o) {
 
 }).call(this);
 
-},{}],14:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 /**
  * RGB space.
  *
@@ -1288,7 +1174,55 @@ module.exports = {
 	max: [255,255,255],
 	channel: ['red', 'green', 'blue']
 };
-},{}],15:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
+/**
+ * Add a convertor from one to another space via XYZ or RGB space as a medium.
+ *
+ * @module  color-space/add-convertor
+ */
+
+var xyz = require('../xyz');
+var rgb = require('../rgb');
+
+module.exports = addConvertor;
+
+
+/**
+ * Add convertor from space A to space B.
+ * So space A will be able to transform to B.
+ */
+function addConvertor(fromSpace, toSpace){
+	if (!fromSpace[toSpace.name]) {
+		fromSpace[toSpace.name] = getConvertor(fromSpace, toSpace);
+	}
+
+	return fromSpace;
+}
+
+
+/** return converter through xyz/rgb space */
+function getConvertor(fromSpace, toSpace){
+	var toSpaceName = toSpace.name;
+
+	//create xyz converter, if available
+	if (fromSpace.xyz && xyz[toSpaceName]) {
+		return function(arg){
+			return xyz[toSpaceName](fromSpace.xyz(arg));
+		};
+	}
+	//create rgb converter
+	else if (fromSpace.rgb && rgb[toSpaceName]) {
+		return function(arg){
+			return rgb[toSpaceName](fromSpace.rgb(arg));
+		};
+	}
+
+	else throw Error('Can’t add convertor from ' + fromSpace.name + ' to ' + toSpaceName);
+
+	return fromSpace[toSpaceName];
+}
+
+},{"../rgb":12,"../xyz":14}],14:[function(require,module,exports){
 /**
  * CIE XYZ
  *
@@ -1397,7 +1331,7 @@ rgb.xyz = function(rgb) {
 
 	return [x * 100, y *100, z * 100];
 };
-},{"./rgb":14}],16:[function(require,module,exports){
+},{"./rgb":12}],15:[function(require,module,exports){
 /* MIT license */
 var colorNames = require('color-name');
 
@@ -1617,7 +1551,7 @@ var reverseNames = {};
 for (var name in colorNames) {
   reverseNames[colorNames[name]] = name;
 }
-},{"color-name":17}],17:[function(require,module,exports){
+},{"color-name":16}],16:[function(require,module,exports){
 module.exports={
 	"aliceblue": [240, 248, 255],
 	"antiquewhite": [250, 235, 215],
@@ -1766,7 +1700,7 @@ module.exports={
 	"yellow": [255, 255, 0],
 	"yellowgreen": [154, 205, 50]
 }
-},{}],18:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 /**
  * @module Icicle
  */
@@ -1838,7 +1772,7 @@ function isLocked(target, name){
 	var locks = lockCache.get(target);
 	return (locks && locks[name]);
 }
-},{}],19:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 /**
  * Chess grid trivial renderer
  *
@@ -1879,7 +1813,7 @@ function renderGrid(a, b, imgData){
 
 	return imgData;
 }
-},{}],20:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 /**
  * Polar coordinate system renderer
  *
@@ -1900,9 +1834,10 @@ module.exports = renderPolar;
  * @param {array} channels Channel indexes to render
  * @param {array} mins left values for the channels
  * @param {array} maxes right values for the channels
+ * @param {UInt8CappedArray} buffer An image data buffer
  * @param {ImageData} imgData An target image data in which to render range
  */
-function renderPolar(rgba, space, channels, mins, maxes, imgData){
+function renderPolar(rgba, opts, buffer){
 	/**
 	 * Calculate step values for a polar range
 	 */
@@ -1936,9 +1871,9 @@ function renderPolar(rgba, space, channels, mins, maxes, imgData){
 		return vals;
 	}
 
-	return render(rgba, space, channels, mins, maxes, imgData, calcPolarStep);
+	return render(rgba, opts, buffer, calcPolarStep);
 }
-},{"./render":22}],21:[function(require,module,exports){
+},{"./render":21}],20:[function(require,module,exports){
 /**
  * Cartesian coordinate system renderer
  *
@@ -1959,9 +1894,10 @@ module.exports = renderRect;
  * @param {array} channels Channel indexes to render
  * @param {array} mins left values for the channels
  * @param {array} maxes right values for the channels
+ * @param {UInt8CappedArray} buffer An image data buffer
  * @param {ImageData} imgData An target image data in which to render range
  */
-function renderRect(rgba, space, channels, mins, maxes, imgData){
+function renderRect(rgba, opts, buffer){
 	/**
 	 * Calculate step values for a rectangular range
 	 *
@@ -1982,16 +1918,28 @@ function renderRect(rgba, space, channels, mins, maxes, imgData){
 		return vals;
 	}
 
-	return render(rgba, space, channels, mins, maxes, imgData, calcRectStep);
+	return render(rgba, opts, buffer, calcRectStep);
 }
-},{"./render":22}],22:[function(require,module,exports){
+},{"./render":21}],21:[function(require,module,exports){
 /**
  * A somewhat abstract renderer.
  *
  * @module color-ranger/render
  */
 
+var convert = require('color-space');
+
 module.exports = render;
+
+
+//default options for default rendering
+var defaults = {
+	//37 is the most optimal calc size
+	//you can scale resulting image with no significant quality loss
+	channel: [0,1],
+	space: 'rgb'
+};
+
 
 /**
  * Render passed rectangular range for the color to imageData.
@@ -2001,19 +1949,39 @@ module.exports = render;
  * @param {array} channels List of channel indexes to render
  * @param {array} mins Min values to render range (can be different than space mins)
  * @param {array} maxes Max values to render range (can be different than space maxes)
- * @param {ImageData} imgData An image data object
+ * @param {UInt8CappedArray} buffer An image data buffer
  * @param {function} calc A calculator for the step color
  *
  * @return {ImageData} ImageData containing a range
  */
-function render(rgba, space, channels, mins, maxes, imgData, calc){
+function render(rgba, opts, buffer, calc){
 	// console.time('canv');
+	var size = opts.size = opts.size || [Math.floor(Math.sqrt(buffer.length / 4))];
+	if (size.length === 1) {
+		size[1] = size[0];
+	}
+
+	var space = opts.space = opts.space || defaults.space;
+	var channels = opts.channel = opts.channel !== undefined ? opts.channel : defaults.channel;
+
+	var mins = opts.min = opts.min || [],
+		maxes = opts.maxes = opts.max || [];
+
+	//take mins/maxes of target space’s channels
+	for (var i = 0; i < channels.length; i++){
+		if (mins.length < channels.length) {
+			mins[i] = convert[space].min[channels[i]] || 0;
+		}
+		if (maxes.length < channels.length) {
+			maxes[i] = convert[space].max[channels[i]] || 255;
+		}
+	}
 
 	var isCMYK = space === 'cmyk';
 
 	//add alpha
-	if (rgba.length === 4) rgba[3] *= 255;
-	if (rgba.length === 3) rgba[3] = 255;
+	if (rgba.length === 4) {rgba[3] *= 255;}
+	if (rgba.length === 3) {rgba[3] = 255;}
 
 	//get specific space values
 	var values;
@@ -2021,56 +1989,67 @@ function render(rgba, space, channels, mins, maxes, imgData, calc){
 		values = rgba.slice();
 	} else {
 		values = convert.rgb[space](rgba);
-		if (!isCMYK && values.length === 3) values[3] = rgba[3];
+		if (!isCMYK && values.length === 3) {
+			values[3] = rgba[3];
+		}
 	}
 
-	//resolve channel indexes
-	var h = imgData.height,
-		w = imgData.width,
-		size = [w,h];
-
+	//resolve absent indexes
 	var noIdx = [];
-	for (var i = space.length; i--;){
-		if (i !== channels[0] && i !== channels[1]) noIdx.push(i);
+	for (i = space.length; i--;){
+		if (i !== channels[0] && i !== channels[1]) {
+			noIdx.push(i);
+		}
 	}
 	var noIdx1 = noIdx[0];
 	var noIdx2 = noIdx[1];
 	var noIdx3 = noIdx[2];
 
 	//get converting fn
-	var converter = space === 'rgb' ? function(a){return a} : convert[space].rgb;
+	var converter = space === 'rgb' ? function(a){return a;} : convert[space].rgb;
 
-	for (var x, y = h, row, col, res, stepVals = values.slice(); y--;) {
-		row = y * w * 4;
+	for (var x, y = size[1], row, col, res, stepVals = values.slice(); y--;) {
+		row = y * size[0] * 4;
 
-		for (x = 0; x < w; x++) {
+		for (x = 0; x < size[0]; x++) {
 			col = row + x * 4;
 
 			//calculate color
 			stepVals = calc(x,y, stepVals, size, channels, mins, maxes);
 
-			if (noIdx1 || noIdx1 === 0) stepVals[noIdx1] = values[noIdx1];
-			if (noIdx2 || noIdx2 === 0) stepVals[noIdx2] = values[noIdx2];
-			if (noIdx3 || noIdx3 === 0) stepVals[noIdx3] = values[noIdx3];
+			if (noIdx1 || noIdx1 === 0) {
+				stepVals[noIdx1] = values[noIdx1];
+			}
+			if (noIdx2 || noIdx2 === 0) {
+				stepVals[noIdx2] = values[noIdx2];
+			}
+			if (noIdx3 || noIdx3 === 0) {
+				stepVals[noIdx3] = values[noIdx3];
+			}
 
 			//fill image data
 			res = converter(stepVals);
 			res[3] = isCMYK ? 255 : stepVals[3];
 
-			imgData.data.set(res, col);
+			buffer.set(res, col);
 		}
 	}
 
-	return imgData;
+	return buffer;
 }
-},{}],"color-space":[function(require,module,exports){
+},{"color-space":"color-space"}],"color-space":[function(require,module,exports){
 /**
  * @module color-space
  *
+ * @todo  to-source method, preparing the code for webworker
  * @todo  implement all side spaces from http://en.wikipedia.org/wiki/Category:Color_space yuv, yiq etc.
+ * @todo  here are additional spaces http://www.jentronics.com/color.html ITU, REC709, SMTPE, NTSC, GREY
+ *
+ * @todo implement asm-js way to convert spaces (promises to be times faster)
+ *
  */
 
-var addConvertor = require('./add-convertor');
+var addConvertor = require('./util/add-convertor');
 
 
 /** Exported spaces */
@@ -2090,35 +2069,6 @@ var spaces = {
 };
 
 
-/**
- * Add a new space to the set
- */
-Object.defineProperty(spaces, 'add', {
-	value: function (space) {
-		var spaceName = space.name;
-
-		//ignore existing space
-		if (this[spaceName]) return;
-
-		//add convertors to every existing space
-		var otherSpace;
-		for (var otherSpaceName in this) {
-			otherSpace = this[otherSpaceName];
-			addConvertor(space, otherSpace);
-			addConvertor(otherSpace, space);
-		}
-
-		//save a new space
-		this[spaceName] = space;
-
-		return space;
-	}
-});
-
-//you can add other spaces manually
-//via `spaces.add(require('color-space/ciecam'))`
-
-
 
 //build absent convertors from each to every space
 var fromSpace, toSpace;
@@ -2134,7 +2084,7 @@ for (var fromSpaceName in spaces) {
 
 
 module.exports = spaces;
-},{"./add-convertor":2,"./cmyk":3,"./hsl":4,"./hsv":5,"./husl":6,"./huslp":7,"./hwb":8,"./lab":9,"./lchab":10,"./lchuv":11,"./luv":12,"./rgb":14,"./xyz":15}],"color":[function(require,module,exports){
+},{"./cmyk":1,"./hsl":2,"./hsv":3,"./husl":4,"./huslp":5,"./hwb":6,"./lab":7,"./lchab":8,"./lchuv":9,"./luv":10,"./rgb":12,"./util/add-convertor":13,"./xyz":14}],"color":[function(require,module,exports){
 /* MIT license */
 var convert = require("color-space"),
     string = require("color-string");
@@ -2143,24 +2093,18 @@ var Color = function(cssString) {
   if (cssString instanceof Color) return cssString;
   if (! (this instanceof Color)) return new Color(cssString);
 
-   //TODO: get rid of this set, replace with values array. There are too many spaces to keep.
-   this.values = {
-      rgb: [0, 0, 0],
-      hsl: [0, 0, 0],
-      hsv: [0, 0, 0],
-      hwb: [0, 0, 0],
-      cmyk: [0, 0, 0, 0],
-      alpha: 1
-   };
+   // actual values
+   this.values = [0,0,0];
+   this._alpha = 1;
 
-   //keep actual values reference
+   //keep actual space reference
    this.space = 'rgb';
 
 
    // parse Color() argument
    //[0,0,0]
    if (cssString instanceof Array) {
-      this.values.rgb = cssString;
+      this.values = cssString;
    }
    //rgb(0,0,0)
    else if (typeof cssString == "string") {
@@ -2221,40 +2165,41 @@ Color.prototype = {
 
    rgbArray: function() {
       this.actualizeSpace('rgb');
-      return this.values.rgb.slice();
+      return this.values.slice();
    },
    hslArray: function() {
       this.actualizeSpace('hsl');
-      return this.values.hsl.slice();
+      return this.values.slice();
    },
    hsvArray: function() {
       this.actualizeSpace('hsv');
-      return this.values.hsv.slice();
+      return this.values.slice();
    },
    hwbArray: function() {
       this.actualizeSpace('hwb');
-      if (this.values.alpha !== 1) {
-        return this.values.hwb.concat([this.values.alpha])
+      var hwb = this.values.slice()
+      if (this._alpha !== 1) {
+        return hwb.concat(this._alpha);
       }
-      return this.values.hwb.slice();
+      return hwb;
    },
    cmykArray: function() {
       this.actualizeSpace('cmyk');
-      return this.values.cmyk.slice();
+      return this.values.slice();
    },
    rgbaArray: function() {
       this.actualizeSpace('rgb');
-      var rgb = this.values.rgb.slice();
-      return rgb.concat([this.values.alpha]);
+      var rgb = this.values.slice();
+      return rgb.concat(this._alpha);
    },
    hslaArray: function() {
       this.actualizeSpace('hsl');
-      var hsl = this.values.hsl;
-      return hsl.concat([this.values.alpha]);
+      var hsl = this.values.slice();
+      return hsl.concat(this._alpha);
    },
    alpha: function(val) {
       if (val === undefined) {
-         return this.values.alpha;
+         return this._alpha;
       }
       this.setValues("alpha", val);
       return this;
@@ -2305,47 +2250,47 @@ Color.prototype = {
 
    hexString: function() {
       this.actualizeSpace('rgb');
-      return string.hexString(this.values.rgb);
+      return string.hexString(this.values);
    },
    rgbString: function() {
       this.actualizeSpace('rgb');
-      return string.rgbString(this.values.rgb, this.values.alpha);
+      return string.rgbString(this.values, this._alpha);
    },
    rgbaString: function() {
       this.actualizeSpace('rgb');
-      return string.rgbaString(this.values.rgb, this.values.alpha);
+      return string.rgbaString(this.values, this._alpha);
    },
    percentString: function() {
       this.actualizeSpace('rgb');
-      return string.percentString(this.values.rgb, this.values.alpha);
+      return string.percentString(this.values, this._alpha);
    },
    hslString: function() {
       this.actualizeSpace('hsl');
-      return string.hslString(this.values.hsl, this.values.alpha);
+      return string.hslString(this.values, this._alpha);
    },
    hslaString: function() {
       this.actualizeSpace('hsl');
-      return string.hslaString(this.values.hsl, this.values.alpha);
+      return string.hslaString(this.values, this._alpha);
    },
    hwbString: function() {
       this.actualizeSpace('hwb');
-      return string.hwbString(this.values.hwb, this.values.alpha);
+      return string.hwbString(this.values, this._alpha);
    },
 
    keyword: function() {
       this.actualizeSpace('rgb');
-      return string.keyword(this.values.rgb, this.values.alpha);
+      return string.keyword(this.values, this._alpha);
    },
 
    rgbNumber: function() {
       this.actualizeSpace('rgb');
-      return (this.values.rgb[0] << 16) | (this.values.rgb[1] << 8) | this.values.rgb[2];
+      return (this.values[0] << 16) | (this.values[1] << 8) | this.values[2];
    },
 
    luminosity: function() {
       // http://www.w3.org/TR/WCAG20/#relativeluminancedef
       this.actualizeSpace('rgb');
-      var rgb = this.values.rgb;
+      var rgb = this.values;
       var lum = [];
       for (var i = 0; i < rgb.length; i++) {
          var chan = rgb[i] / 255;
@@ -2377,7 +2322,7 @@ Color.prototype = {
    dark: function() {
       // YIQ equation from http://24ways.org/2010/calculating-color-contrast
       this.actualizeSpace('rgb');
-      var rgb = this.values.rgb,
+      var rgb = this.values,
           yiq = (rgb[0] * 299 + rgb[1] * 587 + rgb[2] * 114) / 1000;
       return yiq < 128;
    },
@@ -2390,7 +2335,7 @@ Color.prototype = {
       this.actualizeSpace('rgb');
       var rgb = [];
       for (var i = 0; i < 3; i++) {
-         rgb[i] = 255 - this.values.rgb[i];
+         rgb[i] = 255 - this.values[i];
       }
       this.setValues("rgb", rgb);
       return this;
@@ -2398,49 +2343,49 @@ Color.prototype = {
 
    lighten: function(ratio) {
       this.actualizeSpace('hsl');
-      this.values.hsl[2] += this.values.hsl[2] * ratio;
-      this.setValues("hsl", this.values.hsl);
+      this.values[2] += this.values[2] * ratio;
+      this.setValues("hsl", this.values);
       return this;
    },
 
    darken: function(ratio) {
       this.actualizeSpace('hsl');
-      this.values.hsl[2] -= this.values.hsl[2] * ratio;
-      this.setValues("hsl", this.values.hsl);
+      this.values[2] -= this.values[2] * ratio;
+      this.setValues("hsl", this.values);
       return this;
    },
 
    saturate: function(ratio) {
       this.actualizeSpace('hsl');
-      this.values.hsl[1] += this.values.hsl[1] * ratio;
-      this.setValues("hsl", this.values.hsl);
+      this.values[1] += this.values[1] * ratio;
+      this.setValues("hsl", this.values);
       return this;
    },
 
    desaturate: function(ratio) {
       this.actualizeSpace('hsl');
-      this.values.hsl[1] -= this.values.hsl[1] * ratio;
-      this.setValues("hsl", this.values.hsl);
+      this.values[1] -= this.values[1] * ratio;
+      this.setValues("hsl", this.values);
       return this;
    },
 
    whiten: function(ratio) {
       this.actualizeSpace('hwb');
-      this.values.hwb[1] += this.values.hwb[1] * ratio;
-      this.setValues("hwb", this.values.hwb);
+      this.values[1] += this.values[1] * ratio;
+      this.setValues("hwb", this.values);
       return this;
    },
 
    blacken: function(ratio) {
       this.actualizeSpace('hwb');
-      this.values.hwb[2] += this.values.hwb[2] * ratio;
-      this.setValues("hwb", this.values.hwb);
+      this.values[2] += this.values[2] * ratio;
+      this.setValues("hwb", this.values);
       return this;
    },
 
    greyscale: function() {
       this.actualizeSpace('rgb');
-      var rgb = this.values.rgb;
+      var rgb = this.values;
       // http://en.wikipedia.org/wiki/Grayscale#Converting_color_to_grayscale
       var val = rgb[0] * 0.3 + rgb[1] * 0.59 + rgb[2] * 0.11;
       this.setValues("rgb", [val, val, val]);
@@ -2448,22 +2393,22 @@ Color.prototype = {
    },
 
    clearer: function(ratio) {
-      this.setValues("alpha", this.values.alpha - (this.values.alpha * ratio));
+      this.setValues("alpha", this._alpha - (this._alpha * ratio));
       return this;
    },
 
    opaquer: function(ratio) {
-      this.setValues("alpha", this.values.alpha + (this.values.alpha * ratio));
+      this.setValues("alpha", this._alpha + (this._alpha * ratio));
       return this;
    },
 
    rotate: function(degrees) {
       this.actualizeSpace('hsl');
-      var hue = this.values.hsl[0];
+      var hue = this.values[0];
       hue = (hue + degrees) % 360;
       hue = hue < 0 ? 360 + hue : hue;
-      this.values.hsl[0] = hue;
-      this.setValues("hsl", this.values.hsl);
+      this.values[0] = hue;
+      this.setValues("hsl", this.values);
       return this;
    },
 
@@ -2471,6 +2416,7 @@ Color.prototype = {
       space = space || 'rgb';
 
       this.actualizeSpace(space);
+      color2.actualizeSpace(space);
 
       weight = 1 - (weight == null ? 0.5 : weight);
 
@@ -2482,8 +2428,8 @@ Color.prototype = {
       var weight1 = (((t1 * d == -1) ? t1 : (t1 + d) / (1 + t1 * d)) + 1) / 2;
       var weight2 = 1 - weight1;
 
-      var vals = this.values[space];
-      var vals2 = color2.values[space];
+      var vals = this.values;
+      var vals2 = color2.values;
 
       for (var i = 0; i < vals.length; i++) {
          vals[i] = vals[i] * weight1 + vals2[i] * weight2;
@@ -2504,8 +2450,17 @@ Color.prototype = {
      return new Color(this.rgbArray());
    },
 
+   //somewhat generic getters
+   toArray: function(){
+      var vals = this.values.slice();
+      if (this._alpha === 1) {
+         return vals.concat(this._alpha);
+      }
+      return vals;
+   },
+
    toString: function(){
-      return string[this.space + 'String'](this.values[this.space], this.values.alpha);
+      return string[this.space + 'String'](this.values, this._alpha);
    }
 };
 
@@ -2515,10 +2470,10 @@ Color.prototype.getValues = function(space) {
 
    var vals = {};
    for (var i = 0; i < space.length; i++) {
-      vals[space[i]] = this.values[space][i];
+      vals[space[i]] = this.values[i];
    }
-   if (this.values.alpha != 1) {
-      vals["a"] = this.values.alpha;
+   if (this._alpha != 1) {
+      vals["a"] = this._alpha;
    }
    // {r: 255, g: 255, b: 255, a: 0.4}
    return vals;
@@ -2536,13 +2491,13 @@ Color.prototype.setValues = function(space, vals) {
    }
    else if (vals.length) {
       // [10, 10, 10]
-      this.values[space] = vals.slice(0, space.length);
+      this.values = vals.slice(0, space.length);
       alpha = vals[space.length];
    }
    else if (vals[space[0]] !== undefined) {
       // {r: 10, g: 10, b: 10}
       for (var i = 0; i < space.length; i++) {
-        this.values[space][i] = vals[space[i]];
+        this.values[i] = vals[space[i]];
       }
       alpha = vals.a;
    }
@@ -2550,19 +2505,21 @@ Color.prototype.setValues = function(space, vals) {
       // {red: 10, green: 10, blue: 10}
       var chans = convert[space].channel;
       for (var i = 0; i < space.length; i++) {
-        this.values[space][i] = vals[chans[i]];
+        this.values[i] = vals[chans[i]];
       }
       alpha = vals.alpha;
    }
-   this.values.alpha = Math.max(0, Math.min(1, (alpha !== undefined ? alpha : this.values.alpha) ));
+
+   this._alpha = Math.max(0, Math.min(1, (alpha !== undefined ? alpha : this._alpha) ));
+
    if (space == "alpha") {
       return;
    }
 
    // cap values
    for (var i = 0, capped; i < space.length; i++) {
-      capped = Math.max(0, Math.min(convert[space].max[i], this.values[space][i]));
-      this.values[space][i] = Math.round(capped);
+      capped = Math.max(0, Math.min(convert[space].max[i], this.values[i]));
+      this.values[i] = Math.round(capped);
    }
 
    return true;
@@ -2574,21 +2531,14 @@ Color.prototype.actualizeSpace = function(space){
    var currSpace = this.space;
 
    //space is already actual
-   if (currSpace === space) return this;
-   if (space === 'alpha') return this;
+   if (currSpace !== space && space !== 'alpha') {
+      //calc new space values
+      this.values = convert[currSpace][space](this.values);
+      for (var i = this.values.length; i--;) this.values[i] = Math.round(this.values[i]);
 
-   // cap values of the space prior converting all values
-   for (var i = space.length; i--;) {
-      var capped = Math.max(0, Math.min(convert[space].max[i], this.values[space][i]));
-      this.values[space][i] = Math.round(capped);
+      //save last actual space
+      this.space = space;
    }
-
-   //calc new space values
-   this.values[space] = convert[currSpace][space](this.values[currSpace]);
-   for (var i = this.values[space].length; i--;) this.values[space][i] = Math.round(this.values[space][i]);
-
-   //save last actual space
-   this.space = space;
 
    return this;
 };
@@ -2612,16 +2562,16 @@ Color.prototype.setChannel = function(space, index, val) {
    this.actualizeSpace(space);
    if (val === undefined) {
       // color.red()
-      return this.values[space][index];
+      return this.values[index];
    }
    // color.red(100)
-   this.values[space][index] = Math.max(Math.min(val, convert[space].max[index]), 0);
+   this.values[index] = Math.max(Math.min(val, convert[space].max[index]), 0);
    return this;
 };
 
 module.exports = Color;
 
-},{"color-space":"color-space","color-string":16}],"emmy":[function(require,module,exports){
+},{"color-space":"color-space","color-string":15}],"emmy":[function(require,module,exports){
 var icicle = require('icicle');
 
 
@@ -2977,4 +2927,4 @@ Emmy.bindStaticAPI();
 
 /** @module muevents */
 module.exports = Emmy;
-},{"icicle":18}]},{},[]);
+},{"icicle":17}]},{},[]);

@@ -3,7 +3,7 @@
  */
 var convert = require('color-space');
 
-//TODO: paint limits, esp. lch: how?
+//TODO: paint limits, esp. lch, xyz: how?
 //TODO: readme
 //TODO: jsfiddle get started chunk
 //TODO: base64d API images

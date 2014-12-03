@@ -33,14 +33,17 @@ var defaults = {
  */
 function render(rgba, opts, buffer, calc){
 	// console.time('canv');
-	var size = opts.size = opts.size || [~~Math.sqrt(buffer.length / 4)];
-	if (size.length === 1) size[1] = size[0];
+	var size = opts.size = opts.size || [Math.floor(Math.sqrt(buffer.length / 4))];
+	if (size.length === 1) {
+		size[1] = size[0];
+	}
 
 	var space = opts.space = opts.space || defaults.space;
 	var channels = opts.channel = opts.channel !== undefined ? opts.channel : defaults.channel;
 
 	var mins = opts.min = opts.min || [],
 		maxes = opts.maxes = opts.max || [];
+
 	//take mins/maxes of target space’s channels
 	for (var i = 0; i < channels.length; i++){
 		if (mins.length < channels.length) {
@@ -54,8 +57,8 @@ function render(rgba, opts, buffer, calc){
 	var isCMYK = space === 'cmyk';
 
 	//add alpha
-	if (rgba.length === 4) rgba[3] *= 255;
-	if (rgba.length === 3) rgba[3] = 255;
+	if (rgba.length === 4) {rgba[3] *= 255;}
+	if (rgba.length === 3) {rgba[3] = 255;}
 
 	//get specific space values
 	var values;
@@ -70,7 +73,7 @@ function render(rgba, opts, buffer, calc){
 
 	//resolve absent indexes
 	var noIdx = [];
-	for (var i = space.length; i--;){
+	for (i = space.length; i--;){
 		if (i !== channels[0] && i !== channels[1]) {
 			noIdx.push(i);
 		}
@@ -80,7 +83,7 @@ function render(rgba, opts, buffer, calc){
 	var noIdx3 = noIdx[2];
 
 	//get converting fn
-	var converter = space === 'rgb' ? function(a){return a} : convert[space].rgb;
+	var converter = space === 'rgb' ? function(a){return a;} : convert[space].rgb;
 
 	for (var x, y = size[1], row, col, res, stepVals = values.slice(); y--;) {
 		row = y * size[0] * 4;

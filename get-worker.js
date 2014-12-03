@@ -7,6 +7,7 @@
 //TODO: make husl renderable via worker
 // 		move full husl maths to color-space?
 //		serialize full husl code?
+//TODO: make worker hookable in io.
 
 module.exports = getWorker;
 

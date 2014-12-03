@@ -2,7 +2,7 @@
 
 <code>**C O L O R − R A N G E R**</code>&nbsp; renders a color range for a particular space in rectangular or polar coordinate system by manipulating _ImageData_. It is primarily needed for building color pickers.
 
-* It can be used as web-worker, document thread and in node.
+* It can be used in a web-worker, document thread or in node.
 * You can require renderers selectively.
 * See [demo](jsfiddle), [range list and tests](https://cdn.rawgit.com/dfcreative/color-ranger/master/test/index.html).
 

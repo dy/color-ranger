@@ -1,90 +1,10 @@
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var o;"undefined"!=typeof window?o=window:"undefined"!=typeof global?o=global:"undefined"!=typeof self&&(o=self),o.colorRanger=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /**
- * Create worker for rendering ranges
- *
- * @module color-ranger/render
- */
-
-//TODO: make husl renderable via worker
-// 		move full husl maths to color-space?
-//		serialize full husl code?
-
-module.exports = getWorker;
-
-
-var render = require('./render');
-var renderPolar = require('./render-polar');
-var renderRect = require('./render-rect');
-var toSource = require('color-space/util/to-source');
-
-/**
- * Return a new worker, if supported
- *
- * @param {object} spaces A set of spaces to init in web-worker
- *
- * @return {Worker}  A web-worker, accepting messages with data:
- *                   {
- *                   	rgb: rgbArray,
- *                   	type: ('polar'|'rect')
- *                   	space: '<spaceName>,
- *                   	channel: <channel indexes>,
- *                   	max: [360, 100],
- *                   	min: [0, 0],
- *                   	data: ImageData,
- *                   	id: 1
- *                   }
- *                   The data is the same as arguments for the `render` method
- *                   except for `id`, which is returned in response unchanged
- *                   to identify the request.
- */
-function getWorker(spaces){
-	//inline worker - isn’t slower on init & work than a file loader
-	// call URL.revokeObjectURL( blobURL ); if you’re finished
-	var blobURL = URL.createObjectURL( new Blob([
-		//export `color-ranger`
-		'var render = ', render.toString() + '\n',
-		'var renderRect = ', renderRect.toString() + '\n',
-		'var renderPolar = ', renderPolar.toString() + '\n',
-
-		//export `color-space`
-		'var convert = ' + toSource(spaces) + '\n',
-
-		//export message handler
-		';(',
-		function(){
-			self.onmessage = function(e){
-				var data = e.data, result;
-
-				//ignore empty data
-				if (!data) return postMessage(false);
-
-				if (data.type === 'polar') {
-					result = renderPolar(data.rgb, data.space, data.channel, data.min, data.max, data.data);
-				} else {
-					result = renderRect(data.rgb, data.space, data.channel, data.min, data.max, data.data);
-				}
-
-				postMessage({
-					data: result,
-					id: e.data.id
-				});
-			};
-		}.toString(),
-		')();'
-	], { type: 'application/javascript' } ) );
-
-	var worker = new Worker(blobURL);
-
-	return worker;
-}
-},{"./render":22,"./render-polar":20,"./render-rect":21,"color-space/util/to-source":17}],2:[function(require,module,exports){
-/**
  * @module color-ranger
  */
 var convert = require('color-space');
 
-
-//TODO: paint limits, esp. lch: how?
+//TODO: paint limits, esp. lch, xyz: how?
 //TODO: readme
 //TODO: jsfiddle get started chunk
 //TODO: base64d API images
@@ -101,10 +21,9 @@ var convert = require('color-space');
 module.exports = {
 	renderRect: require('./render-rect'),
 	renderPolar: require('./render-polar'),
-	renderGrid: require('./render-grid'),
-	getWorker: require('./get-worker')
+	renderGrid: require('./render-grid')
 };
-},{"./get-worker":1,"./render-grid":19,"./render-polar":20,"./render-rect":21,"color-space":9}],3:[function(require,module,exports){
+},{"./render-grid":17,"./render-polar":18,"./render-rect":19,"color-space":8}],2:[function(require,module,exports){
 /**
  * @module color-space/cmyk
  */
@@ -145,7 +64,7 @@ rgb.cmyk = function(rgb) {
 	y = (1 - b - k) / (1 - k) || 0;
 	return [c * 100, m * 100, y * 100, k * 100];
 };
-},{"./rgb":15}],4:[function(require,module,exports){
+},{"./rgb":14}],3:[function(require,module,exports){
 /**
  * @module color-space/hsl
  */
@@ -251,7 +170,7 @@ rgb.hsl = function(rgb) {
 
 	return [h, s * 100, l * 100];
 };
-},{"./rgb":15}],5:[function(require,module,exports){
+},{"./rgb":14}],4:[function(require,module,exports){
 /**
  * @module color-space/hsv
  */
@@ -367,7 +286,7 @@ hsl.hsv = function(hsl) {
 
 	return [h, sv * 100, v * 100];
 };
-},{"./hsl":4,"./rgb":15}],6:[function(require,module,exports){
+},{"./hsl":3,"./rgb":14}],5:[function(require,module,exports){
 /**
  * A uniform wrapper for husl.
  * // http://www.boronine.com/husl/
@@ -403,7 +322,7 @@ lchuv.husl = _husl._conv.lch.husl;
 xyz.husl = function(arg){
 	return _husl._conv.lch.husl(xyz.lchuv(arg));
 };
-},{"./lchuv":12,"./xyz":18,"husl":14}],7:[function(require,module,exports){
+},{"./lchuv":11,"./xyz":16,"husl":13}],6:[function(require,module,exports){
 /**
  * A uniform wrapper for huslp.
  * // http://www.boronine.com/husl/
@@ -433,7 +352,7 @@ module.exports = {
 //extend lchuv, xyz
 lchuv.huslp = _husl._conv.lch.huslp;
 xyz.huslp = function(arg){return _husl._conv.lch.huslp(xyz.lchuv(arg));};
-},{"./lchuv":12,"./xyz":18,"husl":14}],8:[function(require,module,exports){
+},{"./lchuv":11,"./xyz":16,"husl":13}],7:[function(require,module,exports){
 /**
  * @module color-space/hwb
  */
@@ -543,7 +462,7 @@ hsv.hwb = function(arg){
 hsl.hwb = function(arg){
 	return hsv.hwb(hsl.hsv(arg));
 };
-},{"./hsl":4,"./hsv":5,"./rgb":15}],9:[function(require,module,exports){
+},{"./hsl":3,"./hsv":4,"./rgb":14}],8:[function(require,module,exports){
 /**
  * @module color-space
  *
@@ -590,7 +509,7 @@ for (var fromSpaceName in spaces) {
 
 
 module.exports = spaces;
-},{"./cmyk":3,"./hsl":4,"./hsv":5,"./husl":6,"./huslp":7,"./hwb":8,"./lab":10,"./lchab":11,"./lchuv":12,"./luv":13,"./rgb":15,"./util/add-convertor":16,"./xyz":18}],10:[function(require,module,exports){
+},{"./cmyk":2,"./hsl":3,"./hsv":4,"./husl":5,"./huslp":6,"./hwb":7,"./lab":9,"./lchab":10,"./lchuv":11,"./luv":12,"./rgb":14,"./util/add-convertor":15,"./xyz":16}],9:[function(require,module,exports){
 /**
  * CIE LAB space model
  *
@@ -650,7 +569,7 @@ xyz.lab = function(xyz){
 
 	return [l, a, b];
 };
-},{"./xyz":18}],11:[function(require,module,exports){
+},{"./xyz":16}],10:[function(require,module,exports){
 /**
  * Cylindrical LAB
  *
@@ -706,7 +625,7 @@ lab.lchab = function(lab) {
 xyz.lchab = function(arg){
 	return lab.lchab(xyz.lab(arg));
 };
-},{"./lab":10,"./xyz":18}],12:[function(require,module,exports){
+},{"./lab":9,"./xyz":16}],11:[function(require,module,exports){
 /**
  * Cylindrical CIE LUV
  *
@@ -757,7 +676,7 @@ luv.lchuv = function(luv){
 xyz.lchuv = function(arg){
   return luv.lchuv(xyz.luv(arg));
 };
-},{"./luv":13,"./xyz":18}],13:[function(require,module,exports){
+},{"./luv":12,"./xyz":16}],12:[function(require,module,exports){
 /**
  * CIE LUV (C'est la vie)
  *
@@ -857,7 +776,7 @@ xyz.luv = function(arg, i, o) {
 
 	return [l, u, v];
 };
-},{"./xyz":18}],14:[function(require,module,exports){
+},{"./xyz":16}],13:[function(require,module,exports){
 // Generated by CoffeeScript 1.8.0
 (function() {
   var L_to_Y, Y_to_L, conv, distanceFromPole, dotProduct, epsilon, fromLinear, getBounds, intersectLineLine, kappa, lengthOfRayUntilIntersect, m, m_inv, maxChromaForLH, maxSafeChromaForL, refU, refV, refX, refY, refZ, rgbPrepare, root, round, toLinear;
@@ -1289,7 +1208,7 @@ xyz.luv = function(arg, i, o) {
 
 }).call(this);
 
-},{}],15:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 /**
  * RGB space.
  *
@@ -1302,7 +1221,7 @@ module.exports = {
 	max: [255,255,255],
 	channel: ['red', 'green', 'blue']
 };
-},{}],16:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 /**
  * Add a convertor from one to another space via XYZ or RGB space as a medium.
  *
@@ -1350,53 +1269,7 @@ function getConvertor(fromSpace, toSpace){
 	return fromSpace[toSpaceName];
 }
 
-},{"../rgb":15,"../xyz":18}],17:[function(require,module,exports){
-/**
- * Transform set of spaces to source code.
- * Useful to pass color-spaces source to web-worker, for example.
- *
- * @module  color-space/to-source
- */
-
-
-/**
- * Return evaluable source code of spaces set.
- *
- * @param {object} spaces A (sub)set of color spaces to stringify. Normally - index.js.
- *
- * @return {string} source code
- */
-module.exports = function(spaces){
-	var res = '(function(){\nvar space = {};\n';
-
-	var fnSrc, space;
-	for (var spaceName in spaces) {
-		space = spaces[spaceName];
-
-		res += '\nvar ' + spaceName + ' = space.' + spaceName + ' = {\n';
-
-		for (var prop in space) {
-			if (typeof space[prop] === 'function') {
-				fnSrc = space[prop].toString();
-
-				//replace medium converters refs
-				fnSrc = fnSrc.replace('[toSpaceName]', '.' + prop);
-				fnSrc = fnSrc.replace('fromSpace', spaceName);
-
-				res += prop + ':' + fnSrc + ',\n';
-			} else {
-				res += prop + ':' + JSON.stringify(space[prop]) + ',\n';
-			}
-		}
-
-		res += '}\n';
-	}
-
-	res += '\nreturn space;})()';
-
-	return res;
-};
-},{}],18:[function(require,module,exports){
+},{"../rgb":14,"../xyz":16}],16:[function(require,module,exports){
 /**
  * CIE XYZ
  *
@@ -1505,7 +1378,7 @@ rgb.xyz = function(rgb) {
 
 	return [x * 100, y *100, z * 100];
 };
-},{"./rgb":15}],19:[function(require,module,exports){
+},{"./rgb":14}],17:[function(require,module,exports){
 /**
  * Chess grid trivial renderer
  *
@@ -1546,7 +1419,7 @@ function renderGrid(a, b, imgData){
 
 	return imgData;
 }
-},{}],20:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 /**
  * Polar coordinate system renderer
  *
@@ -1567,9 +1440,10 @@ module.exports = renderPolar;
  * @param {array} channels Channel indexes to render
  * @param {array} mins left values for the channels
  * @param {array} maxes right values for the channels
+ * @param {UInt8CappedArray} buffer An image data buffer
  * @param {ImageData} imgData An target image data in which to render range
  */
-function renderPolar(rgba, space, channels, mins, maxes, imgData){
+function renderPolar(rgba, opts, buffer){
 	/**
 	 * Calculate step values for a polar range
 	 */
@@ -1603,9 +1477,9 @@ function renderPolar(rgba, space, channels, mins, maxes, imgData){
 		return vals;
 	}
 
-	return render(rgba, space, channels, mins, maxes, imgData, calcPolarStep);
+	return render(rgba, opts, buffer, calcPolarStep);
 }
-},{"./render":22}],21:[function(require,module,exports){
+},{"./render":20}],19:[function(require,module,exports){
 /**
  * Cartesian coordinate system renderer
  *
@@ -1626,9 +1500,10 @@ module.exports = renderRect;
  * @param {array} channels Channel indexes to render
  * @param {array} mins left values for the channels
  * @param {array} maxes right values for the channels
+ * @param {UInt8CappedArray} buffer An image data buffer
  * @param {ImageData} imgData An target image data in which to render range
  */
-function renderRect(rgba, space, channels, mins, maxes, imgData){
+function renderRect(rgba, opts, buffer){
 	/**
 	 * Calculate step values for a rectangular range
 	 *
@@ -1649,9 +1524,9 @@ function renderRect(rgba, space, channels, mins, maxes, imgData){
 		return vals;
 	}
 
-	return render(rgba, space, channels, mins, maxes, imgData, calcRectStep);
+	return render(rgba, opts, buffer, calcRectStep);
 }
-},{"./render":22}],22:[function(require,module,exports){
+},{"./render":20}],20:[function(require,module,exports){
 /**
  * A somewhat abstract renderer.
  *
@@ -1660,8 +1535,17 @@ function renderRect(rgba, space, channels, mins, maxes, imgData){
 
 var convert = require('color-space');
 
-
 module.exports = render;
+
+
+//default options for default rendering
+var defaults = {
+	//37 is the most optimal calc size
+	//you can scale resulting image with no significant quality loss
+	channel: [0,1],
+	space: 'rgb'
+};
+
 
 /**
  * Render passed rectangular range for the color to imageData.
@@ -1671,19 +1555,39 @@ module.exports = render;
  * @param {array} channels List of channel indexes to render
  * @param {array} mins Min values to render range (can be different than space mins)
  * @param {array} maxes Max values to render range (can be different than space maxes)
- * @param {ImageData} imgData An image data object
+ * @param {UInt8CappedArray} buffer An image data buffer
  * @param {function} calc A calculator for the step color
  *
  * @return {ImageData} ImageData containing a range
  */
-function render(rgba, space, channels, mins, maxes, imgData, calc){
+function render(rgba, opts, buffer, calc){
 	// console.time('canv');
+	var size = opts.size = opts.size || [Math.floor(Math.sqrt(buffer.length / 4))];
+	if (size.length === 1) {
+		size[1] = size[0];
+	}
+
+	var space = opts.space = opts.space || defaults.space;
+	var channels = opts.channel = opts.channel !== undefined ? opts.channel : defaults.channel;
+
+	var mins = opts.min = opts.min || [],
+		maxes = opts.maxes = opts.max || [];
+
+	//take mins/maxes of target space’s channels
+	for (var i = 0; i < channels.length; i++){
+		if (mins.length < channels.length) {
+			mins[i] = convert[space].min[channels[i]] || 0;
+		}
+		if (maxes.length < channels.length) {
+			maxes[i] = convert[space].max[channels[i]] || 255;
+		}
+	}
 
 	var isCMYK = space === 'cmyk';
 
 	//add alpha
-	if (rgba.length === 4) rgba[3] *= 255;
-	if (rgba.length === 3) rgba[3] = 255;
+	if (rgba.length === 4) {rgba[3] *= 255;}
+	if (rgba.length === 3) {rgba[3] = 255;}
 
 	//get specific space values
 	var values;
@@ -1696,13 +1600,9 @@ function render(rgba, space, channels, mins, maxes, imgData, calc){
 		}
 	}
 
-	//resolve channel indexes
-	var h = imgData.height,
-		w = imgData.width,
-		size = [w,h];
-
+	//resolve absent indexes
 	var noIdx = [];
-	for (var i = space.length; i--;){
+	for (i = space.length; i--;){
 		if (i !== channels[0] && i !== channels[1]) {
 			noIdx.push(i);
 		}
@@ -1712,12 +1612,12 @@ function render(rgba, space, channels, mins, maxes, imgData, calc){
 	var noIdx3 = noIdx[2];
 
 	//get converting fn
-	var converter = space === 'rgb' ? function(a){return a} : convert[space].rgb;
+	var converter = space === 'rgb' ? function(a){return a;} : convert[space].rgb;
 
-	for (var x, y = h, row, col, res, stepVals = values.slice(); y--;) {
-		row = y * w * 4;
+	for (var x, y = size[1], row, col, res, stepVals = values.slice(); y--;) {
+		row = y * size[0] * 4;
 
-		for (x = 0; x < w; x++) {
+		for (x = 0; x < size[0]; x++) {
 			col = row + x * 4;
 
 			//calculate color
@@ -1737,11 +1637,11 @@ function render(rgba, space, channels, mins, maxes, imgData, calc){
 			res = converter(stepVals);
 			res[3] = isCMYK ? 255 : stepVals[3];
 
-			imgData.data.set(res, col);
+			buffer.set(res, col);
 		}
 	}
 
-	return imgData;
+	return buffer;
 }
-},{"color-space":9}]},{},[2])(2)
+},{"color-space":8}]},{},[1])(1)
 });
