@@ -120,14 +120,14 @@ Render a chess grid, useful for transparency grid image rendering. Grid size is 
 | Parameter | Type | Description |
 |----|----|----|
 | rgbA | _Array_ | An rgb values for the "black cell" color. |
-| rgbB | _Array_ | An rgb values for the right color. |
+| rgbB | _Array_ | An rgb values for the "white cell" color. |
 | buffer | _Uint8ClampedArray_ | An `ImageData` object to which render the grid bitmap. |
 
 <br/>
 
 #### `.getWebworker(spaces)`
 
-Return a web-worker able to render any space range for the passed set of spaces. `spaces` should be a `color-space` module or it’s custom build. Usually you do this:
+Return a web-worker able to render any range for the passed set of spaces. `spaces` should be a `color-space` module or it’s custom build. Usually you do this:
 
 ```js
 var spaces = require('color-space');
