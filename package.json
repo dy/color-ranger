@@ -1,6 +1,6 @@
 {
   "name": "color-ranger",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Render color space range for color picker. Can be used as a web-worker or single flow.",
   "main": "index.js",
   "files": [
