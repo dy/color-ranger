@@ -21,9 +21,7 @@ You may also be interesting in checking out picky - a color picker based on that
 -->
 
 
-# Get started
-
-### Install
+# Install
 
 The best way to use color ranger is to [browserify](https://github.com/substack/node-browserify) it as a requirement.
 
@@ -50,10 +48,10 @@ Alternately you can use a standalone version, comprising `color-space` module. I
 <script src="https://cdn.rawgit.com/dfcreative/color-ranger/master/color-ranger.js"></script>
 ```
 
-You will get a `window.colorRanger` object, comprising rendering functions.
+You will get a `window.colorRanger` object with rendering functions.
 
 
-### Use
+# Use
 
 First off you need to setup a canvas to make color-ranger work. Look for [getting-started example](http://jsfiddle.net/dfcreative/3ng2wg59/):
 
@@ -94,11 +92,11 @@ You’ll see a range rendered as `html` background. You can see full list of ran
 
 # API
 
-<img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/rect.png" height="200"/>
-<img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/polar.png" height="200"/>
+<img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/rect.png" height="128"/>
+<img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/polar.png" height="132"/>
 
-##### `.renderRect(rgb, buffer, options)`
-##### `.renderPolar(rgb, buffer, options)`
+#### `.renderRect(rgb, buffer, options)`
+#### `.renderPolar(rgb, buffer, options)`
 
 Render rectangular or polar range into an `imageData`’s buffer. Size of the final image is taken such that it fills the whole `imageData` area.
 
@@ -115,7 +113,7 @@ Render rectangular or polar range into an `imageData`’s buffer. Size of the fi
 
 <img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/alpha.png"/>
 
-##### `.renderGrid(rgbA, rgbB, buffer)`
+#### `.renderGrid(rgbA, rgbB, buffer)`
 
 Render a chess grid, useful for transparency grid image rendering. Grid size is automatically figured out from the `imageData` size.
 
@@ -125,8 +123,9 @@ Render a chess grid, useful for transparency grid image rendering. Grid size is 
 | rgbB | _Array_ | An rgb values for the right color. |
 | buffer | _Uint8ClampedArray_ | An `ImageData` object to which render the grid bitmap. |
 
+<br/>
 
-##### `.getWebworker(spaces)`
+#### `.getWebworker(spaces)`
 
 Return a web-worker able to render any space range for the passed set of spaces. `spaces` should be a `color-space` module or it’s custom build. Usually you do this:
 
@@ -160,7 +159,7 @@ rangerWorker.postMessage({
 });
 ```
 
-Worker gets all the same parameters as [`.renderRect`](#.renderRect) or [`.renderPolar`](#.renderPolar), besides there are two additional options: `type` and `id`.
+Worker gets all the same parameters as [`.renderRect`](#renderrectrgb-buffer-options) or [`.renderPolar`](#renderpolarrgb-buffer-options), besides there are two additional options: `type` and `id`.
 
 | Parameter | Type | Description |
 |----|----|----|
