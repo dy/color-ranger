@@ -1,10 +1,10 @@
 <img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/logo.png" height="190"/>
 
-<code>**C O L O R − R A N G E R**</code>&nbsp; renders a color range for a color in a particular space in rectangular or polar coordinate system by manipulating _ImageData_. It is primarily needed for building color pickers.
+<code>**C O L O R − R A N G E R**</code>&nbsp; renders a color range for a color in rectangular or polar coordinate system by manipulating _ImageData_’s buffer. It is primarily needed for building color pickers.
 
 * It can be used in a web-worker, document thread or in io.
 * You can require renderers selectively.
-* See [demo](jsfiddle), [range list and tests](https://cdn.rawgit.com/dfcreative/color-ranger/master/test/index.html).
+* See [demo](http://jsfiddle.net/dfcreative/3ng2wg59/), [range list and tests](https://cdn.rawgit.com/dfcreative/color-ranger/master/test/index.html).
 
 <p>
 	<a href="https://travis-ci.org/dfcreative/color-ranger"><img src="https://travis-ci.org/dfcreative/color-ranger.svg?branch=master"/></a>
@@ -55,7 +55,7 @@ You will get a `window.colorRanger` object, comprising rendering functions.
 
 ### Use
 
-First off you need to setup a canvas to make color-ranger work. Look for [getting-started example code](https://raw.githubusercontent.com/dfcreative/color-ranger/master/test/gettingstarted.html):
+First off you need to setup a canvas to make color-ranger work. Look for [getting-started example](http://jsfiddle.net/dfcreative/3ng2wg59/):
 
 ```js
 //create a canvas
@@ -86,7 +86,7 @@ imageData.data = colorRanger.renderRect(what, where, how);
 context.putImageData(imageData, 0, 0);
 
 //get a background with the rendered range
-document.documentElement.style.backgroundImage = 'url(' + canvas.toDataURL() + ')';
+document.documentElement.style.background = 'url(' + canvas.toDataURL() + ') 0 0 / cover';
 ```
 
 You’ll see a range rendered as `html` background. You can see full list of ranges in [tests page](https://cdn.rawgit.com/dfcreative/color-space/master/test/index.html).
@@ -94,23 +94,26 @@ You’ll see a range rendered as `html` background. You can see full list of ran
 
 # API
 
+<img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/rect.png" height="200"/>
+<img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/polar.png" height="200"/>
+
 ##### `.renderRect(rgb, buffer, options)`
 ##### `.renderPolar(rgb, buffer, options)`
 
-Render rectangular or polar range into an `imageData`. Size of the final image is taken such that it fills the whole `imageData` area.
+Render rectangular or polar range into an `imageData`’s buffer. Size of the final image is taken such that it fills the whole `imageData` area.
 
 | Parameter | Type | Description |
 |----|----|----|
-| rgb | _Array_ | An array of rgb values, representing a color. E. g. `[0, 255, 127]`. |
-| space | _string_ | A color space name for the range taken from the [color-space](https://github.com/dfcreative/color-space/) module. E. g. `'hsl'`. |
-| channel | _Array_ | A tuple of x/y space channel indexes. E. g. `[0,2]` from `'hsv'` is hue and value. One of the channels can be omitted, e. g. `[null, 1]` means render saturation on y-axis. |
-| min, max | _Array_ | Arrays of left and right values for the range, corresponding to the channels in x/y axis. |
-| imageData | _ImageData_ | An `ImageData` object to which render a range. |
+| `rgb` | _Array_ | An array of rgb values, representing a color. E. g. `[0, 255, 127]`. |
+| `buffer` | _Uint8ClampedArray_ | An `imageData.data` object to which render a range. |
+| `options.space` | _string_ | A color space name for the range taken from the [color-space](https://github.com/dfcreative/color-space/) module. E. g. `'hsl'`. |
+| `options.channel` | _Array_ | An array of x/y space channel indexes. E. g. `[0,2]` from `'hsv'` is _hue_ and _value_ channels. One of the channels can be omitted, e. g. `[null, 1]` means render saturation by y-axis. |
+| `options.min`, `options.max` | _Array_ | Arrays of left and right values for the range, corresponding to the channels in x/y axis. |
 
 <br/>
 
 
-<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAJElEQVQoU2OsqKhIY8ACOjo6ZmETZxyRGrCFBEgMV2AwjkQNAGKgIuHnlRM+AAAAAElFTkSuQmCC"/>
+<img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/alpha.png"/>
 
 ##### `.renderGrid(rgbA, rgbB, buffer)`
 
@@ -120,12 +123,12 @@ Render a chess grid, useful for transparency grid image rendering. Grid size is 
 |----|----|----|
 | rgbA | _Array_ | An rgb values for the "black cell" color. |
 | rgbB | _Array_ | An rgb values for the right color. |
-| imageData | _ImageData_ | An `ImageData` object to which render the grid bitmap. |
+| buffer | _Uint8ClampedArray_ | An `ImageData` object to which render the grid bitmap. |
 
 
 ##### `.getWebworker(spaces)`
 
-Return a web-worker able to render any space range for the passed set of spaces. `spaces` should be a `color-space` module or it’s custom build.
+Return a web-worker able to render any space range for the passed set of spaces. `spaces` should be a `color-space` module or it’s custom build. Usually you do this:
 
 ```js
 var spaces = require('color-space');
@@ -137,12 +140,12 @@ var rangerWorker = ranger.getWorker(spaces);
 rangerWorker.addEvenListener('message', function(evt){
 	if (evt.data.id !== 1) return;
 
-	//image data is returned as `event.data.data`
-	context.putImageData(evt.data.data, 0, 0);
+	//image data buffer is returned as `event.data.data`
+	imageData.data = evt.data.data;
+	context.putImageData(imageData, 0, 0);
 
-	document.body.style.backgroundImage = 'url(' + canvas.toDataURL() + ')';
+	document.body.style.background = 'url(' + canvas.toDataURL() + ') 0 0 / cover';
 });
-
 
 //send a data to the worker
 rangerWorker.postMessage({
@@ -157,12 +160,12 @@ rangerWorker.postMessage({
 });
 ```
 
-Worker gets all the same parameters as [`.renderRect`](#.renderRect) or [`.renderPolar`](#.renderPolar) whilst there are two additional options: `type` and `id`.
+Worker gets all the same parameters as [`.renderRect`](#.renderRect) or [`.renderPolar`](#.renderPolar), besides there are two additional options: `type` and `id`.
 
 | Parameter | Type | Description |
 |----|----|----|
-| type | _string_ | A type of plot to render: `'rect'` or `'polar'`. |
-| id | _number_ | A number of request to identify response. Returned unchanged. |
+| type | _string_ | A type of a plane to render: `'rect'` or `'polar'`. |
+| id | _number_ | An id of request to identify response. Returns unchanged. |
 
 
 # Contribute
@@ -172,7 +175,7 @@ There are some things to do with this lib.
 * At first, it needs implementing WebGL shaders version, or combining somehow with [color-space-canvas](https://github.com/rosskettle/color-space-canvas) module.
 * At second, there’s no HUSL space in webworker available, because HUSL space requires intricated serialization of code for web-worker.
 * Also it might need to add a triangular shape rendering.
-* It’s a good idea to add server-side rendering as well.
+* It’s a good idea to test server-side rendering as well.
 * Asm-js calculation
 
 So please fork, add fixes/features, make a PR. Color-ranger is an unlicensed project in that it is free to use or modify.

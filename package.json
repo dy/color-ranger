@@ -14,12 +14,6 @@
   "directories": {
     "test": "test"
   },
-  "scripts": {
-    "test": "mocha --harmony",
-    "build": "browserify --standalone colorRanger ./index.js > dist/color-ranger.js",
-    "build-test": "browserify -r emmy -r color-space -r color -r ./get-worker:../get-worker -r ./index.js:../ > test/bundle.js",
-    "min": "ccjs dist/color-ranger.js --language_in=ECMASCRIPT5 > dist/color-ranger.min.js"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/dfcreative/color-range"
@@ -48,6 +42,12 @@
     "url": "https://github.com/dfcreative/color-range/issues"
   },
   "homepage": "https://github.com/dfcreative/color-range",
+  "scripts": {
+    "test": "mocha --harmony",
+    "build": "browserify --standalone colorRanger ./index.js > dist/color-ranger.js",
+    "build-test": "browserify -r emmy -r color-space -r color -r ./get-worker:../get-worker -r ./index.js:../ > test/bundle.js",
+    "min": "ccjs dist/color-ranger.js --language_in=ECMASCRIPT5 > dist/color-ranger.min.js"
+  },
   "dependencies": {
     "color-space": ">=0"
   },
