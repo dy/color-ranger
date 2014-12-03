@@ -87,16 +87,16 @@ context.putImageData(imageData, 0, 0);
 document.documentElement.style.background = 'url(' + canvas.toDataURL() + ') 0 0 / cover';
 ```
 
-You’ll see a range rendered as `html` background. You can see full list of ranges in [tests page](https://cdn.rawgit.com/dfcreative/color-space/master/test/index.html).
+You’ll see a range rendered as `html` background. You can see full list of ranges in the [tests page](https://cdn.rawgit.com/dfcreative/color-space/master/test/index.html).
 
 
 # API
 
-<img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/rect.png" height="128"/>
-<img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/polar.png" height="132"/>
-
 #### `.renderRect(rgb, buffer, options)`
 #### `.renderPolar(rgb, buffer, options)`
+
+<img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/rect.png" height="128"/>
+<img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/polar.png" height="132"/>
 
 Render rectangular or polar range into an `imageData`’s buffer. Size of the final image is taken such that it fills the whole `imageData` area.
 
@@ -111,9 +111,9 @@ Render rectangular or polar range into an `imageData`’s buffer. Size of the fi
 <br/>
 
 
-<img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/alpha.png"/>
-
 #### `.renderGrid(rgbA, rgbB, buffer)`
+
+<img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/alpha.png"/>
 
 Render a chess grid, useful for transparency grid image rendering. Grid size is automatically figured out from the `imageData` size.
 
