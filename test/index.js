@@ -8,17 +8,27 @@ var ranger = require('../');
 var Emmy = require('emmy');
 var spaces = require('color-space');
 
+//detect browser
+var doc = typeof document === 'undefined' ? null : document;
 
-var demo = document.getElementById('demo');
+//browser case
+if (doc) {
+	var getWorker = require('../get-worker');
 
+	var demo = document.getElementById('demo');
 
-//virtual canvas
-var cnv = document.createElement('canvas');
-cnv.width = 101;
-cnv.height = 101;
-var ctx = cnv.getContext('2d');
-var imageData = ctx.getImageData(0,0,cnv.width,cnv.height);
-var data = imageData.data;
+	//virtual canvas
+	var cnv = document.createElement('canvas');
+	cnv.width = 101;
+	cnv.height = 101;
+	var ctx = cnv.getContext('2d');
+	var imageData = ctx.getImageData(0,0,cnv.width,cnv.height);
+	var data = imageData.data;
+}
+//node case
+else {
+	var data = new Uint8ClampedArray(101*101*4);
+}
 
 //color to take as a basis
 var color = new Color('red');
@@ -26,6 +36,8 @@ var color = new Color('red');
 
 //create range case
 function createRangeCase(str, type, buffer){
+	if (!doc) return;
+
 	var bg = document.createElement('div');
 	bg.className = 'range-case';
 
@@ -39,15 +51,17 @@ function createRangeCase(str, type, buffer){
 	imageData.data = buffer;
 	ctx.putImageData(imageData, 0, 0);
 
-	demo.appendChild(bg);
-
 	bg.style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+
+	demo.appendChild(bg);
 
 	return bg;
 }
 
 
 function createSection(str){
+	if (!doc) return;
+
 	var title = document.createElement('h2');
 	title.innerHTML = str;
 	demo.appendChild(title);
@@ -78,7 +92,6 @@ describe('axis', function(){
 	});
 
 	it('[x,y]', function(){
-		ctx.putImageData(imageData, 0, 0);
 		createRangeCase('x-y', 'rect', ranger.renderRect(color.rgbArray(), {
 			space: 'hsl',
 			channel: [0, 1],
@@ -91,6 +104,8 @@ describe('axis', function(){
 
 describe('alpha', function(){
 	var gridBg;
+
+	if (!doc) return;
 
 	before(function(){
 		createSection(this.test.parent.title);
@@ -653,19 +668,19 @@ describe('conical', function(){
 			createSection(this.test.parent.title);
 		});
 		it('hue', function(){
-			createRangeCase('hue', 'polar', ranger.renderPolar(color.rgbArray(), {space:'hsl', channel:[0],min: [0], max:[360]}, data)).style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+			createRangeCase('hue', 'polar', ranger.renderPolar(color.rgbArray(), {space:'hsl', channel:[0],min: [0], max:[360]}, data));
 		});
 
 		it('saturation', function(){
-			createRangeCase('saturation', 'polar', ranger.renderPolar(color.rgbArray(), {space:'hsl', channel:[1],min: [0], max:[100]}, data)).style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+			createRangeCase('saturation', 'polar', ranger.renderPolar(color.rgbArray(), {space:'hsl', channel:[1],min: [0], max:[100]}, data));
 		});
 
 		it('lightness', function(){
-			createRangeCase('lightness', 'polar', ranger.renderPolar(color.rgbArray(), {space:'hsl', channel:[2],min: [0], max:[100]}, data)).style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+			createRangeCase('lightness', 'polar', ranger.renderPolar(color.rgbArray(), {space:'hsl', channel:[2],min: [0], max:[100]}, data));
 		});
 
 		it('brightness', function(){
-			createRangeCase('brightness', 'polar', ranger.renderPolar(color.rgbArray(), {space:'hsv', channel:[2],min: [0], max:[100]}, data)).style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+			createRangeCase('brightness', 'polar', ranger.renderPolar(color.rgbArray(), {space:'hsv', channel:[2],min: [0], max:[100]}, data));
 		});
 	});
 
@@ -674,15 +689,15 @@ describe('conical', function(){
 			createSection(this.test.parent.title);
 		});
 		it('red', function(){
-			createRangeCase('red', 'polar', ranger.renderPolar(color.rgbArray(), {space:'rgb', channel:[0],min: [0], max:[255]}, data)).style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+			createRangeCase('red', 'polar', ranger.renderPolar(color.rgbArray(), {space:'rgb', channel:[0],min: [0], max:[255]}, data));
 		});
 
 		it('green', function(){
-			createRangeCase('green', 'polar', ranger.renderPolar(color.rgbArray(), {space:'rgb', channel:[1],min: [0], max:[255]}, data)).style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+			createRangeCase('green', 'polar', ranger.renderPolar(color.rgbArray(), {space:'rgb', channel:[1],min: [0], max:[255]}, data));
 		});
 
 		it('blue', function(){
-			createRangeCase('blue', 'polar', ranger.renderPolar(color.rgbArray(), {space:'rgb', channel:[2],min: [0], max:[255]}, data)).style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+			createRangeCase('blue', 'polar', ranger.renderPolar(color.rgbArray(), {space:'rgb', channel:[2],min: [0], max:[255]}, data));
 		});
 	});
 
@@ -691,19 +706,19 @@ describe('conical', function(){
 			createSection(this.test.parent.title);
 		});
 		it('cyan', function(){
-			createRangeCase('cyan', 'polar', ranger.renderPolar(color.rgbArray(), {space:'cmyk', channel:[0],min: [0], max:[100]}, data)).style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+			createRangeCase('cyan', 'polar', ranger.renderPolar(color.rgbArray(), {space:'cmyk', channel:[0],min: [0], max:[100]}, data));
 		});
 
 		it('magenta', function(){
-			createRangeCase('magenta', 'polar', ranger.renderPolar(color.rgbArray(), {space:'cmyk', channel:[1],min: [0], max:[100]}, data)).style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+			createRangeCase('magenta', 'polar', ranger.renderPolar(color.rgbArray(), {space:'cmyk', channel:[1],min: [0], max:[100]}, data));
 		});
 
 		it('yellow', function(){
-			createRangeCase('yellow', 'polar', ranger.renderPolar(color.rgbArray(), {space:'cmyk', channel:[2],min: [0], max:[100]}, data)).style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+			createRangeCase('yellow', 'polar', ranger.renderPolar(color.rgbArray(), {space:'cmyk', channel:[2],min: [0], max:[100]}, data));
 		});
 
 		it('black', function(){
-			createRangeCase('black', 'polar', ranger.renderPolar(color.rgbArray(), {space:'cmyk', channel:[3],min: [0], max:[100]}, data)).style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+			createRangeCase('black', 'polar', ranger.renderPolar(color.rgbArray(), {space:'cmyk', channel:[3],min: [0], max:[100]}, data));
 		});
 	});
 
@@ -712,13 +727,13 @@ describe('conical', function(){
 			createSection(this.test.parent.title);
 		});
 		it('x', function(){
-			createRangeCase('x', 'polar', ranger.renderPolar(color.rgbArray(), {space:'xyz', channel:[0],min: [0], max:[95]}, data)).style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+			createRangeCase('x', 'polar', ranger.renderPolar(color.rgbArray(), {space:'xyz', channel:[0],min: [0], max:[95]}, data));
 		});
 		it('y', function(){
-			createRangeCase('y', 'polar', ranger.renderPolar(color.rgbArray(), {space:'xyz', channel:[1],min: [0], max:[100]}, data)).style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+			createRangeCase('y', 'polar', ranger.renderPolar(color.rgbArray(), {space:'xyz', channel:[1],min: [0], max:[100]}, data));
 		});
 		it('z', function(){
-			createRangeCase('z', 'polar', ranger.renderPolar(color.rgbArray(), {space:'xyz', channel:[2],min: [0], max:[109]}, data)).style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+			createRangeCase('z', 'polar', ranger.renderPolar(color.rgbArray(), {space:'xyz', channel:[2],min: [0], max:[109]}, data));
 		});
 	});
 
@@ -727,23 +742,23 @@ describe('conical', function(){
 			createSection(this.test.parent.title);
 		});
 		it('L', function(){
-			createRangeCase('L', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lab', channel:[0],min: [0], max:[100]}, data)).style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+			createRangeCase('L', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lab', channel:[0],min: [0], max:[100]}, data));
 		});
 		it('a', function(){
-			createRangeCase('a', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lab', channel:[1], min:[-100], max:[100]}, data)).style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+			createRangeCase('a', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lab', channel:[1], min:[-100], max:[100]}, data));
 		});
 		it('b', function(){
-			createRangeCase('b', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lab', channel:[2], min:[-100], max:[100]}, data)).style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+			createRangeCase('b', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lab', channel:[2], min:[-100], max:[100]}, data));
 		});
 
 		it('l', function(){
-			createRangeCase('l', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lchab', channel:[0],min: [0], max:[100]}, data)).style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+			createRangeCase('l', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lchab', channel:[0],min: [0], max:[100]}, data));
 		});
 		it('c', function(){
-			createRangeCase('c', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lchab', channel:[1],min: [0], max:[100]}, data)).style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+			createRangeCase('c', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lchab', channel:[1],min: [0], max:[100]}, data));
 		});
 		it('h', function(){
-			createRangeCase('h', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lchab', channel:[2],min: [0], max:[360]}, data)).style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+			createRangeCase('h', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lchab', channel:[2],min: [0], max:[360]}, data));
 		});
 	});
 
@@ -752,23 +767,23 @@ describe('conical', function(){
 			createSection(this.test.parent.title);
 		});
 		it('L(uv)', function(){
-			createRangeCase('L', 'polar', ranger.renderPolar(color.rgbArray(), {space:'luv', channel:[0],min: [0], max:[100]}, data)).style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+			createRangeCase('L', 'polar', ranger.renderPolar(color.rgbArray(), {space:'luv', channel:[0],min: [0], max:[100]}, data));
 		});
 		it('u', function(){
-			createRangeCase('u', 'polar', ranger.renderPolar(color.rgbArray(), {space:'luv', channel:[1], min:[-100], max:[100]}, data)).style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+			createRangeCase('u', 'polar', ranger.renderPolar(color.rgbArray(), {space:'luv', channel:[1], min:[-100], max:[100]}, data));
 		});
 		it('v', function(){
-			createRangeCase('v', 'polar', ranger.renderPolar(color.rgbArray(), {space:'luv', channel:[2], min:[-100], max:[100]}, data)).style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+			createRangeCase('v', 'polar', ranger.renderPolar(color.rgbArray(), {space:'luv', channel:[2], min:[-100], max:[100]}, data));
 		});
 
 		it('l(uv)', function(){
-			createRangeCase('lυν', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lchuv', channel:[0],min: [0], max:[100]}, data)).style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+			createRangeCase('lυν', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lchuv', channel:[0],min: [0], max:[100]}, data));
 		});
 		it('c(uv)', function(){
-			createRangeCase('cυν', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lchuv', channel:[1],min: [0], max:[100]}, data)).style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+			createRangeCase('cυν', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lchuv', channel:[1],min: [0], max:[100]}, data));
 		});
 		it('h(uv)', function(){
-			createRangeCase('hυν', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lchuv', channel:[2],min: [0], max:[360]}, data)).style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+			createRangeCase('hυν', 'polar', ranger.renderPolar(color.rgbArray(), {space:'lchuv', channel:[2],min: [0], max:[360]}, data));
 		});
 	});
 
@@ -778,24 +793,24 @@ describe('conical', function(){
 			createSection(this.test.parent.title);
 		});
 		it('husl-hue', function(){
-			createRangeCase('h', 'polar', ranger.renderPolar(color.rgbArray(), {space:'husl', channel:[0],min: [0], max:[360]}, data)).style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+			createRangeCase('h', 'polar', ranger.renderPolar(color.rgbArray(), {space:'husl', channel:[0],min: [0], max:[360]}, data));
 		});
 		it('husl-sat', function(){
-			createRangeCase('s', 'polar', ranger.renderPolar(color.rgbArray(), {space:'husl', channel:[1],min: [0], max:[100]}, data)).style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+			createRangeCase('s', 'polar', ranger.renderPolar(color.rgbArray(), {space:'husl', channel:[1],min: [0], max:[100]}, data));
 		});
 		it('husl-l', function(){
-			createRangeCase('l', 'polar', ranger.renderPolar(color.rgbArray(), {space:'husl', channel:[2],min: [0], max:[100]}, data)).style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+			createRangeCase('l', 'polar', ranger.renderPolar(color.rgbArray(), {space:'husl', channel:[2],min: [0], max:[100]}, data));
 		});
 
 
 		it('huslp-hue', function(){
-			createRangeCase('h', 'polar', ranger.renderPolar(color.rgbArray(), {space:'huslp', channel:[0],min: [0], max:[360]}, data)).style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+			createRangeCase('h', 'polar', ranger.renderPolar(color.rgbArray(), {space:'huslp', channel:[0],min: [0], max:[360]}, data));
 		});
 		it('huslp-sat', function(){
-			createRangeCase('s', 'polar', ranger.renderPolar(color.rgbArray(), {space:'huslp', channel:[1],min: [0], max:[100]}, data)).style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+			createRangeCase('s', 'polar', ranger.renderPolar(color.rgbArray(), {space:'huslp', channel:[1],min: [0], max:[100]}, data));
 		});
 		it('huslp-l', function(){
-			createRangeCase('l', 'polar', ranger.renderPolar(color.rgbArray(), {space:'huslp', channel:[2],min: [0], max:[100]}, data)).style.backgroundImage = 'url(' + cnv.toDataURL() + ')';
+			createRangeCase('l', 'polar', ranger.renderPolar(color.rgbArray(), {space:'huslp', channel:[2],min: [0], max:[100]}, data));
 		});
 	});
 });
@@ -1106,6 +1121,8 @@ describe('polar', function(){
 
 
 describe('performance', function(){
+	if (!doc) return;
+
 	before(function(){
 		createSection(this.test.parent.title);
 	});
@@ -1115,9 +1132,10 @@ describe('performance', function(){
 
 	//hook up worker
 	before(function(done){
+
 		console.time('create-webworker');
 
-		worker = ranger.getWorker(spaces);
+		worker = getWorker(spaces);
 
 		worker.postMessage('');
 		Emmy.one(worker, 'message', function(){

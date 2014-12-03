@@ -3,7 +3,6 @@
  */
 var convert = require('color-space');
 
-//TODO: make server-side calc via Uint8ClampedArray
 //TODO: paint limits, esp. lch: how?
 //TODO: readme
 //TODO: jsfiddle get started chunk
@@ -21,6 +20,5 @@ var convert = require('color-space');
 module.exports = {
 	renderRect: require('./render-rect'),
 	renderPolar: require('./render-polar'),
-	renderGrid: require('./render-grid'),
-	getWorker: require('./get-worker')
+	renderGrid: require('./render-grid')
 };
