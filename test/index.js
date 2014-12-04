@@ -139,21 +139,23 @@ describe('alpha', function(){
 			channel: [0,3]
 		};
 		var bg = createRangeCase('red-alpha', 'rect', ranger.renderRect(color.rgbaArray(), data, opts));
-		bg.style.background += bg.style.backgroundImage + ' 0 0/cover, ' + gridBg;
+		bg.style.background = bg.style.backgroundImage + ' 0 0/cover, ' + gridBg;
 	});
 	it('hue-alpha', function(){
 		var opts = {
 			space: 'hsl', channel: [0,3], max:[360,255]
 		};
 		var bg = createRangeCase('hue-alpha', 'rect', ranger.renderRect(color.rgbaArray(), data, opts));
-		bg.style.background += bg.style.backgroundImage + ' 0 0/cover, ' + gridBg;
+		bg.style.background = bg.style.backgroundImage + ' 0 0/cover, ' + gridBg;
 	});
 	it('lightness-alpha', function(){
 		var opts = {
-			space: 'luv', channel: [0,3], max:[100,255]
+			space: 'luv', channel: [3,0],
+			min: [255, 0],
+			max:[0,100]
 		};
-		var bg = createRangeCase('lightness-alpha', 'polar', ranger.renderRect(color.rgbaArray(), data, opts));
-		bg.style.background += bg.style.backgroundImage + ' 0 0/cover, ' + gridBg;
+		var bg = createRangeCase('lightness-alpha', 'polar', ranger.renderPolar(color.rgbaArray(), data, opts));
+		bg.style.background = bg.style.backgroundImage + ' 0 0/cover, ' + gridBg;
 	});
 });
 
