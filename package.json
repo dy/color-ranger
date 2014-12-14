@@ -4,12 +4,7 @@
   "description": "Render color space range for color picker. Can be used as a web-worker or single flow.",
   "main": "index.js",
   "files": [
-    "index.js",
-    "render.js",
-    "render-rect.js",
-    "render-grid.js",
-    "render-polar.js",
-    "get-worker.js"
+    "*.js"
   ],
   "directories": {
     "test": "test"
