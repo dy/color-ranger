@@ -1,6 +1,6 @@
 {
   "name": "color-ranger",
-  "version": "4.0.4",
+  "version": "4.0.5",
   "description": "Color space ranges.",
   "main": "index.js",
   "files": [
