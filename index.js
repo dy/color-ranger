@@ -34,7 +34,7 @@ var defaults = {
  */
 function render(rgba, buffer, opts){
 	// console.time('canv');
-	var size = opts.size = opts.size || [Math.floor(Math.sqrt(buffer.length / 4))];
+	var size = opts.size || [Math.floor(Math.sqrt(buffer.length / 4))];
 	if (size.length === 1) {
 		size[1] = size[0];
 	}
@@ -42,8 +42,8 @@ function render(rgba, buffer, opts){
 	var space = opts.space = opts.space || defaults.space;
 	var channels = opts.channel = opts.channel !== undefined ? opts.channel : defaults.channel;
 
-	var mins = opts.min = opts.min || [],
-		maxes = opts.maxes = opts.max || [];
+	var mins = opts.min || [],
+		maxes = opts.max || [];
 
 	var calc = opts.type === 'polar' ?  calcPolarStep : calcRectStep;
 
