@@ -33,6 +33,8 @@ var defaults = {
  * @return {ImageData} ImageData containing a range
  */
 function render(rgba, buffer, opts){
+	if (!buffer || !buffer.length) throw Error('Buffer must be valid non-empty UInt8CappedArray');
+
 	// console.time('canv');
 	var size = opts.size || [Math.floor(Math.sqrt(buffer.length / 4))];
 	if (size.length === 1) {
