@@ -45,6 +45,7 @@
     "color-space": ">=0"
   },
   "devDependencies": {
+    "color": "*",
     "mocha": ">=1",
     "require-stub": ">=1.0",
     "emmy": ">=1.0"

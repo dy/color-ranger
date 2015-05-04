@@ -11,12 +11,13 @@ module.exports = render;
 
 //default options for default rendering
 var defaults = {
-	//37 is the most optimal calc size
-	//you can scale resulting image with no significant quality loss
 	channel: [0,1],
 	space: 'rgb'
 };
 
+
+//37 is the most optimal calc size
+//you can scale resulting image with no significant quality loss
 
 /**
  * Render passed rectangular range for the color to imageData.
