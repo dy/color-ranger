@@ -4,10 +4,10 @@
 
 [Test & demo](https://cdn.rawgit.com/dfcreative/color-ranger/master/test/index.html), [color picker](https://github.com/dfcreative/picky).
 
-[![alt](https://travis-ci.org/dfcreative/color-ranger)](https://travis-ci.org/dfcreative/color-ranger.svg?branch=master)
-[![alt](https://codeclimate.com/github/dfcreative/color-ranger)](https://codeclimate.com/github/dfcreative/color-ranger/badges/gpa.svg)
-[![alt](https://coveralls.io/r/dfcreative/color-ranger)](https://img.shields.io/coveralls/dfcreative/color-ranger.svg)
-[![alt](https://david-dm.org/dfcreative/color-ranger)](https://david-dm.org/dfcreative/color-ranger.svg)
+[![alt](https://travis-ci.org/dfcreative/color-ranger.svg?branch=master)](https://travis-ci.org/dfcreative/color-ranger)
+[![alt](https://codeclimate.com/github/dfcreative/color-ranger/badges/gpa.svg)](https://codeclimate.com/github/dfcreative/color-ranger)
+[![alt](https://img.shields.io/coveralls/dfcreative/color-ranger.svg)](https://coveralls.io/r/dfcreative/color-ranger)
+[![alt](https://david-dm.org/dfcreative/color-ranger.svg)](https://david-dm.org/dfcreative/color-ranger)
 [![unstable](http://badges.github.io/stability-badges/dist/unstable.svg)](http://github.com/badges/stability-badges)
 
 
