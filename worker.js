@@ -1,20 +1,13 @@
 /**
  * Create worker for rendering ranges
  *
- * @module color-ranger/render
+ * @module color-ranger/worker
  */
-
-//TODO: make husl renderable via worker
-// 		move full husl maths to color-space?
-//		serialize full husl code?
-//TODO: make worker hookable in io.
 
 module.exports = getWorker;
 
 
-var render = require('./render');
-var renderPolar = require('./render-polar');
-var renderRect = require('./render-rect');
+var render = require('./');
 var toSource = require('color-space/util/to-source');
 
 /**
@@ -43,8 +36,6 @@ function getWorker(spaces){
 	var blobURL = URL.createObjectURL( new Blob([
 		//export `color-ranger`
 		'var render = ', render.toString() + '\n',
-		'var renderRect = ', renderRect.toString() + '\n',
-		'var renderPolar = ', renderPolar.toString() + '\n',
 
 		//export `color-space`
 		'var convert = ' + toSource(spaces) + '\n',
@@ -58,11 +49,7 @@ function getWorker(spaces){
 				//ignore empty data
 				if (!data) return postMessage(false);
 
-				if (data.type === 'polar') {
-					result = renderPolar(data.rgb, data.data, data);
-				} else {
-					result = renderRect(data.rgb, data.data, data);
-				}
+				result = render(data.rgb, data.data, data);
 
 				postMessage({
 					data: result,

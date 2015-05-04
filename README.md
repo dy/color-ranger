@@ -2,60 +2,25 @@
 
 <code>**C O L O R − R A N G E R**</code>&nbsp; renders a color range for a color in rectangular or polar coordinate system by manipulating _ImageData_’s buffer. It is primarily needed for building color pickers.
 
-* It can be used in a web-worker, document thread or in io.
-* You can require renderers selectively.
-* See [demo](http://jsfiddle.net/dfcreative/3ng2wg59/), [range list and tests](https://cdn.rawgit.com/dfcreative/color-ranger/master/test/index.html).
+[Demo](http://jsfiddle.net/dfcreative/3ng2wg59/), [ranges list](https://cdn.rawgit.com/dfcreative/color-ranger/master/test/index.html), [color picker](https://github.com/dfcreative/picky).
 
 <p>
 	<a href="https://travis-ci.org/dfcreative/color-ranger"><img src="https://travis-ci.org/dfcreative/color-ranger.svg?branch=master"/></a>
 	<a href="https://codeclimate.com/github/dfcreative/color-ranger"><img src="https://codeclimate.com/github/dfcreative/color-ranger/badges/gpa.svg"/></a>
 	<a href="https://coveralls.io/r/dfcreative/color-ranger"><img src="https://img.shields.io/coveralls/dfcreative/color-ranger.svg"/></a>
 	<a href="https://david-dm.org/dfcreative/color-ranger"><img src="https://david-dm.org/dfcreative/color-ranger.svg"/></a>
-	<a href="UNLICENSE"><img src="http://upload.wikimedia.org/wikipedia/commons/6/62/PD-icon.svg" width="20"/></a>
 </p>
 
+[![unstable](http://badges.github.io/stability-badges/dist/unstable.svg)](http://github.com/badges/stability-badges)
 
 
-<!--
-You may also be interesting in checking out picky - a color picker based on that.
--->
+## Use
 
-
-# Install
-
-The best way to use color ranger is to [browserify](https://github.com/substack/node-browserify) it as a requirement.
-
-1. Install local package:
 `$ npm install --save color-ranger`
 
-2. Build bundle:
-`browserify -r color-ranger > bundle.js`
-Or if you have your own package, append color-ranger to it:
-`browserify -r color-ranger -r your-dependency your-package.js > bundle.js`
-
-3. Include the bundle: `<script src="bundle.js"></script>`
-4. Finally require color-ranger module:
-```html
-<script>
-	var ranger = require('color-ranger');
-</script>
-```
-
-
-Alternately you can use a standalone version, comprising `color-space` module. Include [color-ranger.js](https://raw.githubusercontent.com/dfcreative/color-ranger/master/color-ranger.js) before you’ll use it:
-
-```html
-<script src="https://cdn.rawgit.com/dfcreative/color-ranger/master/color-ranger.js"></script>
-```
-
-You will get a `window.colorRanger` object with rendering functions.
-
-
-# Use
-
-First off you need to setup a canvas to make color-ranger work. A [getting-started example](http://jsfiddle.net/dfcreative/3ng2wg59/):
-
 ```js
+var colorRanger = require('color-ranger');
+
 //create a canvas
 var canvas = document.createElement('canvas');
 canvas.width = 50;
@@ -87,13 +52,10 @@ context.putImageData(imageData, 0, 0);
 document.documentElement.style.background = 'url(' + canvas.toDataURL() + ') 0 0 / cover';
 ```
 
-You’ll see a range rendered as `html` background. You can see full list of ranges in the [tests page](https://cdn.rawgit.com/dfcreative/color-space/master/test/index.html).
 
+## API
 
-# API
-
-#### `.renderRect(rgb, buffer, options)`
-#### `.renderPolar(rgb, buffer, options)`
+### `color-ranger`:`render(rgb, buffer, options)`
 
 <img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/rect.png" height="128"/>
 <img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/polar.png" height="132"/>
@@ -107,11 +69,10 @@ Render rectangular or polar range into an `imageData`’s buffer. Size of the fi
 | `options.space` | _string_ | A color space name for the range taken from the [color-space](https://github.com/dfcreative/color-space/) module. E. g. `'hsl'`. |
 | `options.channel` | _Array_ | An array of x/y space channel indexes. E. g. `[0,2]` from `'hsv'` is _hue_ and _value_ channels. One of the channels can be omitted, e. g. `[null, 1]` means render saturation by y-axis. |
 | `options.min`, `options.max` | _Array_ | Arrays of left and right values for the range, corresponding to the channels in x/y axis. |
+| `options.type` | _String_ | Render whether `'polar'` or `'rect'`. |
 
-<br/>
 
-
-#### `.renderGrid(rgbA, rgbB, buffer)`
+### `color-ranger/chess`:`chess(rgbA, rgbB, buffer)`
 
 <img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/alpha.png"/>
 
@@ -125,15 +86,16 @@ Render a chess grid, useful for transparency grid image rendering. Grid size is 
 
 <br/>
 
-#### `.getWebworker(spaces)`
+### `color-ranger/worker`:`getWorker(spaces)`
 
 Return a web-worker able to render any range for the passed set of spaces. `spaces` should be a `color-space` module or it’s custom build. Usually you do this:
+
 
 ```js
 var spaces = require('color-space');
 
 //set up and run worker
-var rangerWorker = ranger.getWorker(spaces);
+var rangerWorker = require('color-ranger/worker')();
 
 //catch worker response
 rangerWorker.addEvenListener('message', function(evt){
@@ -159,25 +121,8 @@ rangerWorker.postMessage({
 });
 ```
 
-Worker gets all the same parameters as [`.renderRect`](#renderrectrgb-buffer-options) or [`.renderPolar`](#renderpolarrgb-buffer-options), besides there are two additional options: `type` and `id`.
+Worker gets all the parameters of `.render`, besides there are additional option `id`, an id of request to identify response in response.
 
-| Parameter | Type | Description |
-|----|----|----|
-| type | _string_ | A type of a plane to render: `'rect'` or `'polar'`. |
-| id | _number_ | An id of request to identify response. Returns unchanged. |
-
-
-# Contribute
-
-There are some things to do with this lib.
-
-* At first, it needs implementing WebGL shaders version, or combining somehow with [color-space-canvas](https://github.com/rosskettle/color-space-canvas) module.
-* At second, there’s no HUSL space in webworker available, because HUSL space requires intricated serialization of code for web-worker.
-* Also it might need to add a triangular shape rendering.
-* It’s a good idea to test server-side rendering as well.
-* Asm-js calculation
-
-So please fork, add fixes/features, make a PR. Color-ranger is an unlicensed project in that it is free to use or modify.
 
 
 [![NPM](https://nodei.co/npm/color-ranger.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/color-ranger/)

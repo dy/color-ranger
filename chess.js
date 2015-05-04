@@ -1,7 +1,7 @@
 /**
  * Chess grid trivial renderer
  *
- * @module color-ranger/render-grid
+ * @module color-ranger/chess
  */
 
 module.exports = renderGrid;
