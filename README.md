@@ -2,15 +2,12 @@
 
 <code>**C O L O R − R A N G E R**</code>&nbsp; renders a color range for a color in rectangular or polar coordinate system by manipulating _ImageData_’s buffer. It is primarily needed for building color pickers.
 
-[Demo](http://jsfiddle.net/dfcreative/3ng2wg59/), [ranges list](https://cdn.rawgit.com/dfcreative/color-ranger/master/test/index.html), [color picker](https://github.com/dfcreative/picky).
+[Test & demo](https://cdn.rawgit.com/dfcreative/color-ranger/master/test/index.html), [color picker](https://github.com/dfcreative/picky).
 
-<p>
-	<a href="https://travis-ci.org/dfcreative/color-ranger"><img src="https://travis-ci.org/dfcreative/color-ranger.svg?branch=master"/></a>
-	<a href="https://codeclimate.com/github/dfcreative/color-ranger"><img src="https://codeclimate.com/github/dfcreative/color-ranger/badges/gpa.svg"/></a>
-	<a href="https://coveralls.io/r/dfcreative/color-ranger"><img src="https://img.shields.io/coveralls/dfcreative/color-ranger.svg"/></a>
-	<a href="https://david-dm.org/dfcreative/color-ranger"><img src="https://david-dm.org/dfcreative/color-ranger.svg"/></a>
-</p>
-
+[![alt](https://travis-ci.org/dfcreative/color-ranger)](https://travis-ci.org/dfcreative/color-ranger.svg?branch=master)
+[![alt](https://codeclimate.com/github/dfcreative/color-ranger)](https://codeclimate.com/github/dfcreative/color-ranger/badges/gpa.svg)
+[![alt](https://coveralls.io/r/dfcreative/color-ranger)](https://img.shields.io/coveralls/dfcreative/color-ranger.svg)
+[![alt](https://david-dm.org/dfcreative/color-ranger)](https://david-dm.org/dfcreative/color-ranger.svg)
 [![unstable](http://badges.github.io/stability-badges/dist/unstable.svg)](http://github.com/badges/stability-badges)
 
 
@@ -72,7 +69,7 @@ Render rectangular or polar range into an `imageData`’s buffer. Size of the fi
 | `options.type` | _String_ | Render whether `'polar'` or `'rect'`. |
 
 
-### `color-ranger/chess`:`chess(rgbA, rgbB, buffer)`
+### `color-ranger/chess`:`renderChess(rgbA, rgbB, buffer)`
 
 <img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/alpha.png"/>
 
