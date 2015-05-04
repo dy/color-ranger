@@ -45,7 +45,6 @@
     "color-space": ">=0"
   },
   "devDependencies": {
-    "color": "dfcreative/color",
     "mocha": ">=1",
     "require-stub": ">=1.0",
     "emmy": ">=1.0"
