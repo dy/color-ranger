@@ -25,27 +25,19 @@ canvas.height = 50;
 var context = canvas.getContext('2d');
 var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
 
-//for the blue color (blue = 255, red = 0, green = 0)
-var what = [0, 0, 255];
-
-//to imageData’s buffer
-var where = imageData.data;
-
-//for hue and saturation channels [0,1]
-var how = {
-	space: 'hsl',
-	channel: [0,1],
-	min: [0,0],
-	max: [360,100]
-};
-
 //render
-imageData.data = colorRanger.renderRect(what, where, how);
+imageData.data = colorRanger.render({
+	rgb: [0, 255, 255],
+	type: 'polar',
+	space: 'hsl',
+	channel: [0, 1],
+	max: [360, 100],
+	min: [0, 100],
+	data: imageData
+});
 
 //put image data back to canvas
 context.putImageData(imageData, 0, 0);
-
-//get a background with the rendered range
 document.documentElement.style.background = 'url(' + canvas.toDataURL() + ') 0 0 / cover';
 ```
 
@@ -57,7 +49,7 @@ document.documentElement.style.background = 'url(' + canvas.toDataURL() + ') 0 0
 <img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/rect.png" height="128"/>
 <img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/polar.png" height="132"/>
 
-Render rectangular or polar range into an `imageData`’s buffer. Size of the final image is taken such that it fills the whole `imageData` area.
+Render rectangular or polar range into an imageData’s buffer. Size of the final image is taken such that it fills the whole imageData area.
 
 | Parameter | Type | Description |
 |----|----|----|
@@ -66,7 +58,7 @@ Render rectangular or polar range into an `imageData`’s buffer. Size of the fi
 | `options.space` | _string_ | A color space name for the range taken from the [color-space](https://github.com/dfcreative/color-space/) module. E. g. `'hsl'`. |
 | `options.channel` | _Array_ | An array of x/y space channel indexes. E. g. `[0,2]` from `'hsv'` is _hue_ and _value_ channels. One of the channels can be omitted, e. g. `[null, 1]` means render saturation by y-axis. |
 | `options.min`, `options.max` | _Array_ | Arrays of left and right values for the range, corresponding to the channels in x/y axis. |
-| `options.type` | _String_ | Render whether `'polar'` or `'rect'`. |
+| `options.type` | _String_ | Render whether `polar`, `rect` or `chess`. |
 
 
 ### ranger.chess(rgbA, rgbB, buffer)

@@ -11,14 +11,21 @@ var convert = require('color-space');
 
 
 //default options for default rendering
-var defaults = render.defaults = {
+var defaults = {
 	channel: [0,1],
 	space: 'rgb'
 };
 
 
+/** Bind self for exports */
+render.render = render;
+render.chess = renderChess;
+render.defaults = defaults;
+
+
 //37 is the most optimal calc size
 //you can scale resulting image with no significant quality loss
+
 
 /**
  * Render passed rectangular range for the color to imageData.
@@ -36,7 +43,9 @@ var defaults = render.defaults = {
 function render(rgba, buffer, opts) {
 	if (!buffer || !buffer.length) throw Error('Buffer must be a valid non-empty UInt8CappedArray');
 
-	// console.time('canv');
+	if (opts && opts.type === 'chess') return renderChess([255,255,255], rgba, buffer);
+
+
 	var size = opts.size || [Math.floor(Math.sqrt(buffer.length / 4))];
 	if (size.length === 1) {
 		size[1] = size[0];
@@ -119,76 +128,72 @@ function render(rgba, buffer, opts) {
 	}
 
 	return buffer;
-
-
-	/**
-	 * Calculate polar step
-	 *
-	 * @param {[type]} x [description]
-	 * @param {[type]} y [description]
-	 * @param {[type]} vals [description]
-	 * @param {[type]} size [description]
-	 * @param {[type]} channels [description]
-	 * @param {[type]} mins [description]
-	 * @param {[type]} maxes [description]
-	 *
-	 * @return {[type]} [description]
-	 */
-	function calcPolarStep(x,y, vals, size, channels, mins, maxes) {
-		//cet center
-		var cx = size[0]/2, cy = size[1]/2;
-
-		//get radius
-		var r = Math.sqrt((cx-x)*(cx-x) + (cy-y)*(cy-y));
-
-		//normalize radius
-		var nr = r / cx;
-
-		//get angle
-		var a = Math.atan2( cy-y, cx-x );
-
-		//get normalized angle (avoid negative values)
-		var na = (a + Math.PI)/Math.PI/2;
-
-
-		//ch 1 is radius
-		if (channels[1] || channels[1] === 0) {
-			vals[channels[1]] = mins[1] + (maxes[1] - mins[1]) * nr;
-		}
-
-		//ch 2 is angle
-		if (channels[0] || channels[0] === 0) {
-			vals[channels[0]] = mins[0] + (maxes[0] - mins[0]) * na;
-		}
-
-		return vals;
-	}
-
-
-	/**
-	 * Calculate step values for a rectangular range
-	 *
-	 * @param {array} vals step values to calc
-	 * @param {array} size size of rect
-	 * @param {array} mins min c1,c2
-	 * @param {array} maxes max c1,c2
-	 *
-	 * @return {array} [description]
-	 */
-	function calcRectStep(x,y, vals, size, channels, mins, maxes) {
-		if (channels[1] || channels[1] === 0) {
-			vals[channels[1]] = mins[1] + (maxes[1] - mins[1]) * (1 - y / (size[1] - 1));
-		}
-		if (channels[0] || channels[0] === 0) {
-			vals[channels[0]] = mins[0] + (maxes[0] - mins[0]) * x / (size[0] - 1);
-		}
-		return vals;
-	}
 }
 
 
-/** Bind self for exports */
-render.render = render;
+/**
+ * Calculate polar step
+ *
+ * @param {[type]} x [description]
+ * @param {[type]} y [description]
+ * @param {[type]} vals [description]
+ * @param {[type]} size [description]
+ * @param {[type]} channels [description]
+ * @param {[type]} mins [description]
+ * @param {[type]} maxes [description]
+ *
+ * @return {[type]} [description]
+ */
+function calcPolarStep(x,y, vals, size, channels, mins, maxes) {
+	//cet center
+	var cx = size[0]/2, cy = size[1]/2;
+
+	//get radius
+	var r = Math.sqrt((cx-x)*(cx-x) + (cy-y)*(cy-y));
+
+	//normalize radius
+	var nr = r / cx;
+
+	//get angle
+	var a = Math.atan2( cy-y, cx-x );
+
+	//get normalized angle (avoid negative values)
+	var na = (a + Math.PI)/Math.PI/2;
+
+
+	//ch 1 is radius
+	if (channels[1] || channels[1] === 0) {
+		vals[channels[1]] = mins[1] + (maxes[1] - mins[1]) * nr;
+	}
+
+	//ch 2 is angle
+	if (channels[0] || channels[0] === 0) {
+		vals[channels[0]] = mins[0] + (maxes[0] - mins[0]) * na;
+	}
+
+	return vals;
+}
+
+
+/**
+ * Calculate step values for a rectangular range
+ *
+ * @param {array} vals step values to calc
+ * @param {array} size size of rect
+ * @param {array} mins min c1,c2
+ * @param {array} maxes max c1,c2
+ *
+ * @return {array} [description]
+ */
+function calcRectStep(x,y, vals, size, channels, mins, maxes) {
+	if (channels[1] || channels[1] === 0) {
+		vals[channels[1]] = mins[1] + (maxes[1] - mins[1]) * (1 - y / (size[1] - 1));
+	}
+	if (channels[0] || channels[0] === 0) {
+		vals[channels[0]] = mins[0] + (maxes[0] - mins[0]) * x / (size[0] - 1);
+	}
+	return vals;
+}
 
 
 /**
@@ -201,7 +206,7 @@ render.render = render;
  *
  * @return {ImageData} Return updated imageData
  */
-render.chess = function (a, b, data) {
+function renderChess (a, b, data) {
 	//suppose square data
 	var w = Math.floor(Math.sqrt(data.length / 4)), h = w;
 
@@ -221,4 +226,4 @@ render.chess = function (a, b, data) {
 	}
 
 	return data;
-};
+}
