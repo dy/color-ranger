@@ -52,7 +52,7 @@ document.documentElement.style.background = 'url(' + canvas.toDataURL() + ') 0 0
 
 ## API
 
-### `color-ranger`:`render(rgb, buffer, options)`
+### ranger.render(rgb, buffer, options)
 
 <img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/rect.png" height="128"/>
 <img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/polar.png" height="132"/>
@@ -69,7 +69,7 @@ Render rectangular or polar range into an `imageData`’s buffer. Size of the fi
 | `options.type` | _String_ | Render whether `'polar'` or `'rect'`. |
 
 
-### `color-ranger/chess`:`renderChess(rgbA, rgbB, buffer)`
+### ranger.chess(rgbA, rgbB, buffer)
 
 <img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/alpha.png"/>
 
@@ -81,21 +81,16 @@ Render a chess grid, useful for transparency grid image rendering. Grid size is 
 | rgbB | _Array_ | An rgb values for the "white cell" color. |
 | buffer | _Uint8ClampedArray_ | An `ImageData` object to which render the grid bitmap. |
 
-<br/>
 
-### `color-ranger/worker`:`getWorker(spaces)`
+### color-ranger/worker
 
-Return a web-worker able to render any range for the passed set of spaces. `spaces` should be a `color-space` module or it’s custom build. Usually you do this:
-
+Return worker for [workerify](http://github.com/substack/workerify), able to render range in a background.
 
 ```js
-var spaces = require('color-space');
+var work = require('webworkify');
+var worker = work(require('color-ranger/worker'));
 
-//set up and run worker
-var rangerWorker = require('color-ranger/worker')();
-
-//catch worker response
-rangerWorker.addEvenListener('message', function(evt){
+worker.addEvenListener('message', function(evt){
 	if (evt.data.id !== 1) return;
 
 	//image data buffer is returned as `event.data.data`
@@ -105,8 +100,7 @@ rangerWorker.addEvenListener('message', function(evt){
 	document.body.style.background = 'url(' + canvas.toDataURL() + ') 0 0 / cover';
 });
 
-//send a data to the worker
-rangerWorker.postMessage({
+worker.postMessage({
 	rgb: rgbArray,
 	type: 'polar',
 	space: 'lab',
@@ -118,4 +112,4 @@ rangerWorker.postMessage({
 });
 ```
 
-Worker gets all the parameters of `.render`, besides there are additional option `id`, an id of request to identify response in response.
+Worker gets all the parameters of `.render`, with additional option `id`, an id of request to identify response.

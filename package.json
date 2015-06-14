@@ -39,6 +39,7 @@
   "homepage": "https://github.com/dfcreative/color-ranger",
   "scripts": {
     "test": "mocha --harmony",
+    "build": "browserify -r emmy/on -r emmy/once -r color-space -r color2:color -r ./worker:../worker -r webworkify -r ./index:../ | ccjs - --language_in=ECMASCRIPT5 > test/bundle.js",
     "watch": "watchify -r emmy/on -r emmy/once -r color-space -r color2:color -r ./worker:../worker -r webworkify -r ./index:../ -d -o test/bundle.js"
   },
   "dependencies": {

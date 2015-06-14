@@ -11,7 +11,7 @@ var convert = require('color-space');
 
 
 //default options for default rendering
-var defaults = {
+var defaults = render.defaults = {
 	channel: [0,1],
 	space: 'rgb'
 };
@@ -185,6 +185,10 @@ function render(rgba, buffer, opts) {
 		return vals;
 	}
 }
+
+
+/** Bind self for exports */
+render.render = render;
 
 
 /**
