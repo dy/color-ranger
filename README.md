@@ -44,7 +44,7 @@ document.documentElement.style.background = 'url(' + canvas.toDataURL() + ') 0 0
 
 ## API
 
-### ranger.render(rgb, buffer, options)
+### `require('color-ranger').render(color, buffer, options)`
 
 <img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/rect.png" height="128"/>
 <img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/polar.png" height="132"/>
@@ -53,15 +53,16 @@ Render rectangular or polar range into an imageData’s buffer. Size of the fina
 
 | Parameter | Type | Description |
 |----|----|----|
-| `rgb` | _Array_ | An array of rgb values, representing a color. E. g. `[0, 255, 127]`. |
+| `color` | _Color_ | An array of input values, defined in `sourceSpace` - rgb by default. |
 | `buffer` | _Uint8ClampedArray_ | An `imageData.data` object to which render a range. |
 | `options.space` | _string_ | A color space name for the range taken from the [color-space](https://github.com/dfcreative/color-space/) module. E. g. `'hsl'`. |
 | `options.channel` | _Array_ | An array of x/y space channel indexes. E. g. `[0,2]` from `'hsv'` is _hue_ and _value_ channels. One of the channels can be omitted, e. g. `[null, 1]` means render saturation by y-axis. |
 | `options.min`, `options.max` | _Array_ | Arrays of left and right values for the range, corresponding to the channels in x/y axis. |
 | `options.type` | _String_ | Render whether `polar`, `rect` or `chess`. |
+| `options.sourceSpace` | _String_ | If you have an input array different from `rgb` (for hsl edge cases), pass the color source space. |
 
 
-### ranger.chess(rgbA, rgbB, buffer)
+### `require('color-ranger').chess(colorA, colorB, buffer)`
 
 <img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/alpha.png"/>
 
@@ -69,12 +70,12 @@ Render a chess grid, useful for transparency grid image rendering. Grid size is 
 
 | Parameter | Type | Description |
 |----|----|----|
-| rgbA | _Array_ | An rgb values for the "black cell" color. |
-| rgbB | _Array_ | An rgb values for the "white cell" color. |
-| buffer | _Uint8ClampedArray_ | An `ImageData` object to which render the grid bitmap. |
+| `colorA` | _Array_ | Black cell color. |
+| `colorB` | _Array_ | White cell color. |
+| `buffer` | _Uint8ClampedArray_ | An `ImageData` object into which to render grid. |
 
 
-### color-ranger/worker
+### `require('color-ranger/worker')`
 
 Return worker for [workerify](http://github.com/substack/workerify), able to render range in a background.
 
@@ -93,9 +94,10 @@ worker.addEvenListener('message', function(evt){
 });
 
 worker.postMessage({
-	rgb: rgbArray,
+	color: [255, 255, 255],
 	type: 'polar',
 	space: 'lab',
+	sourceSpace: 'rgb'
 	channel: [0,1],
 	max: [360, 100],
 	min: [0, 100],

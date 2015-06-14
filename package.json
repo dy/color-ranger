@@ -43,7 +43,8 @@
     "watch": "watchify -r emmy/on -r emmy/once -r color-space -r color2:color -r ./worker:../worker -r webworkify -r ./index:../ -d -o test/bundle.js"
   },
   "dependencies": {
-    "color-space": ">=0"
+    "color-space": ">=0",
+    "is-array": "^1.0.1"
   },
   "devDependencies": {
     "color": "*",

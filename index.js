@@ -13,7 +13,8 @@ var convert = require('color-space');
 //default options for default rendering
 var defaults = {
 	channel: [0,1],
-	space: 'rgb'
+	space: 'rgb',
+	sourceSpace: 'rgb'
 };
 
 
@@ -40,10 +41,10 @@ render.defaults = defaults;
  *
  * @return {ImageData} ImageData containing a range
  */
-function render(rgba, buffer, opts) {
+function render(values, buffer, opts) {
 	if (!buffer || !buffer.length) throw Error('Buffer must be a valid non-empty UInt8CappedArray');
 
-	if (opts && opts.type === 'chess') return renderChess([255,255,255], rgba, buffer);
+	if (opts && opts.type === 'chess') return renderChess([255,255,255], values, buffer);
 
 
 	var size = opts.size || [Math.floor(Math.sqrt(buffer.length / 4))];
@@ -52,12 +53,15 @@ function render(rgba, buffer, opts) {
 	}
 
 	var space = opts.space = opts.space || defaults.space;
+	var sourceSpace = opts.sourceSpace = opts.sourceSpace || defaults.sourceSpace;
+
 	var channels = opts.channel = opts.channel !== undefined ? opts.channel : defaults.channel;
 
 	var mins = opts.min || [],
 		maxes = opts.max || [];
 
 	var calc = opts.type === 'polar' ?  calcPolarStep : calcRectStep;
+
 
 	//take mins/maxes of target space’s channels
 	for (var i = 0; i < channels.length; i++) {
@@ -71,20 +75,19 @@ function render(rgba, buffer, opts) {
 
 	var isCMYK = space === 'cmyk';
 
-	//add alpha
-	if (rgba.length === 4) {rgba[3] *= 255;}
-	if (rgba.length === 3) {rgba[3] = 255;}
-
 	//get specific space values
-	var values;
-	if (space === 'rgb') {
-		values = rgba.slice();
+	if (space === sourceSpace) {
+		values = values.slice();
 	} else {
-		values = convert.rgb[space](rgba);
+		values = convert[sourceSpace][space](values);
 		if (!isCMYK && values.length === 3) {
-			values[3] = rgba[3];
+			values[3] = values[3];
 		}
 	}
+
+	//add alpha
+	if (values.length === 4) {values[3] = (values[3] === undefined ? 1 : values[3]) * 255;}
+	if (values.length === 3) {values[3] = 255;}
 
 	//resolve absent indexes
 	var noIdx = [];
@@ -100,7 +103,7 @@ function render(rgba, buffer, opts) {
 	//get converting fn
 	var converter = space === 'rgb' ? function(a) {return a;} : convert[space].rgb;
 
-	for (var x, y = size[1], row, col, res, stepVals = values.slice(); y--;) {
+	for (var x, y = size[1], row, col, res, stepVals = values; y--;) {
 		row = y * size[0] * 4;
 
 		for (x = 0; x < size[0]; x++) {

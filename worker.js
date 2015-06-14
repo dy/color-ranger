@@ -21,8 +21,7 @@ module.exports = function (self) {
 
 		//ignore empty data
 		if (!data) return postMessage(false);
-
-		result = render(data.rgb, data.data, data);
+		result = render(data.color, data.data, data);
 
 		postMessage({
 			data: result,

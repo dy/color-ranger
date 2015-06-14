@@ -1315,7 +1315,6 @@ describe('polar', function(){
 });
 
 
-
 describe('performance', function(){
 	if (!doc) return;
 
@@ -1371,7 +1370,7 @@ describe('performance', function(){
 
 		//send request
 		console.time('webworker-clone');
-		worker.postMessage({rgb: color.rgbArray(), space: 'lchab', channel: [0,2], max: [100, 360], data: data, min:[0,0], id: 1});
+		worker.postMessage({color: color.rgbArray(), space: 'lchab', channel: [0,2], max: [100, 360], data: data, min:[0,0], id: 1});
 	});
 
 
@@ -1397,5 +1396,14 @@ describe('performance', function(){
 
 	it.skip('webGL shaders', function(){
 
+	});
+});
+
+
+describe('Special cases', function(){
+	it('side hsl values', function(){
+		var color = Color('hsl(120, 0, 0)');
+		var opts = {space:'hsl', channel:[1,2], min:[0,0], max:[100,100], sourceSpace: 'hsl'};
+		createRangeCase('hsl-sl', 'rect', render(color.hslArray(), data, opts));
 	});
 });
