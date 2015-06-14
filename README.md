@@ -49,13 +49,13 @@ Render rectangular or polar range into an imageData’s buffer. Size of the fina
 
 | Parameter | Type | Description |
 |----|----|----|
-| `color` | _Color_ | An array of input values, defined in `sourceSpace` - rgb by default. |
-| `buffer` | _Uint8ClampedArray_ | An `imageData.data` object to which render a range. |
+| `color` | _Array_ | An array of input values, defined in `sourceSpace` - rgb by default. |
+| `buffer` | _Uint8ClampedArray_ | An `imageData.data` object to which render the range. |
 | `options.space` | _string_ | A color space name for the range taken from the [color-space](https://github.com/dfcreative/color-space/) module. E. g. `'hsl'`. |
 | `options.channel` | _Array_ | An array of x/y space channel indexes. E. g. `[0,2]` from `'hsv'` is _hue_ and _value_ channels. One of the channels can be omitted, e. g. `[null, 1]` means render saturation by y-axis. |
 | `options.min`, `options.max` | _Array_ | Arrays of left and right values for the range, corresponding to the channels in x/y axis. |
 | `options.type` | _String_ | Render whether `polar`, `rect` or `chess`. |
-| `options.sourceSpace` | _String_ | If you have an input array different from `rgb` (for hsl edge cases), pass the color source space. |
+| `options.sourceSpace` | _String_ | If you have `color` in a space different from `rgb`, pass the sourceSpace. |
 
 
 ### ranger.chess(colorA, colorB, buffer)
