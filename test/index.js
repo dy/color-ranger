@@ -1402,7 +1402,7 @@ describe('performance', function(){
 
 describe('Special cases', function(){
 	it('side hsl values', function(){
-		var color = Color('hsl(120, 0, 0)');
+		var color = Color('hsl(120, 0%, 0%)');
 		var opts = {space:'hsl', channel:[1,2], min:[0,0], max:[100,100], sourceSpace: 'hsl'};
 		createRangeCase('hsl-sl', 'rect', render(color.hslArray(), data, opts));
 	});
