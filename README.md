@@ -26,14 +26,10 @@ var context = canvas.getContext('2d');
 var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
 
 //render
-imageData.data = colorRanger.render({
-	rgb: [0, 255, 255],
+imageData.data = colorRanger.render([0, 255, 255], imageData.data, {
 	type: 'polar',
 	space: 'hsl',
-	channel: [0, 1],
-	max: [360, 100],
-	min: [0, 100],
-	data: imageData
+	channel: [0, 1]
 });
 
 //put image data back to canvas
@@ -44,7 +40,7 @@ document.documentElement.style.background = 'url(' + canvas.toDataURL() + ') 0 0
 
 ## API
 
-### `require('color-ranger').render(color, buffer, options)`
+### ranger.render(color, buffer, options)
 
 <img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/rect.png" height="128"/>
 <img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/polar.png" height="132"/>
@@ -62,7 +58,7 @@ Render rectangular or polar range into an imageData’s buffer. Size of the fina
 | `options.sourceSpace` | _String_ | If you have an input array different from `rgb` (for hsl edge cases), pass the color source space. |
 
 
-### `require('color-ranger').chess(colorA, colorB, buffer)`
+### ranger.chess(colorA, colorB, buffer)
 
 <img src="https://cdn.rawgit.com/dfcreative/color-ranger/design/alpha.png"/>
 
@@ -75,7 +71,7 @@ Render a chess grid, useful for transparency grid image rendering. Grid size is 
 | `buffer` | _Uint8ClampedArray_ | An `ImageData` object into which to render grid. |
 
 
-### `require('color-ranger/worker')`
+### require('color-ranger/worker')
 
 Return worker for [workerify](http://github.com/substack/workerify), able to render range in a background.
 
