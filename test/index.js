@@ -5,17 +5,16 @@
 
 var Color = require('color');
 var render = require('../');
-var Emmy = require('emmy');
+var on = require('emmy/on');
+var once = require('emmy/once');
 var spaces = require('color-space');
-var chess = require('../chess');
+
 
 //detect browser
 var doc = typeof document === 'undefined' ? null : document;
 
 //get data - browser case
 if (doc) {
-	var getWorker = require('../worker');
-
 	var demo = document.getElementById('demo');
 
 	//virtual canvas
@@ -119,7 +118,7 @@ describe('alpha', function(){
 
 		cnv.width = 12; cnv.height = 12;
 		var gridData = ctx.getImageData(0,0,cnv.width,cnv.height);
-		gridData.data = chess([120,120,120,.4], [0,0,0,0], gridData.data);
+		gridData.data = render.chess([120,120,120,.4], [0,0,0,0], gridData.data);
 
 		ctx.putImageData(gridData, 0, 0);
 
@@ -347,7 +346,6 @@ describe('horizontal',function(){
 		});
 	});
 });
-
 
 
 describe('vertical',function(){
@@ -763,8 +761,6 @@ describe('rectangular', function(){
 });
 
 
-
-
 describe('conical', function(){
 	before(function(){
 		createSection(this.test.parent.title);
@@ -1112,7 +1108,6 @@ describe('radial', function(){
 });
 
 
-
 describe('polar', function(){
 	before(function(){
 			createSection(this.test.parent.title);
@@ -1324,11 +1319,12 @@ describe('polar', function(){
 describe('performance', function(){
 	if (!doc) return;
 
+	var work = require('webworkify');
+	var worker;
+
 	before(function(){
 		createSection(this.test.parent.title);
 	});
-
-	var worker;
 
 
 	//hook up worker
@@ -1336,10 +1332,10 @@ describe('performance', function(){
 
 		console.time('create-webworker');
 
-		worker = getWorker(spaces);
-
+		worker = work(require('../worker'));
 		worker.postMessage('');
-		Emmy.one(worker, 'message', function(){
+
+		once(worker, 'message', function(){
 			done();
 			console.timeEnd('create-webworker');
 		});
@@ -1363,7 +1359,7 @@ describe('performance', function(){
 
 	it('webworker clone', function(done){
 		//listen for response
-		Emmy.on(worker, 'message', function(e){
+		on(worker, 'message', function(e){
 			if (e.data.id !== 1) return;
 
 			createRangeCase('webworker-clone', 'rect', e.data.data);
@@ -1382,7 +1378,7 @@ describe('performance', function(){
 	//image data buffer isn’t transferable yet
 	it.skip('webworker transfer', function(done){
 		//listen for response
-		Emmy.on(worker, 'message', function(e){
+		on(worker, 'message', function(e){
 			if (e.data.id !== 1) return;
 
 			var opts = {rgb: color.rgbArray(), space: 'lchab', channel: [0,2], max: [100, 360], data: data, min:[0,0], id: 1};
@@ -1399,7 +1395,6 @@ describe('performance', function(){
 	});
 
 
-	//TODO
 	it.skip('webGL shaders', function(){
 
 	});

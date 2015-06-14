@@ -1,7 +1,7 @@
 {
   "name": "color-ranger",
   "version": "4.0.6",
-  "description": "Color space ranges.",
+  "description": "Render color space range in canvas or web-worker",
   "main": "index.js",
   "files": [
     "*.js"
@@ -32,22 +32,24 @@
     "lab"
   ],
   "author": "Dmitry Ivanov",
-  "license": "unlicensed",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/dfcreative/color-ranger/issues"
   },
   "homepage": "https://github.com/dfcreative/color-ranger",
   "scripts": {
     "test": "mocha --harmony",
-    "watch": "watchify -r emmy -r color-space -r color -r ./worker:../worker -r ./index.js:../ -r ./chess:../chess -d -o test/bundle.js"
+    "watch": "watchify -r emmy/on -r emmy/once -r color-space -r color2:color -r ./worker:../worker -r webworkify -r ./index:../ -d -o test/bundle.js"
   },
   "dependencies": {
     "color-space": ">=0"
   },
   "devDependencies": {
     "color": "*",
+    "color2": "^1.0.6",
+    "emmy": "^5.2.8",
     "mocha": ">=1",
     "require-stub": ">=1.0",
-    "emmy": ">=1.0"
+    "webworkify": "^1.0.2"
   }
 }

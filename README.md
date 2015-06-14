@@ -6,14 +6,14 @@
 
 [![alt](https://travis-ci.org/dfcreative/color-ranger.svg?branch=master)](https://travis-ci.org/dfcreative/color-ranger)
 [![alt](https://codeclimate.com/github/dfcreative/color-ranger/badges/gpa.svg)](https://codeclimate.com/github/dfcreative/color-ranger)
-[![alt](https://img.shields.io/coveralls/dfcreative/color-ranger.svg)](https://coveralls.io/r/dfcreative/color-ranger)
 [![alt](https://david-dm.org/dfcreative/color-ranger.svg)](https://david-dm.org/dfcreative/color-ranger)
 [![unstable](http://badges.github.io/stability-badges/dist/unstable.svg)](http://github.com/badges/stability-badges)
 
 
 ## Use
 
-`$ npm install --save color-ranger`
+[![NPM](https://nodei.co/npm/color-ranger.png?mini=true)](https://nodei.co/npm/color-ranger/)
+
 
 ```js
 var colorRanger = require('color-ranger');
@@ -119,7 +119,3 @@ rangerWorker.postMessage({
 ```
 
 Worker gets all the parameters of `.render`, besides there are additional option `id`, an id of request to identify response in response.
-
-
-
-[![NPM](https://nodei.co/npm/color-ranger.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/color-ranger/)

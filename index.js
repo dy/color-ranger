@@ -4,9 +4,10 @@
  * @module color-ranger/render
  */
 
-var convert = require('color-space');
-
 module.exports = render;
+
+
+var convert = require('color-space');
 
 
 //default options for default rendering
@@ -32,8 +33,8 @@ var defaults = {
  *
  * @return {ImageData} ImageData containing a range
  */
-function render(rgba, buffer, opts){
-	if (!buffer || !buffer.length) throw Error('Buffer must be valid non-empty UInt8CappedArray');
+function render(rgba, buffer, opts) {
+	if (!buffer || !buffer.length) throw Error('Buffer must be a valid non-empty UInt8CappedArray');
 
 	// console.time('canv');
 	var size = opts.size || [Math.floor(Math.sqrt(buffer.length / 4))];
@@ -50,7 +51,7 @@ function render(rgba, buffer, opts){
 	var calc = opts.type === 'polar' ?  calcPolarStep : calcRectStep;
 
 	//take mins/maxes of target space’s channels
-	for (var i = 0; i < channels.length; i++){
+	for (var i = 0; i < channels.length; i++) {
 		if (mins.length < channels.length) {
 			mins[i] = convert[space].min[channels[i]] || 0;
 		}
@@ -78,7 +79,7 @@ function render(rgba, buffer, opts){
 
 	//resolve absent indexes
 	var noIdx = [];
-	for (i = space.length; i--;){
+	for (i = space.length; i--;) {
 		if (i !== channels[0] && i !== channels[1]) {
 			noIdx.push(i);
 		}
@@ -88,7 +89,7 @@ function render(rgba, buffer, opts){
 	var noIdx3 = noIdx[2];
 
 	//get converting fn
-	var converter = space === 'rgb' ? function(a){return a;} : convert[space].rgb;
+	var converter = space === 'rgb' ? function(a) {return a;} : convert[space].rgb;
 
 	for (var x, y = size[1], row, col, res, stepVals = values.slice(); y--;) {
 		row = y * size[0] * 4;
@@ -133,7 +134,7 @@ function render(rgba, buffer, opts){
 	 *
 	 * @return {[type]} [description]
 	 */
-	function calcPolarStep(x,y, vals, size, channels, mins, maxes){
+	function calcPolarStep(x,y, vals, size, channels, mins, maxes) {
 		//cet center
 		var cx = size[0]/2, cy = size[1]/2;
 
@@ -174,7 +175,7 @@ function render(rgba, buffer, opts){
 	 *
 	 * @return {array} [description]
 	 */
-	function calcRectStep(x,y, vals, size, channels, mins, maxes){
+	function calcRectStep(x,y, vals, size, channels, mins, maxes) {
 		if (channels[1] || channels[1] === 0) {
 			vals[channels[1]] = mins[1] + (maxes[1] - mins[1]) * (1 - y / (size[1] - 1));
 		}
@@ -184,3 +185,36 @@ function render(rgba, buffer, opts){
 		return vals;
 	}
 }
+
+
+/**
+ * Render transparency grid.
+ * Image data is split in two equally
+ *
+ * @param {array} a Rgb values representing "white" cell
+ * @param {array} b Rgb values representing "black" cell
+ * @param {ImageData} imgData A data taken as a base for grid
+ *
+ * @return {ImageData} Return updated imageData
+ */
+render.chess = function (a, b, data) {
+	//suppose square data
+	var w = Math.floor(Math.sqrt(data.length / 4)), h = w;
+
+	var cellH = ~~(h/2);
+	var cellW = ~~(w/2);
+
+	//convert alphas to 255
+	if (a.length === 4) a[3] *= 255;
+	if (b.length === 4) b[3] *= 255;
+
+	for (var y=0, col, row; y < h; y++) {
+		row = y * w * 4;
+		for ( var x=0; x < w; x++) {
+			col = row + x * 4;
+			data.set(x >= cellW ? (y >= cellH ? a : b) : (y >= cellH ? b : a), col);
+		}
+	}
+
+	return data;
+};
